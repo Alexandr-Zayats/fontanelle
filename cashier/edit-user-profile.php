@@ -119,7 +119,7 @@ while ($result=mysqli_fetch_array($query)) {
                                   <tr>
                                     <th>Email</th>
                                     <td>
-                                      <input type="tel" class="form-control form-control-user" id="email" value="<?php echo $result['EmailId'];?>" name="email" required="false">
+                                      <input type="email" class="form-control form-control-user" id="email" value="<?php echo $result['EmailId'];?>" name="email" required="false">
                                     </td>
                                   </tr>
                                   <tr><th>Счетчики</th>
