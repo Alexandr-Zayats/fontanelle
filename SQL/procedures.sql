@@ -29,7 +29,9 @@ DELIMITER $$
 
 DROP PROCEDURE IF EXISTS sp_addMoney;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_addMoney` (`cashier` INT(3),  `uid` INT(3), `sum` decimal(8,2), `dst` VARCHAR(15))  BEGIN
-update users set Balans=(Balans + sum) WHERE id=uid;
+IF (dst != 'inc') THEN
+  update users set Balans=(Balans + sum) WHERE id=uid;
+END IF;
 insert into payments (cashierId, userId, sum, dst) values (cashier, uid, sum, dst);
 END$$
 
