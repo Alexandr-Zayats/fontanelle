@@ -10,9 +10,7 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
     $counter=$_POST['counter'];
     $dCurrent=$_POST['dCurrent'];
     $nCurrent=$_POST['nCurrent'];
-    $con = mysqli_connect(DB_SERVER,DB_USER,DB_PASS,DB_NAME);
     $latest=mysqli_fetch_assoc(mysqli_query($con,"call sp_getLastCounterValues($counter)"));
-
     if($latest[nightLast] > $nCurrent || $latest[dayLast] > $dCurrent) {
       echo "<script>alert('Введеные показания ниже предыдущих!');</script>";
     } else {
@@ -55,14 +53,15 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
 </head>
 
 <?php
-$uid=$_GET['uid'];
-$counters=mysqli_query($con,"call sp_counterList($uid)");
+  mysqli_close($con);
+  $con = mysqli_connect(DB_SERVER,DB_USER,DB_PASS,DB_NAME);
+  $uid=$_GET['uid'];
+  $counters=mysqli_query($con,"call sp_counterList($uid)");
 ?>
 
 <body class="bg-gradient-primary">
 
     <div class="container">
-
         <div class="card o-hidden border-0 shadow-lg my-5">
             <div class="card-body p-0">
                 <!-- Nested Row within Card Body -->
@@ -78,7 +77,8 @@ $counters=mysqli_query($con,"call sp_counterList($uid)");
                                 <div class="form-group row">
                                     <div class="col-sm-6 mb-3 mb-sm-0">
                                       <label for="uid">Участок:</label>
-                                      <input type="number" class="form-control form-control-user" id="uid" name="uid" value="<?php echo $uid ?>" readonly>
+                                      <input type="number" class="form-control form-control-user" id="uid" name="uid"
+                                        value="<?php echo $uid ?>" readonly>
                                     </div>
                                 </div>
                                 <div class="form-group row">
@@ -96,13 +96,29 @@ $counters=mysqli_query($con,"call sp_counterList($uid)");
                                 <div class="form-group row">
                                     <div class="col-sm-6 mb-3 mb-sm-0">
                                         <label for="dCurrent">День:</label>
-                                        <input type="number" class="form-control form-control-user" id="dCurrent" value="<?php echo $latest[dayLast] ?>" name="dCurrent" required="true">
+                                        <input type="number" class="form-control form-control-user" id="dCurrent"
+                                        value="<?php
+  if(is_numeric($latest['dayLast']) && isset($latest['dayLast'])) {
+    echo $latest['dayLast'];
+  } else {
+    echo '0';
+  }
+?>"
+                                        name="dCurrent" required="true">
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <div class="col-sm-6 mb-3 mb-sm-0">
                                         <label for="nCurrent">Ночь:</label>
-                                        <input type="number" class="form-control form-control-user" id="nCurrent" value="0" name="nCurrent" required="false">
+                                        <input type="number" class="form-control form-control-user" id="nCurrent"
+                                        value="<?php
+  if(is_numeric($latest[nightLast])) {
+    echo $latest[nightLast];
+  } else {
+    echo 0;
+  }
+?>"
+                                          name="nCurrent" required="false">
                                     </div>
                                 </div>
                                 <button type="submit" name="addvalues" class="btn btn-primary btn-user btn-block">

@@ -75,6 +75,13 @@ CREATE TABLE IF NOT EXISTS `users` (
 -- Dumping data for table `users`
 --
 
+LOCK TABLES `users` WRITE;
+/*!40000 ALTER TABLE `users` DISABLE KEYS */;
+INSERT INTO `users` VALUES 
+(71,'Самаренко Светлана Генриевна',5,'Ssamarenko@gmail.com','+380677038044',NULL,NULL,5.00,1,500.00,'2021-03-07 08:40:41',1,'2021-03-07 08:43:03'),(99,'Нефьедов В.О.',6,NULL,'0667071957',NULL,NULL,5.50,1,0.00,'2021-03-07 08:15:55',1,'2021-03-07 08:15:55'),(159,'Щевчено Т.Г.',8,NULL,'+38 050 443 28 29',NULL,NULL,5.50,1,0.00,'2021-03-06 15:16:00',1,'2021-03-06 15:16:00'),(169,'Беляева Татьяна Борисовна',9,'D@d','+380976381972',NULL,NULL,13.00,1,600.00,'2021-03-07 08:33:44',1,'2021-03-07 08:36:18'),(189,'Ткаченко Вадим Эдуардович',9,NULL,'0672475171',NULL,NULL,5.50,1,0.00,'2021-03-07 08:28:39',1,'2021-03-07 08:28:39'),(231,'Грецкая Людмила Игоревна',11,NULL,'+380509822419',NULL,NULL,5.50,1,0.00,'2021-03-07 09:28:30',1,'2021-03-07 09:28:30'),(367,'Поливянный Виталий Петрович',15,NULL,'+380672631894',NULL,NULL,5.50,1,0.00,'2021-03-07 09:22:29',1,'2021-03-07 09:22:29');
+/*!40000 ALTER TABLE `users` ENABLE KEYS */;
+UNLOCK TABLES;
+
 /*
 INSERT INTO `users` (`id`, `Name`, `EmailId`, `UserPassword`, `IsActive`) VALUES
 (0, 'РОДНИЧОК', '', '', 1);
@@ -168,37 +175,32 @@ INSERT INTO `tariffs` (`day`, `night`) VALUES
 -- Table structure for table `payments`
 --
 
--- DROP TABLE IF EXISTS `payments`;
+DROP TABLE IF EXISTS `payments`;
+DROP TABLE IF EXISTS `fee`;
+DROP TABLE IF EXISTS `income`;
 CREATE TABLE IF NOT EXISTS `payments` (
   `cashierId` int(3) NOT NULL,
   `userId` int(3) NOT NULL,
   `date` TIMESTAMP NOT NULL DEFAULT current_timestamp(),
-  `sum` decimal(15,2) NOT NULL
+  `sum` DECIMAL(15,2) NOT NULL,
+  `dst` VARCHAR(6) NOT NULL DEFAULT "el"
+
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
---
--- Table structure for table `few`
---
+LOCK TABLES `payments` WRITE;
 
--- DROP TABLE IF EXISTS `fee`;
-CREATE TABLE IF NOT EXISTS `fee` (
-  `cashierId` int(3) NOT NULL,
-  `userId` int(3) NOT NULL,
-  `date` TIMESTAMP NOT NULL DEFAULT current_timestamp(),
-  `sum` decimal(15,2) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+INSERT INTO `payments` (`cashierId`, `userId`, `date`, `sum`, `dst`) VALUES
+(2,169,'2021-03-07 08:34:59',600.00,'fee'),
+(2,71,'2021-03-07 08:43:45',500.00,'fee'),
+(2,99,'2021-03-07 08:17:58',500.00,'el'),
+(2,189,'2021-03-07 08:29:47',300.00,'el'),
+(2,169,'2021-03-07 08:37:34',100.00,'el'),
+(2,367,'2021-03-07 09:23:32',350.00,'el'),
+(2,231,'2021-03-07 09:29:32',500.00,'el');
 
+UNLOCK TABLES;
 --
--- Table structure for table `income`
---
-
--- DROP TABLE IF EXISTS `income`;
-CREATE TABLE IF NOT EXISTS `income` (
-  `cashierId` int(3) NOT NULL,
-  `userId` int(3) NOT NULL,
-  `date` TIMESTAMP NOT NULL DEFAULT current_timestamp(),
-  `sum` decimal(15,2) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+-- --------------------------------------------------
 
 --
 -- Table structure for table `counters`

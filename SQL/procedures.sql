@@ -30,26 +30,18 @@ DELIMITER $$
 DROP PROCEDURE IF EXISTS sp_addMoney;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_addMoney` (`cashier` INT(3),  `uid` INT(3), `sum` decimal(8,2), `dst` VARCHAR(15))  BEGIN
 update users set Balans=(Balans + sum) WHERE id=uid;
-IF ( dst="fee" ) THEN
-  insert into fee (cashierId, userId, sum) values (cashier, uid, sum);
-END IF;
-IF ( dst="el" ) THEN
-  insert into payments (cashierId, userId, sum) values (cashier, uid, sum);
-END IF;
-IF ( dst="income" ) THEN
-  insert into income (cashierId, userId, sum) values (cashier, uid, sum);
-END IF;
+insert into payments (cashierId, userId, sum, dst) values (cashier, uid, sum, dst);
 END$$
 
 DROP PROCEDURE IF EXISTS sp_addCounterValues;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_addCounterValues` (`uid` INT(3), `cuid` INT(5), dPrevius decimal(8,2), dCurrent decimal(8,2), nPrevius decimal(8,2), nCurrent decimal(8,2))  BEGIN
-IF ( (select dPrevius FROM countValues WHERE cId=cuid AND dPrevius is NOT NULL ORDER BY date DESC LIMIT 1) > 0 ) THEN
-  update users set Balans=(Balans - (SELECT day FROM tariffs WHERE id=users.tariffId) * ( dCurrent - dPrevius )) WHERE id=uid;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_addCounterValues` (`uid` INT(3), `cuid` INT(5), dayP decimal(8,2), dayC decimal(8,2), nightP decimal(8,2), nightC decimal(8,2)) BEGIN
+IF ( (select count(dPrevius) FROM countValues WHERE cId=cuid AND dPrevius is NOT NULL) > 0 ) THEN
+  update users set Balans=(Balans - (SELECT day FROM tariffs WHERE id=users.tariffId) * ( dayC - dayP )) WHERE id=uid;
 END IF;
-IF ( (select nPrevius FROM countValues WHERE cId=cuid AND dPrevius is NOT NULL ORDER BY date DESC LIMIT 1) > 0 ) THEN
-  update users set Balans=(Balans - (SELECT night FROM tariffs WHERE id=users.tariffId) * ( nCurrent - nPrevius )) WHERE id=uid;
+IF ( (select count(nPrevius) FROM countValues WHERE cId=cuid AND nPrevius is NOT NULL) > 0 ) THEN
+  update users set Balans=(Balans - (SELECT night FROM tariffs WHERE id=users.tariffId) * ( nightC - nightP )) WHERE id=uid;
 END IF;
-insert into countValues (cId, tariffId, dPrevius, dCurrent, nPrevius, nCurrent) values (cuid, (SELECT TariffId FROM users WHERE id=uid), dPrevius, dCurrent, nPrevius, nCurrent);
+insert into countValues (cId, tariffId, dPrevius, dCurrent, nPrevius, nCurrent) values (cuid, (SELECT TariffId FROM users WHERE id=uid), dayP, dayC, nightP, nightC);
 END$$
 
 DROP PROCEDURE IF EXISTS sp_getLastCounterValues;
@@ -74,16 +66,11 @@ END$$
 
 DROP PROCEDURE IF EXISTS sp_totalPayment;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_totalPayment` ()  BEGIN
-select SUM(IF(DATE_FORMAT(payments.date, '%Y%m%d')=DATE_FORMAT(CURDATE(), '%Y%m%d'), payments.sum, 0 )) as eDailySum,
-SUM(IF(DATE_FORMAT(payments.date, '%Y%m')=DATE_FORMAT(CURDATE(), '%Y%m'), payments.sum, 0)) as eMonthlySum
+select SUM(IF(DATE_FORMAT(date, '%Y%m%d')=DATE_FORMAT(CURDATE(), '%Y%m%d') AND dst='el', sum, 0 )) as eDailySum,
+SUM(IF(DATE_FORMAT(date, '%Y%m')=DATE_FORMAT(CURDATE(), '%Y%m') AND dst='el' , sum, 0)) as eMonthlySum,
+SUM(IF(DATE_FORMAT(date, '%Y%m%d')=DATE_FORMAT(CURDATE(), '%Y%m%d') AND dst='fee', sum, 0 )) as aDailySum,
+SUM(IF(DATE_FORMAT(date, '%Y%m')=DATE_FORMAT(CURDATE(), '%Y%m') AND dst='fee', sum, 0)) as aMonthlySum
 from payments;
-END$$
-
-DROP PROCEDURE IF EXISTS sp_totalPaymentStaf;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_totalPaymentStaf` ()  BEGIN
-select SUM(IF(DATE_FORMAT(fee.date, '%Y%m%d')=DATE_FORMAT(CURDATE(), '%Y%m%d'), fee.sum, 0 )) as aDailySum,
-SUM(IF(DATE_FORMAT(fee.date, '%Y%m')=DATE_FORMAT(CURDATE(), '%Y%m'), fee.sum, 0)) as aMonthlySum
-from fee;
 END$$
 
 DROP PROCEDURE IF EXISTS sp_cashierchangepwd;
