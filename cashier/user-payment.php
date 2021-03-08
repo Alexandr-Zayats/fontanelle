@@ -75,7 +75,7 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
                                 </div>
                                 <div class="form-group row">
                                   <div class="col-sm-6 mb-3 mb-sm-0">
-                                    <input type="radio" id="el" name="fee" value="el">
+                                    <input type="radio" id="el" name="fee" value="el" required>
                                     <label for="fee">электричество</label><br>
                                     <input type="radio" id="fee" name="fee" value="fee">
                                     <label for="fee">членские взносы</label><br>
