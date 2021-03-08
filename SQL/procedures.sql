@@ -194,7 +194,7 @@ DROP PROCEDURE IF EXISTS sp_registration;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_registration` (`uid` int(3), `name` VARCHAR(120), `street` int(3), `phone` VARCHAR(120), `size` VARCHAR(20), `counterNum` DECIMAL(20), `counterName` VARCHAR(120), `counterInfo` VARCHAR(250), `dCurrent` DECIMAL(8,2), `nCurrent` DECIMAL(8,2)) BEGIN
 insert into users (id,Name,Size,StreetId,PhoneNumber) values (uid,name,size,street,phone);
 insert into counters (userId, number, name, info) values (uid,counterNum,counterName,counterInfo);
-insert into countValues (cId, tariffId, dCurrent, nCurrent) values ((SELECT id FROM counters WHERE userId=uid LIMIT 0,1), (SELECT TariffId FROM users WHERE id=uid LIMIT 0,1), dCurrent, nCurrent);
+insert into countValues (cId, tariffId, dPrevius, dCurrent, nPrevius, nCurrent) values ((SELECT id FROM counters WHERE userId=uid LIMIT 0,1), (SELECT TariffId FROM users WHERE id=uid LIMIT 0,1), 0, dCurrent, 0, nCurrent);
 END$$
 
 DROP PROCEDURE IF EXISTS sp_signup;
