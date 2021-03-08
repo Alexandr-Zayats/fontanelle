@@ -59,7 +59,7 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
                         <div class="p-5">
                             <div class="text-center">
                                 <h5 style="color:blue">СТ "РУЧЕЕК"</h5>
-                                <h1 class="h4 text-gray-900 mb-4">Оплата за электроенергию</h1>
+                                <h1 class="h4 text-gray-900 mb-4">Внесение наличных</h1>
                             </div>
                             <form class="user" name="payment" method="post">
                                 <div class="form-group row">
@@ -75,8 +75,12 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
                                 </div>
                                 <div class="form-group row">
                                   <div class="col-sm-6 mb-3 mb-sm-0">
-                                    <input type="checkbox" id="fee" name="fee" value="fee">
-                                    <label for="fee">Оплата членских взносов</label>
+                                    <input type="radio" id="el" name="fee" value="el">
+                                    <label for="fee">электричество</label><br>
+                                    <input type="radio" id="fee" name="fee" value="fee">
+                                    <label for="fee">членские взносы</label><br>
+                                    <input type="radio" id="income" name="fee" value="income">
+                                    <label for="income">вступительный взнос</label>
                                   </div>
                                 </div>
                                 <button type="submit" name="payment" class="btn btn-primary btn-user btn-block">
@@ -90,7 +94,6 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
                 </div>
             </div>
         </div>
-
     </div>
 
     <!-- Bootstrap core JavaScript-->

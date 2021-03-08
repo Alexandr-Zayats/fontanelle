@@ -17,7 +17,7 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
     $phone=$_POST['phone'];
 
 //validate current password
-   $ret=mysqli_query($con, "call sp_cashiercurrentpwdvalidate('$cpwd','$uid')");
+    $ret=mysqli_query($con, "call sp_cashiercurrentpwdvalidate('$cpwd','$uid')");
     $result=mysqli_num_rows($ret);
     if($result==0) {
       echo "<script>alert('Current password is wrong');</script>";
@@ -100,33 +100,40 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
                               </div>
                               <div class="card-body">
 <?php
+  $cuid=$_SESSION['adid'];
   $query=mysqli_query($con,"call sp_cashierprofile($cuid)");
   while ($result=mysqli_fetch_array($query)) {
 ?>
                                 <form method="post" name="changepwd" onsubmit="return checkpass();">
-                                <table class="table table-bordered dataTable" id="dataTable" width="100%" cellspacing="0" role="grid" aria-describedby="dataTable_info" style="width: 100%;">
+                                <table class="table table-bordered dataTable" id="dataTable" width="100%" cellspacing="0"
+                                  role="grid" aria-describedby="dataTable_info" style="width: 100%;">
                                   <tr>
                                     <th>Логин</th>
                                     <td>
-                                      <input type="text" class="form-control form-control-user" id="UserName" value="<?php echo $result['UserName'];?>" name="UserName" readonly="true">
+                                      <input type="text" class="form-control form-control-user" id="UserName"
+                                        value="<?php echo $result['UserName'];?>" name="UserName" readonly="true">
                                     </td>
                                   </tr>
                                   <tr>
                                     <th>ФИО</th>
                                     <td>
-                                      <input type="text" class="form-control form-control-user" id="name" value="<?php echo $result['Name'];?>" name="name" required="true">
+                                      <input type="text" class="form-control form-control-user" id="name"
+                                        value="<?php echo $result['Name'];?>" name="name" required="true">
                                     </td>
                                   </tr>
                                   <tr>
                                     <th>Телефон</th>
                                     <td>
-                                      <input type="tel" class="form-control form-control-user" id="phone" value="<?php echo $result['PhoneNumber'];?>" name="phone" required="false" pattern="+38 ([0-9]{3}) [0-9]{3} [0-9]{2} [0-9]{2}">
+                                      <input type="tel" class="form-control form-control-user" id="phone"
+                                        value="<?php echo $result['PhoneNumber'];?>" name="phone" required="false"
+                                        pattern="+38 ([0-9]{3}) [0-9]{3} [0-9]{2} [0-9]{2}">
                                     </td>
                                   </tr>
                                   <tr>
                                     <th>Email</th>
                                     <td>
-                                      <input type="email" class="form-control form-control-user" id="email" value="<?php echo $result['EmailId'];?>" name="email" required="false">
+                                      <input type="email" class="form-control form-control-user" id="email"
+                                        value="<?php echo $result['EmailId'];?>" name="email" required="false">
                                     </td>
                                   </tr>
                                   <tr>

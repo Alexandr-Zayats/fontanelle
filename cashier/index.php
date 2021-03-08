@@ -1,4 +1,6 @@
 <?php
+session_unset();
+session_destroy();
 session_start();
 include('../includes/config.php');
 if(isset($_POST['login'])) {

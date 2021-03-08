@@ -7,6 +7,12 @@ if(isset($_POST['createuser'])) {
   $street=$_POST['street'];
   $name=$_POST['name'];
   $phone=$_POST['phone'];
+  $size=$_POST['size'];
+  $counterNum=$_POST['counterNum'];
+  $counterName=$_POST['counterName'];
+  $counterInfo=$_POST['counterInfo'];
+  $dCurrent=$_POST['dCurrent'];
+  $nCurrent=$_POST['nCurrent'];
   //$username=$_POST['username'];
   //$email=$_POST['emailid'];
   //$password=md5($_POST['inputpass']);
@@ -23,7 +29,7 @@ if(isset($_POST['createuser'])) {
   } else {
     mysqli_close($con);
     $con = mysqli_connect(DB_SERVER,DB_USER,DB_PASS,DB_NAME);
-    $query=mysqli_query($con, "call sp_registration($id, '$name', $street, '$phone')");
+    $query=mysqli_query($con, "call sp_registration($id, '$name', $street, '$phone', '$size', '$counterNum', '$counterName', '$counterInfo', '$dCurrent', '$nCurrent')");
     if ($query) {
       echo "<script>alert('Новый садовый участок успешно добавлен');</script>";
       echo "<script>window.location.href='registered-users.php'</script>";
@@ -79,7 +85,8 @@ $streets=mysqli_query($con,"call sp_streetList()");
                             <form class="user" name="createuser" method="post">
                                 <div class="form-group row">
                                     <div class="col-sm-6 mb-3 mb-sm-0">
-                                        <input type="number" class="form-control form-control-user" id="id" placeholder="Номер участка" name="id" min="1" max="500" required="true">
+                                        <input type="number" class="form-control form-control-user" id="id"
+                                        placeholder="Номер участка" name="id" min="1" max="500" required="true">
                                     </div>
                                 </div>
                                 <div class="form-group row">
@@ -96,18 +103,59 @@ $streets=mysqli_query($con,"call sp_streetList()");
                                 </div>
                                 <div class="form-group row">
                                     <div class="col-sm-6 mb-3 mb-sm-0">
-                                        <input type="text" class="form-control form-control-user" id="name" placeholder="ФИО" name="name" required="true">
+                                        <label for="size">Размер участка (сотки):</label>
+                                        <input type="number" min="0.50" max="100.00" step="0.01" class="form-control form-control-user"
+                                        value="5.50" id="size" name="size" required="true">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-sm-6 mb-3 mb-sm-0">
+                                        <input type="text" class="form-control form-control-user" id="name"
+                                        placeholder="ФИО" name="name" required="true">
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                   <div class="col-sm-6 mb-3 mb-sm-0">
-                                    <input type="tel" class="form-control form-control-user" id="phone" placeholder="+38 (067) 234 34 56" name="phone" required="true" pattern="+380 ([0-9]{2}) [0-9]{3} [0-9]{2} [0-9]{2}">
+                                    <input type="tel" class="form-control form-control-user" id="phone"
+                                    placeholder="+38 (067) 234 34 56" name="phone" required="true" pattern="+380 ([0-9]{2}) [0-9]{3} [0-9]{2} [0-9]{2}">
                                   </div>
                                 </div>
-                                <button type="submit" name="createuser" class="btn btn-primary btn-user btn-block">
-                                    Зарегистрировать
-                                </button>
-                           
+                                <div class="form-group row">
+                                <div class="col-sm-6 mb-3 mb-sm-0">
+                                  <label for="counterNum">Счетчик (номер):</label>
+                                  <input type="number" class="form-control form-control-user" value="1111111111" id="counterNum" name="counterNum" required="true">
+                                </div>
+                              </div>
+                              <div class="form-group row">
+                                <div class="col-sm-6 mb-3 mb-sm-0">
+                                  <label for="counterName">Счетчик (имя):</label>
+                                  <input type="text" class="form-control form-control-user" id="counterName"
+                                  value="дом" name="counterName" required="true">
+                                </div>
+                              </div>
+                              <div class="form-group row">
+                                <div class="col-sm-6 mb-3 mb-sm-0">
+                                  <label for="counterInfo">Описание счетчика:</label>
+                                  <input type="text" class="form-control form-control-user" id="counterInfo" name="counterInfo" required="true" 
+                                  value="основной счетчик">
+                                </div>
+                              </div>
+                              <div class="form-group row">
+                                <div class="col-sm-6 mb-3 mb-sm-0">
+                                  <label for="dCurrent">Первичные показания (день):</label>
+                                  <input type="number" class="form-control form-control-user" id="dCurrent"
+                                  value="0" name="dCurrent" required="true">
+                                </div>
+                              </div>
+                              <div class="form-group row">
+                                <div class="col-sm-6 mb-3 mb-sm-0">
+                                  <label for="nCurrent">Первичные показания (ночь):</label>
+                                  <input type="number" class="form-control form-control-user" id="nCurrent" value="0" name="nCurrent" required="true">
+                                </div>
+                              </div>
+                              <button type="submit" name="createuser" class="btn btn-primary btn-user btn-block">
+                                Зарегистрировать
+                              </button>
                             </form>
                             <hr>
                         </div>

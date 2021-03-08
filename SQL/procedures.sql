@@ -32,8 +32,12 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_addMoney` (`cashier` INT(3),  `u
 update users set Balans=(Balans + sum) WHERE id=uid;
 IF ( dst="fee" ) THEN
   insert into fee (cashierId, userId, sum) values (cashier, uid, sum);
-ELSE
+END IF;
+IF ( dst="el" ) THEN
   insert into payments (cashierId, userId, sum) values (cashier, uid, sum);
+END IF;
+IF ( dst="income" ) THEN
+  insert into income (cashierId, userId, sum) values (cashier, uid, sum);
 END IF;
 END$$
 
@@ -187,10 +191,10 @@ insert into countValues (cId, tariffId, dCurrent, nCurrent) values ((SELECT id F
 END$$
 
 DROP PROCEDURE IF EXISTS sp_registration;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_registration` (`uid` int(3), `name` VARCHAR(120), `street` int(3), `phone` VARCHAR(120)) BEGIN
-insert into users (id,Name,StreetId,PhoneNumber) values (uid,name,street,phone);
-insert into counters (userId, number, name) values (uid,'11111111','основной');
-insert into countValues (cId, tariffId, dCurrent, nCurrent) values ((SELECT id FROM counters WHERE userId=uid LIMIT 0,1), (SELECT TariffId FROM users WHERE id=uid LIMIT 0,1), 0, 0);
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_registration` (`uid` int(3), `name` VARCHAR(120), `street` int(3), `phone` VARCHAR(120), `size` VARCHAR(20), `counterNum` DECIMAL(20), `counterName` VARCHAR(120), `counterInfo` VARCHAR(250), `dCurrent` DECIMAL(8,2), `nCurrent` DECIMAL(8,2)) BEGIN
+insert into users (id,Name,Size,StreetId,PhoneNumber) values (uid,name,size,street,phone);
+insert into counters (userId, number, name, info) values (uid,counterNum,counterName,counterInfo);
+insert into countValues (cId, tariffId, dCurrent, nCurrent) values ((SELECT id FROM counters WHERE userId=uid LIMIT 0,1), (SELECT TariffId FROM users WHERE id=uid LIMIT 0,1), dCurrent, nCurrent);
 END$$
 
 DROP PROCEDURE IF EXISTS sp_signup;
@@ -244,208 +248,3 @@ update users set Name=name, LastUpdationDate=current_timestamp(), EmailId=email,
 END$$
 
 DELIMITER ;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `admin`
---
-
-DROP TABLE IF EXISTS `admin`;
-CREATE TABLE `admin` (
-  `id` int(3) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  `Name` varchar(100) DEFAULT NULL,
-  `AdminEmail` varchar(120) DEFAULT NULL,
-  `PhoneNumber` varchar(255) DEFAULT NULL,
-  `UserName` varchar(100) NOT NULL,
-  `Password` varchar(100) NOT NULL,
-  `updationDate` TIMESTAMP NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- Dumping data for table `admin`
---
-
-INSERT INTO `admin` (`Name`, `AdminEmail`, `PhoneNumber`, `UserName`, `Password`) VALUES
-('Александр Заяц', 'alexandr@zayats.org', '+380504432829', 'admin', 'f925916e2754e5e03f75dd58a5733251');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `users`
---
-
-DROP TABLE IF EXISTS `users`;
-CREATE TABLE `users` (
-  `id` int(3) NOT NULL PRIMARY KEY,
-  `Name` varchar(150) NOT NULL,
-  `StreetId` int(3) NOT NULL,
-  `EmailId` varchar(255) DEFAULT NULL,
-  `PhoneNumber` varchar(255) DEFAULT NULL,
-  `UserName` varchar(150) DEFAULT NULL,
-  `UserPassword` varchar(255) DEFAULT NULL,
-  `Size` decimal(5,2) NOT NULL DEFAULT '5.50',
-  `TariffId` int(3) NOT NULL DEFAULT 1,
-  `Balans` decimal(15,2) NOT NULL DEFAULT '0.00',
-  `RegDate` timestamp NULL DEFAULT current_timestamp(),
-  `IsActive` int(1) DEFAULT 1,
-  `LastUpdationDate` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- Dumping data for table `users`
---
-
-INSERT INTO `users` (`id`, `Name`, `EmailId`, `UserPassword`, `IsActive`) VALUES
-(0, 'РОДНИЧОК', '', '', 1);
--- (2, 'Amit Yadav', 'amity@gmail.com', 'c20ad4d76fe97759aa27a0c99bff6710', 1),
-
---
--- Table structure for table `cashier`
---
-
-DROP TABLE IF EXISTS `cashier`;
-CREATE TABLE `cashier` (
-  `id` int(3) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  `Name` varchar(150) DEFAULT NULL,
-  `EmailId` varchar(255) DEFAULT NULL,
-  `PhoneNumber` varchar(255) DEFAULT NULL,
-  `UserName` varchar(100) NOT NULL,
-  `UserPassword` varchar(255) DEFAULT NULL,
-  `RegDate` timestamp NULL DEFAULT current_timestamp(),
-  `LastUpdationDate` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- Dumping data for table `cashier`
---
-
-INSERT INTO `cashier` (`Name`, `EmailId`, `PhoneNumber`, `UserName`, `UserPassword`) VALUES
-('Александр Заяц', 'alexandr@zayats.org', '+380504432829', 'alex', 'f925916e2754e5e03f75dd58a5733251'),
-('Елена', '', '', 'elena', 'f925916e2754e5e03f75dd58a5733251'),
-('Алиса', '', '', 'alisa', 'f925916e2754e5e03f75dd58a5733251');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `streets`
---
-
-DROP TABLE IF EXISTS `streets`;
-CREATE TABLE `streets` (
-  `id` int(3) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  `name` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- Dumping data for table `streets`
---
-
-INSERT INTO `streets` (`name`) VALUES
-('Музейная'),
-('Садовая'),
-('пер. Садовый'),
-('Ромашковая'),
-('Родниковая'),
-('Озерная'),
-('Вишневая'),
-('Яблунева'),
-('Виноградная'),
-('Полиграфистов'),
-('Полевая'),
-('Лесная'),
-('Нова'),
-('Центральная'),
-('пер. Центральный');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `tariffs`
---
-
-DROP TABLE IF EXISTS `tariffs`;
-CREATE TABLE `tariffs` (
-  `id` int(3) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  `day` decimal(4,2) NOT NULL,
-  `night` decimal(4,2) NOT NULL,
-  `created` TIMESTAMP NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- Dumping data for table `tariffs`
---
-
-INSERT INTO `tariffs` (`day`, `night`) VALUES
-(2.00, 1.00),
-(1.85, 0.90);
-
--- -------------------------------------------------------
-
---
--- Table structure for table `payments`
---
-
-DROP TABLE IF EXISTS `payments`;
-CREATE TABLE `payments` (
-  `cashierId` int(3) NOT NULL,
-  `userId` int(3) NOT NULL,
-  `date` TIMESTAMP NOT NULL DEFAULT current_timestamp(),
-  `sum` decimal(15,2) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- Table structure for table `few`
---
-
-DROP TABLE IF EXISTS `fee`;
-CREATE TABLE `fee` (
-  `cashierId` int(3) NOT NULL,
-  `userId` int(3) NOT NULL,
-  `date` TIMESTAMP NOT NULL DEFAULT current_timestamp(),
-  `sum` decimal(15,2) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- Table structure for table `counters`
---
-
-DROP TABLE IF EXISTS `counters`;
-CREATE TABLE `counters` (
-  `id` int(5) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  `userId` int(3) NOT NULL,
-  `number` int(15) NOT NULL,
-  `name` varchar(25) NOT NULL,
-  `info`  varchar(255)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- Dumping data for table `counters`
---
-
-INSERT INTO `counters` (`userId`, `number`, `name`) VALUES
-(0, 11111111, 'трансформатор');
-
--- -------------------------------------------------------
-
---
--- Table structure for table `countValues`
---
-
-DROP TABLE IF EXISTS `countValues`;
-CREATE TABLE `countValues` (
-  `cId` int(5) NOT NULL,
-  `tariffId` int(3) NOT NULL,
-  `dPrevius` decimal(8,2) DEFAULT NULL,
-  `dCurrent` decimal(8,2) DEFAULT NULL,
-  `nPrevius` decimal(8,2) DEFAULT NULL,
-  `nCurrent` decimal(8,2) DEFAULT NULL,
-  `date` TIMESTAMP NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-
--- COMMIT;
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

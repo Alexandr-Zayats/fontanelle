@@ -75,79 +75,63 @@ if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
                                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                     <thead>
                                   <tr>
-                                            <th>#</th>
-                                            <th>Участок</th>
-                                            <th>ФИО</th>
-                                            <th>Телефон</th>
-                                            <th>Email</th>
-                                            <th>Дата регистрации</th>
-                                            <th>Статус</th>
-                                            <th>Баланс</th>
-                                            <th>Последнее изменения</th>
-                                            <th>Actions</th>
+                                            <th style="width: 5%; text-align:center">Счетчик</th>
+                                            <th style="width: 5%; text-align:center">Оплата</th>
+                                            <th style="width: 5%; text-align:center">Изменить</th>
+                                            <th style="width: 5%; text-align:center">Участок</th>
+                                            <th style="width: 30%; text-align:center">ФИО</th>
+                                            <th style="width: 15%; text-align:center">Телефон</th>
+                                            <th style="width: 25%; text-align:center">Email</th>
+                                            <th style="width: 10%; text-align:center">Баланс</th>
                                         </tr>
                                     </thead>
                                     <tfoot>
                                        <tr>
-                                            <th>#</th>
-                                            <th>Участок</th>
-                                            <th>ФИО</th>
-                                            <th>Телефон</th>
-                                            <th>Email</th>
-                                            <th>Дата регистрации</th>
-                                            <th>Статус</th>
-                                            <th>Баланс</th>
-                                            <th>Последнее изменения</th>
-                                            <th>Actions</th>
+                                            <th style="text-align:center">Счетчик</th>
+                                            <th style="text-align:center">Оплата</th>
+                                            <th style="text-align:center">Изменить</th>
+                                            <th style="text-align:center">Участок</th>
+                                            <th style="text-align:center">ФИО</th>
+                                            <th style="text-align:center">Телефон</th>
+                                            <th style="text-align:center">Email</th>
+                                            <th style="text-align:center">Баланс</th>
                                         </tr>
                                     </tfoot>
                                     <tbody>
-                                        <?php
-$query=mysqli_query($con,"call sp_allregisteredusers()");
-$cnt=1;
-while ($result=mysqli_fetch_array($query)) {
+<?php
+  $query=mysqli_query($con,"call sp_allregisteredusers()");
+  while ($result=mysqli_fetch_array($query)) {
 ?>
                                           <tr>
-                                            <td><?php echo $cnt;?></td>
-                                            <td><?php echo $result['id'];?></td>
-                                            <td><?php echo $result['Name'];?></td>
-                                            <td><?php echo $result['PhoneNumber'];?></td>
-                                            <td><?php echo $result['EmailId'];?></td>
-                                            <td><?php echo $result['RegDate'];?></td>
-                                            <td><?php  $accountstatus=$result['IsActive'];
-if($accountstatus==1):
-    echo "Active";
-else:
-    echo "Blocked";
-endif;
-    ?>
-        
-    </td>
-                                            <td><?php echo $result['Balans'];?></td>
-                                            <td><?php echo $result['LastUpdationDate'];?></td>
-<td>
-<a href="user-counter.php?uid=<?php echo $result['id'];?>" class="btn btn-info  btn-circle btn-sm" title="Показания">
-<i class="fas fa-edit"></i></a>
-<a href="user-payment.php?uid=<?php echo $result['id'];?>" class="btn btn-info  btn-circle btn-sm" title="Оплата">
-<i class="fas fa-edit"></i></a>
-<a href="edit-user-profile.php?uid=<?php echo $result['id'];?>" class="btn btn-info  btn-circle btn-sm" title="Редактировать">
-<i class="fas fa-edit"></i></a>
-
-    <a href="registered-users.php?delete=<?php echo $result['id'];?>" onClick="return confirm('Действительно удалить участок?');" class="btn btn-danger btn-circle btn-sm">
-<i class="fas fa-trash"></i></a>
-</td>
+                                            <td style="text-align:center">
+                                              <a href="user-counter.php?uid=<?php echo $result['id'];?>"
+                                              class="btn btn-info  btn-circle btn-sm" title="Показания">
+                                              <i class="fas fa-edit"></i></a>
+                                            </td>
+                                            <td  style="text-align:center">
+                                              <a href="user-payment.php?uid=<?php echo $result['id'];?>"
+                                              class="btn btn-info  btn-circle btn-sm" title="Оплата">
+                                              <i class="fas fa-edit"></i></a>
+                                            </td>
+                                            <td style="text-align:center">
+                                              <a href="edit-user-profile.php?uid=<?php echo $result['id'];?>"
+                                              class="btn btn-info  btn-circle btn-sm" title="Редактировать">
+                                              <i class="fas fa-edit"></i></a>
+                                            </td>
+                                            <td style="text-align:center"><?php echo $result['id'];?></td>
+                                            <td style="text-align:left"><?php echo $result['Name'];?></td>
+                                            <td style="text-align:right"><?php echo $result['PhoneNumber'];?></td>
+                                            <td style="text-align:right"><?php echo $result['EmailId'];?></td>
+                                            <td style="text-align:right"><?php echo $result['Balans'];?></td>
                                         </tr>
-                                       <?php $cnt++;
-                            } ?>
+<?php } ?>
                                     </tbody>
                                 </table>
                             </div>
                         </div>
                     </div>
-
                 </div>
                 <!-- /.container-fluid -->
-
             </div>
             <!-- End of Main Content -->
 

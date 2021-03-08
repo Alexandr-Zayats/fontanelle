@@ -4,7 +4,7 @@ session_start();
 include('../includes/config.php');
 if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
   header('location:logout.php');
-  } else{
+} else {
 ?>
 <!DOCTYPE html>
 <html lang="en">

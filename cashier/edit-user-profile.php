@@ -91,7 +91,8 @@ while ($result=mysqli_fetch_array($query)) {
                               </div>
                               <div class="card-body">
                               <form method="post">
-                                <table class="table table-bordered dataTable" id="dataTable" width="100%" cellspacing="0" role="grid" aria-describedby="dataTable_info" style="width: 100%;">              
+                                <table class="table table-bordered dataTable" id="dataTable" width="100%" cellspacing="0"
+                                  role="grid" aria-describedby="dataTable_info" style="width: 100%;">              
                                   <tr>
                                     <th>Участок</th>
                                     <td>
