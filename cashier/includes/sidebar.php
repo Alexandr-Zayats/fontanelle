@@ -48,21 +48,28 @@
                     <span>Отчеты</span></a>
             </li>
 
-            <!-- Nav Item - Charts
+            <!-- Nav Item - Charts -->
             <li class="nav-item">
                 <a class="nav-link" href="transformator.php">
                     <i class="fas fa-fw fa-user"></i>
                     <span>Счетчик</span></a>
             </li>
 
-            Nav Item - Charts
+            <!--Nav Item - Charts
             <li class="nav-item">
                 <a class="nav-link" href="spends.php">
                     <i class="fas fa-fw fa-user"></i>
                     <span>Рассходы</span></a>
             </li>
 
-            Nav Item - Tables -->
+            Nav Item - Charts -->
+            <li class="nav-item">
+                <a class="nav-link" href="balance.php">
+                    <i class="fas fa-fw fa-user"></i>
+                    <span>Баланс</span></a>
+            </li>
+
+            <!--Nav Item - Tables -->
             <li class="nav-item">
                 <a class="nav-link" href="change-password.php">
                     <i class="fas fa-cogs fa-sm fa-fw mr-2"></i>

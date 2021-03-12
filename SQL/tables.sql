@@ -170,7 +170,8 @@ CREATE TABLE IF NOT EXISTS `tariffs` (
 --
 INSERT INTO `tariffs` (`day`, `night`, `water`) VALUES
 (2.00, 1.00, 17.27),
-(1.85, 0.90, 17.27);
+(1.85, 0.90, 17.27),
+(1.68*40.64,31.68*0.5*40.64,0);
 -- -------------------------------------------------------
 
 --
@@ -183,16 +184,13 @@ CREATE TABLE IF NOT EXISTS `payments` (
   `userId` int(3) NOT NULL,
   `date` TIMESTAMP NOT NULL DEFAULT current_timestamp(),
   `sum` DECIMAL(15,2) NOT NULL,
-  `dst` VARCHAR(6) NOT NULL DEFAULT "el"
-
+  `dst` VARCHAR(255) NOT NULL DEFAULT "el"
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `payments`
 --
-
 LOCK TABLES `payments` WRITE;
-/*!40000 ALTER TABLE `payments` DISABLE KEYS */;
 INSERT INTO `payments` (cashierId,userId,date,sum,dst) VALUES
 (3,169,'2021-03-07 08:34:59',600.00,'fee'),
 (3,71,'2021-03-07 08:43:45',500.00,'fee'),
@@ -201,9 +199,7 @@ INSERT INTO `payments` (cashierId,userId,date,sum,dst) VALUES
 (3,169,'2021-03-07 08:37:34',100.00,'el'),
 (3,367,'2021-03-07 09:23:32',350.00,'el'),
 (3,231,'2021-03-07 09:29:32',500.00,'el');
-/*!40000 ALTER TABLE `payments` ENABLE KEYS */;
 UNLOCK TABLES;
-
 --
 -- --------------------------------------------------
 
@@ -211,7 +207,7 @@ UNLOCK TABLES;
 -- Table structure for table `counters`
 --
 
-DROP TABLE IF EXISTS `counters`;
+-- DROP TABLE IF EXISTS `counters`;
 CREATE TABLE IF NOT EXISTS `counters` (
   `id` int(5) NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `userId` int(3) NOT NULL,
@@ -222,6 +218,7 @@ CREATE TABLE IF NOT EXISTS `counters` (
   `info`  varchar(255) DEFAULT "электричество"
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+/*
 LOCK TABLES `counters` WRITE;
 /*!40000 ALTER TABLE `counters` DISABLE KEYS */;
 INSERT INTO `counters` (userId,number,name) VALUES
@@ -235,6 +232,7 @@ INSERT INTO `counters` (userId,number,name) VALUES
 (231,11111111,'дом');
 /*!40000 ALTER TABLE `counters` ENABLE KEYS */;
 UNLOCK TABLES;
+*/
 
 -- -------------------------------------------------------
 
@@ -242,7 +240,7 @@ UNLOCK TABLES;
 -- Table structure for table `countValues`
 --
 
-DROP TABLE IF EXISTS `countValues`;
+-- DROP TABLE IF EXISTS `countValues`;
 CREATE TABLE IF NOT EXISTS `countValues` (
   `cId` int(5) NOT NULL,
   `tariffId` int(3) NOT NULL,
@@ -257,8 +255,8 @@ CREATE TABLE IF NOT EXISTS `countValues` (
 -- Dumping data for table `countValues`
 --
 
+/*
 LOCK TABLES `countValues` WRITE;
-/*!40000 ALTER TABLE `countValues` DISABLE KEYS */;
 INSERT INTO `countValues` (cId,tariffId,dPrevius,dCurrent,nPrevius,nCurrent,date) VALUES
 (2,1,23300.00,23300.00,10520.00,10520.00,'2021-03-06 15:17:32'),
 (3,1,2500.00,2500.00,0.00,0.00,'2021-03-07 08:17:15'),
@@ -271,8 +269,8 @@ INSERT INTO `countValues` (cId,tariffId,dPrevius,dCurrent,nPrevius,nCurrent,date
 (7,1,1325.00,1500.00,0.00,0.00,'2021-03-07 09:23:15'),
 (8,1,9300.00,9300.00,0.00,0.00,'2021-03-07 09:28:57'),
 (8,1,9300.00,9550.00,0.00,0.00,'2021-03-07 09:29:16');
-/*!40000 ALTER TABLE `countValues` ENABLE KEYS */;
 UNLOCK TABLES;
+*/
 
 -- COMMIT;
 

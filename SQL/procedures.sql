@@ -27,9 +27,16 @@ DELIMITER $$
 -- Procedures
 --
 
+DROP PROCEDURE IF EXISTS sp_balance;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_balance` () BEGIN
+SELECT Balans as balance,
+(SELECT SUM(sum) from payments WHERE cashierId > 1) as inCome,
+(SELECT SUM(sum) from payments WHERE cashierId = 1) as outCome
+FROM users WHERE id=0;
+END$$
+
 DROP PROCEDURE IF EXISTS sp_totalReport;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_totalReport` (`start` TIMESTAMP, `stop` TIMESTAMP) BEGIN
-
 SELECT u.id as id, u.name as name, u.Balans as balans, u.PhoneNumber as phone, u.EmailId as email,
 (SELECT verDate FROM counters
   WHERE userId=u.id AND type="el"
