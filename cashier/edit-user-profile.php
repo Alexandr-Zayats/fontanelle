@@ -14,6 +14,7 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
     $uid=$_GET['uid'];
 
     //$updatetTime = date( 'd-m-Y h:i:s A', time () );
+    //echo "<script>alert('$uid $name $email $phone $size');</script>";
     $query=mysqli_query($con,"call sp_userupdateprofile('$uid','$name','$email','$phone','$size')"); 
     echo "<script>alert('Профайл участка успешно обновлен');</script>";  
     echo "<script>window.location.href='registered-users.php'</script>";
@@ -102,7 +103,7 @@ while ($result=mysqli_fetch_array($query)) {
                                   <tr>
                                     <th>Размер участка (соток)</th>
                                     <td>
-                                      <input type="number" min="0.50" max="100.00" step="0.50" class="form-control form-control-user" id="size" value="<?php echo $result['Size'];?>" name="size" required="true">
+                                      <input type="number" min="0.50" max="100.00" step="0.01" class="form-control form-control-user" id="size" value="<?php echo $result['Size'];?>" name="size" required="true">
                                     </td>
                                   </tr>
                                   <tr>
