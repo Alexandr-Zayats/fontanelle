@@ -74,20 +74,21 @@ CREATE TABLE IF NOT EXISTS `users` (
 --
 -- Dumping data for table `users`
 --
-
 /*
 LOCK TABLES `users` WRITE;
-/*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES 
-(71,'Самаренко Светлана Генриевна',5,'Ssamarenko@gmail.com','+380677038044',NULL,NULL,5.00,1,500.00,'2021-03-07 08:40:41',1,'2021-03-07 08:43:03'),(99,'Нефьедов В.О.',6,NULL,'0667071957',NULL,NULL,5.50,1,0.00,'2021-03-07 08:15:55',1,'2021-03-07 08:15:55'),(159,'Щевчено Т.Г.',8,NULL,'+38 050 443 28 29',NULL,NULL,5.50,1,0.00,'2021-03-06 15:16:00',1,'2021-03-06 15:16:00'),(169,'Беляева Татьяна Борисовна',9,'D@d','+380976381972',NULL,NULL,13.00,1,600.00,'2021-03-07 08:33:44',1,'2021-03-07 08:36:18'),(189,'Ткаченко Вадим Эдуардович',9,NULL,'0672475171',NULL,NULL,5.50,1,0.00,'2021-03-07 08:28:39',1,'2021-03-07 08:28:39'),(231,'Грецкая Людмила Игоревна',11,NULL,'+380509822419',NULL,NULL,5.50,1,0.00,'2021-03-07 09:28:30',1,'2021-03-07 09:28:30'),(367,'Поливянный Виталий Петрович',15,NULL,'+380672631894',NULL,NULL,5.50,1,0.00,'2021-03-07 09:22:29',1,'2021-03-07 09:22:29');
-/*!40000 ALTER TABLE `users` ENABLE KEYS */;
+INSERT INTO `users` VALUES
+(0,'РОДНИЧОК',0,'',NULL,NULL,'',5.50,1,0.00,'2021-03-06 15:14:31',1,'2021-03-06 15:14:31'),
+(71,'Самаренко Светлана Генриевна',5,'ssamarenko@gmail.com','+38 (067) 703 80 44',NULL,NULL,5.00,1,500.00,'2021-03-07 08:40:41',1,'2021-03-08 18:01:18'),
+(99,'Нефьедов В.О.',6,'w@w','+38 (066) 707 19 57',NULL,NULL,6.00,1,0.00,'2021-03-07 08:15:55',1,'2021-03-08 17:58:09'),
+(150,'Шевченко Тамара Ильинична',8,'alexandr@zayats.org','+38 (050) 443 28 29',NULL,NULL,6.00,1,0.00,'2021-03-06 15:16:00',1,'2021-03-08 17:59:10'),
+(169,'Беляева Татьяна Борисовна',9,'w@w','+38 (097) 638 19 72',NULL,NULL,13.00,1,600.00,'2021-03-07 08:33:44',1,'2021-03-08 18:00:28'),
+(189,'Ткаченко Вадим Эдуардович',9,'w@w','+38 (067) 247 51 71',NULL,NULL,6.00,1,0.00,'2021-03-07 08:28:39',1,'2021-03-08 17:59:54'),
+(231,'Грецкая Людмила Игоревна',11,'w@w','+38 (050) 982 24 19',NULL,NULL,6.00,1,0.00,'2021-03-07 09:28:30',1,'2021-03-08 18:00:11'),
+(367,'Поливянный Виталий Петрович',15,'w@w','+38 (067) 263 18 94',NULL,NULL,6.00,1,0.00,'2021-03-07 09:22:29',1,'2021-03-08 18:00:44');
 UNLOCK TABLES;
 */
-/*
-INSERT INTO `users` (`id`, `Name`, `EmailId`, `UserPassword`, `IsActive`) VALUES
-(0, 'РОДНИЧОК', '', '', 1);
--- (2, 'Amit Yadav', 'amity@gmail.com', 'c20ad4d76fe97759aa27a0c99bff6710', 1),
-*/
+--
+-- --------------------------------------------------
 
 --
 -- Table structure for table `cashier`
@@ -154,22 +155,21 @@ INSERT INTO `streets` (`name`) VALUES
 -- Table structure for table `tariffs`
 --
 
--- DROP TABLE IF EXISTS `tariffs`;
+DROP TABLE IF EXISTS `tariffs`;
 CREATE TABLE IF NOT EXISTS `tariffs` (
   `id` int(3) NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `day` decimal(4,2) NOT NULL,
   `night` decimal(4,2) NOT NULL,
+  `water` decimal(4,2) NOT NULL,
   `created` TIMESTAMP NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `tariffs`
 --
-/*
-INSERT INTO `tariffs` (`day`, `night`) VALUES
-(2.00, 1.00),
-(1.85, 0.90);
-*/
+INSERT INTO `tariffs` (`day`, `night`, `water`) VALUES
+(2.00, 1.00, 17.27),
+(1.85, 0.90, 17.27);
 -- -------------------------------------------------------
 
 --
@@ -177,8 +177,6 @@ INSERT INTO `tariffs` (`day`, `night`) VALUES
 --
 
 DROP TABLE IF EXISTS `payments`;
-DROP TABLE IF EXISTS `fee`;
-DROP TABLE IF EXISTS `income`;
 CREATE TABLE IF NOT EXISTS `payments` (
   `cashierId` int(3) NOT NULL,
   `userId` int(3) NOT NULL,
@@ -188,18 +186,23 @@ CREATE TABLE IF NOT EXISTS `payments` (
 
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+--
+-- Dumping data for table `payments`
+--
+
 LOCK TABLES `payments` WRITE;
-
-INSERT INTO `payments` (`cashierId`, `userId`, `date`, `sum`, `dst`) VALUES
-(2,169,'2021-03-07 08:34:59',600.00,'fee'),
-(2,71,'2021-03-07 08:43:45',500.00,'fee'),
-(2,99,'2021-03-07 08:17:58',500.00,'el'),
-(2,189,'2021-03-07 08:29:47',300.00,'el'),
-(2,169,'2021-03-07 08:37:34',100.00,'el'),
-(2,367,'2021-03-07 09:23:32',350.00,'el'),
-(2,231,'2021-03-07 09:29:32',500.00,'el');
-
+/*!40000 ALTER TABLE `payments` DISABLE KEYS */;
+INSERT INTO `payments` (cashierId,userId,date,sum,dst) VALUES
+(3,169,'2021-03-07 08:34:59',600.00,'fee'),
+(3,71,'2021-03-07 08:43:45',500.00,'fee'),
+(3,99,'2021-03-07 08:17:58',500.00,'el'),
+(3,189,'2021-03-07 08:29:47',300.00,'el'),
+(3,169,'2021-03-07 08:37:34',100.00,'el'),
+(3,367,'2021-03-07 09:23:32',350.00,'el'),
+(3,231,'2021-03-07 09:29:32',500.00,'el');
+/*!40000 ALTER TABLE `payments` ENABLE KEYS */;
 UNLOCK TABLES;
+
 --
 -- --------------------------------------------------
 
@@ -207,29 +210,38 @@ UNLOCK TABLES;
 -- Table structure for table `counters`
 --
 
--- DROP TABLE IF EXISTS `counters`;
+DROP TABLE IF EXISTS `counters`;
 CREATE TABLE IF NOT EXISTS `counters` (
   `id` int(5) NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `userId` int(3) NOT NULL,
   `number` int(15) NOT NULL,
   `name` varchar(25) NOT NULL,
-  `info`  varchar(255)
+  `type` varchar(6) NOT NULL DEFAULT "el",
+  `verDate` TIMESTAMP DEFAULT NULL,
+  `info`  varchar(255) DEFAULT "электричество"
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
---
--- Dumping data for table `counters`
---
-/*
-INSERT INTO `counters` (`userId`, `number`, `name`) VALUES
-(0, 11111111, 'трансформатор');
-*/
+LOCK TABLES `counters` WRITE;
+/*!40000 ALTER TABLE `counters` DISABLE KEYS */;
+INSERT INTO `counters` (userId,number,name) VALUES
+(0,11111111,'трансформатор'),
+(150,11111111,'дом'),
+(99,11111111,'дом'),
+(189,11111111,'дом'),
+(169,11111111,'дом'),
+(71,11111111,'дом'),
+(367,11111111,'дом'),
+(231,11111111,'дом');
+/*!40000 ALTER TABLE `counters` ENABLE KEYS */;
+UNLOCK TABLES;
+
 -- -------------------------------------------------------
 
 --
 -- Table structure for table `countValues`
 --
 
--- DROP TABLE IF EXISTS `countValues`;
+DROP TABLE IF EXISTS `countValues`;
 CREATE TABLE IF NOT EXISTS `countValues` (
   `cId` int(5) NOT NULL,
   `tariffId` int(3) NOT NULL,
@@ -240,6 +252,26 @@ CREATE TABLE IF NOT EXISTS `countValues` (
   `date` TIMESTAMP NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+--
+-- Dumping data for table `countValues`
+--
+
+LOCK TABLES `countValues` WRITE;
+/*!40000 ALTER TABLE `countValues` DISABLE KEYS */;
+INSERT INTO `countValues` (cId,tariffId,dPrevius,dCurrent,nPrevius,nCurrent,date) VALUES
+(2,1,23300.00,23300.00,10520.00,10520.00,'2021-03-06 15:17:32'),
+(3,1,2500.00,2500.00,0.00,0.00,'2021-03-07 08:17:15'),
+(3,1,2500.00,2750.00,0.00,0.00,'2021-03-07 08:17:37'),
+(4,1,44200.00,44200.00,0.00,0.00,'2021-03-07 08:29:07'),
+(4,1,44200.00,44350.00,0.00,0.00,'2021-03-07 08:29:22'),
+(5,1,3900.00,3900.00,0.00,0.00,'2021-03-07 08:36:58'),
+(5,1,3900.00,3950.00,0.00,0.00,'2021-03-07 08:37:16'),
+(7,1,1325.00,1325.00,0.00,0.00,'2021-03-07 09:22:55'),
+(7,1,1325.00,1500.00,0.00,0.00,'2021-03-07 09:23:15'),
+(8,1,9300.00,9300.00,0.00,0.00,'2021-03-07 09:28:57'),
+(8,1,9300.00,9550.00,0.00,0.00,'2021-03-07 09:29:16');
+/*!40000 ALTER TABLE `countValues` ENABLE KEYS */;
+UNLOCK TABLES;
 
 -- COMMIT;
 

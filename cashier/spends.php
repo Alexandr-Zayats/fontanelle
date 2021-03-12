@@ -9,7 +9,7 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
 } else {
   if(isset($_POST['payment'])) {
     $sum=$_POST['sum'];
-    $fee=$_POST['type'];
+    $fee=$_POST['fee'];
     mysqli_close($con);
     $con = mysqli_connect(DB_SERVER,DB_USER,DB_PASS,DB_NAME);
     //echo "<script>alert('$cashier $uid $sum $fee');</script>";
@@ -75,13 +75,13 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
                                 </div>
                                 <div class="form-group row">
                                   <div class="col-sm-6 mb-3 mb-sm-0">
-                                    <input type="radio" id="type" name="type" value="el" required>
+                                    <input type="radio" id="el" name="fee" value="el" required>
                                     <label for="fee">электричество</label><br>
-                                    <input type="radio" id="type" name="type" value="wat">
+                                    <input type="radio" id="wat" name="fee" value="wat">
                                     <label for="wat">вода</label><br>
-                                    <input type="radio" id="type" name="type" value="fee">
+                                    <input type="radio" id="fee" name="fee" value="fee">
                                     <label for="fee">членские взносы</label><br>
-                                    <input type="radio" id="type" name="type" value="inc">
+                                    <input type="radio" id="income" name="fee" value="inc">
                                     <label for="income">вступительный взнос</label>
                                   </div>
                                 </div>

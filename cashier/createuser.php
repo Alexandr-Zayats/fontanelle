@@ -7,29 +7,21 @@ if(isset($_POST['createuser'])) {
   $street=$_POST['street'];
   $name=$_POST['name'];
   $phone=$_POST['phone'];
+  $email=$_POST['email'];
   $size=$_POST['size'];
   $counterNum=$_POST['counterNum'];
   $counterName=$_POST['counterName'];
   $counterInfo=$_POST['counterInfo'];
   $dCurrent=$_POST['dCurrent'];
   $nCurrent=$_POST['nCurrent'];
-  //$username=$_POST['username'];
-  //$email=$_POST['emailid'];
-  //$password=md5($_POST['inputpass']);
-  //$isactive=1;
-  //checking acccount if already exists
-  $sql="select id from users where id=$id;";
-  $ret=mysqli_query($con,$sql);
-  $ret=mysqli_query($con,"call sp_checkidavailabilty($id)");
-  //if ($result=mysqli_fetch_array($ret)) {
-  //$result=mysqli_num_rows($ret);
-  //echo "<script>alert('$id $name $street $phone');</script>";
+  $result=count(mysqli_fetch_array(mysqli_query($con,"call sp_checkidavailabilty($id)")));
   if($result>0){
     echo "<script>alert('Участок уже заерегистрирован!');</script>";
   } else {
     mysqli_close($con);
     $con = mysqli_connect(DB_SERVER,DB_USER,DB_PASS,DB_NAME);
-    $query=mysqli_query($con, "call sp_registration($id, '$name', $street, '$phone', '$size', '$counterNum', '$counterName', '$counterInfo', '$dCurrent', '$nCurrent')");
+    //echo "<script>alert('$id $name $street $phone $size $counterNum $counterName $counterInfo $dCurrent $nCurrent $email');</script>";
+    $query=mysqli_query($con, "call sp_registration($id, '$name', $street, '$phone', '$size', '$counterNum', '$counterName', '$counterInfo', '$dCurrent', '$nCurrent', '$email')");
     if ($query) {
       echo "<script>alert('Новый садовый участок успешно добавлен');</script>";
       echo "<script>window.location.href='registered-users.php'</script>";
@@ -64,13 +56,13 @@ if(isset($_POST['createuser'])) {
 </head>
 
 <?php
-$streets=mysqli_query($con,"call sp_streetList()");
+  mysqli_close($con);
+  $con = mysqli_connect(DB_SERVER,DB_USER,DB_PASS,DB_NAME);
+  $streets=mysqli_query($con,"call sp_streetList()");
 ?>
 
 <body class="bg-gradient-primary">
-
     <div class="container">
-
         <div class="card o-hidden border-0 shadow-lg my-5">
             <div class="card-body p-0">
                 <!-- Nested Row within Card Body -->
@@ -121,8 +113,13 @@ $streets=mysqli_query($con,"call sp_streetList()");
                                   </div>
                                 </div>
                                 <div class="form-group row">
+                                  <div class="col-sm-6 mb-3 mb-sm-0">
+                                    <input type="email" class="form-control form-control-user" id="email" required="true" name="email" placeholder="Email">
+                                  </div>
+                                </div>
+                                <div class="form-group row">
                                 <div class="col-sm-6 mb-3 mb-sm-0">
-                                  <label for="counterNum">Счетчик (номер):</label>
+                                  <label for="counterNum">Серийный номер:</label>
                                   <input type="number" class="form-control form-control-user" value="1111111111" id="counterNum" name="counterNum" required="true">
                                 </div>
                               </div>

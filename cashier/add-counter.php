@@ -10,11 +10,14 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
   if(isset($_POST['payment'])) {
     $number=$_POST['number'];
     $name=$_POST['name'];
+    $type=$_POST['type'];
     $info=$_POST['info'];
+    $dCurrent=$_POST['dCurrent'];
+    $nCurrent=$_POST['nCurrent'];
     mysqli_close($con);
     $con = mysqli_connect(DB_SERVER,DB_USER,DB_PASS,DB_NAME);
-    echo "<script>alert('$uid $number $name $info');</script>";
-    $query=mysqli_query($con,"call sp_addCounter('$uid','$number', '$name', '$info')");
+    //echo "<script>alert('$uid $number $name $info');</script>";
+    $query=mysqli_query($con,"call sp_addCounter('$uid','$number', '$name', '$info', '$type', $dCurrent, $nCurrent)");
     if ($query) {
       echo "<script>alert('Счетчик добавлен');</script>";
       echo "<script>window.location.href='edit-user-profile.php?uid=$uid'</script>";
@@ -48,9 +51,7 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
 </head>
 
 <body class="bg-gradient-primary">
-
     <div class="container">
-
         <div class="card o-hidden border-0 shadow-lg my-5">
             <div class="card-body p-0">
                 <!-- Nested Row within Card Body -->
@@ -71,13 +72,21 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
                               </div>
                               <div class="form-group row">
                                 <div class="col-sm-6 mb-3 mb-sm-0">
+                                  <input type="radio" id="el" name="type" value="el" required>
+                                  <label for="el">электричество</label><br>
+                                  <input type="radio" id="wat" name="type" value="wat">
+                                  <label for="wat">вода</label><br>
+                                </div>
+                              </div>
+                              <div class="form-group row">
+                                <div class="col-sm-6 mb-3 mb-sm-0">
                                   <label for="uid">Серийный номер:</label>
                                   <input type="number" class="form-control form-control-user" value="1111111111" id="number" name="number" required="true">
                                 </div>
                               </div>
                               <div class="form-group row">
                                 <div class="col-sm-6 mb-3 mb-sm-0">
-                                  <label for="uid">Псевдоним:</label>
+                                  <label for="uid">Имя:</label>
                                   <input type="text" class="form-control form-control-user" id="name" name="name" required="true">
                                 </div>
                               </div>
@@ -85,6 +94,19 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
                                 <div class="col-sm-6 mb-3 mb-sm-0">
                                   <label for="uid">Описание:</label>
                                   <input type="text" class="form-control form-control-user" id="info" name="info" required="true">
+                                </div>
+                              </div>
+                              <div class="form-group row">
+                                <div class="col-sm-6 mb-3 mb-sm-0">
+                                  <label for="dCurrent">Первичные показания (день):</label>
+                                  <input type="number" class="form-control form-control-user" id="dCurrent"
+                                  value="0" name="dCurrent" required="true">
+                                </div>
+                              </div>
+                              <div class="form-group row">
+                                <div class="col-sm-6 mb-3 mb-sm-0">
+                                  <label for="nCurrent">Первичные показания (ночь):</label>
+                                  <input type="number" class="form-control form-control-user" id="nCurrent" value="0" name="nCurrent" required="true">
                                 </div>
                               </div>
                               <button type="submit" name="payment" class="btn btn-primary btn-user btn-block">

@@ -27,6 +27,65 @@ DELIMITER $$
 -- Procedures
 --
 
+DROP PROCEDURE IF EXISTS sp_totalReport;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_totalReport` (`start` TIMESTAMP, `stop` TIMESTAMP) BEGIN
+
+SELECT u.id as id, u.name as name, u.Balans as balans, u.PhoneNumber as phone, u.EmailId as email,
+(SELECT verDate FROM counters
+  WHERE userId=u.id AND type="el"
+  ORDER BY verDate DESC LIMIT 0,1) as elVerDate,
+(SELECT verDate FROM counters
+  WHERE userId=u.id AND type="wat"
+  ORDER BY verDate DESC LIMIT 0,1) as watVerDate,
+(SELECT SUM(v.dCurrent - v.dPrevius) FROM countValues v
+  LEFT JOIN counters c ON (c.id=v.cId)
+  WHERE
+    DATE_FORMAT(v.date, '%Y%m%d') >= DATE_FORMAT(start, '%Y%m%d') AND
+    DATE_FORMAT(v.date, '%Y%m%d') <= DATE_FORMAT(stop, '%Y%m%d') AND
+    c.userId=u.id AND
+    c.type='el'
+  GROUP BY c.id) as kDay,
+(SELECT SUM(v.nCurrent - v.nPrevius) FROM countValues v
+  LEFT JOIN counters c ON (c.id=v.cId)
+  WHERE
+    DATE_FORMAT(v.date, '%Y%m%d') >= DATE_FORMAT(start, '%Y%m%d') AND
+    DATE_FORMAT(v.date, '%Y%m%d') <= DATE_FORMAT(stop, '%Y%m%d') AND
+    c.userId=u.id AND
+    c.type='el'
+  GROUP BY c.id) as kNight,
+(SELECT SUM(v.dCurrent - v.dPrevius) FROM countValues v
+  LEFT JOIN counters c ON (c.id=v.cId)
+  WHERE
+    DATE_FORMAT(v.date, '%Y%m%d') >= DATE_FORMAT(start, '%Y%m%d') AND
+    DATE_FORMAT(v.date, '%Y%m%d') <= DATE_FORMAT(stop, '%Y%m%d') AND
+    c.userId=u.id AND
+    c.type='wat'
+  GROUP BY c.id) as kWater,
+SUM(
+  IF(dst='el'
+    AND DATE_FORMAT(p.date, '%Y%m%d') >= DATE_FORMAT(start, '%Y%m%d')
+    AND DATE_FORMAT(p.date, '%Y%m%d') <= DATE_FORMAT(stop, '%Y%m%d'),
+    p.sum, 0)) as sumEl,
+SUM(
+  IF(dst='wat'
+    AND DATE_FORMAT(p.date, '%Y%m%d') >= DATE_FORMAT(start, '%Y%m%d')
+    AND DATE_FORMAT(p.date, '%Y%m%d') <= DATE_FORMAT(stop, '%Y%m%d'),
+    p.sum, 0)) as sumWat,
+SUM(
+  IF(dst='fee'
+    AND DATE_FORMAT(p.date, '%Y%m%d') >= DATE_FORMAT(start, '%Y%m%d')
+    AND DATE_FORMAT(p.date, '%Y%m%d') <= DATE_FORMAT(stop, '%Y%m%d'),
+    p.sum, 0)) as sumFee,
+SUM(
+  IF(dst='inc'
+    AND DATE_FORMAT(p.date, '%Y%m%d') >= DATE_FORMAT(start, '%Y%m%d')
+    AND DATE_FORMAT(p.date, '%Y%m%d') <= DATE_FORMAT(stop, '%Y%m%d'),
+    p.sum, 0)) as sumInc
+FROM users u
+  LEFT JOIN payments p ON (p.userId=u.id)
+GROUP BY u.id ORDER BY u.id;
+END$$
+
 DROP PROCEDURE IF EXISTS sp_addMoney;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_addMoney` (`cashier` INT(3),  `uid` INT(3), `sum` decimal(8,2), `dst` VARCHAR(15))  BEGIN
 IF (dst != 'inc') THEN
@@ -37,13 +96,20 @@ END$$
 
 DROP PROCEDURE IF EXISTS sp_addCounterValues;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_addCounterValues` (`uid` INT(3), `cuid` INT(5), dayP decimal(8,2), dayC decimal(8,2), nightP decimal(8,2), nightC decimal(8,2)) BEGIN
-IF ( (select count(dPrevius) FROM countValues WHERE cId=cuid AND dPrevius is NOT NULL) > 0 ) THEN
-  update users set Balans=(Balans - (SELECT day FROM tariffs WHERE id=users.tariffId) * ( dayC - dayP )) WHERE id=uid;
+IF ( (SELECT type FROM counters WHERE id=cuid) = "el" ) THEN
+  IF ( (select count(dPrevius) FROM countValues WHERE cId=cuid AND dPrevius is NOT NULL) > 0 ) THEN
+    update users set Balans=(Balans - (SELECT day FROM tariffs WHERE id=users.tariffId) * ( dayC - dayP )) WHERE id=uid;
+  END IF;
+  IF ( (select count(nPrevius) FROM countValues WHERE cId=cuid AND nPrevius is NOT NULL) > 0 ) THEN
+    update users set Balans=(Balans - (SELECT night FROM tariffs WHERE id=users.tariffId) * ( nightC - nightP )) WHERE id=uid;
+  END IF;
+  insert into countValues (cId, tariffId, dPrevius, dCurrent, nPrevius, nCurrent) values (cuid, (SELECT TariffId FROM users WHERE id=uid), dayP, dayC, nightP, nightC);
+ELSE
+  IF ( (select count(dPrevius) FROM countValues WHERE cId=cuid AND dPrevius is NOT NULL) > 0 ) THEN
+    update users set Balans=(Balans - (SELECT water FROM tariffs WHERE id=users.tariffId) * ( dayC - dayP )) WHERE id=uid;
+    insert into countValues (cId, tariffId, dPrevius, dCurrent, nPrevius, nCurrent) values (cuid, (SELECT TariffId FROM users WHERE id=uid), dayP, dayC, nightP, nightC);
+  END IF;
 END IF;
-IF ( (select count(nPrevius) FROM countValues WHERE cId=cuid AND nPrevius is NOT NULL) > 0 ) THEN
-  update users set Balans=(Balans - (SELECT night FROM tariffs WHERE id=users.tariffId) * ( nightC - nightP )) WHERE id=uid;
-END IF;
-insert into countValues (cId, tariffId, dPrevius, dCurrent, nPrevius, nCurrent) values (cuid, (SELECT TariffId FROM users WHERE id=uid), dayP, dayC, nightP, nightC);
 END$$
 
 DROP PROCEDURE IF EXISTS sp_getLastCounterValues;
@@ -68,10 +134,10 @@ END$$
 
 DROP PROCEDURE IF EXISTS sp_totalPayment;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_totalPayment` ()  BEGIN
-select SUM(IF(DATE_FORMAT(date, '%Y%m%d')=DATE_FORMAT(CURDATE(), '%Y%m%d') AND dst='el', sum, 0 )) as eDailySum,
-SUM(IF(DATE_FORMAT(date, '%Y%m')=DATE_FORMAT(CURDATE(), '%Y%m') AND dst='el' , sum, 0)) as eMonthlySum,
-SUM(IF(DATE_FORMAT(date, '%Y%m%d')=DATE_FORMAT(CURDATE(), '%Y%m%d') AND dst='fee', sum, 0 )) as aDailySum,
-SUM(IF(DATE_FORMAT(date, '%Y%m')=DATE_FORMAT(CURDATE(), '%Y%m') AND dst='fee', sum, 0)) as aMonthlySum
+select SUM(IF(DATE_FORMAT(date, '%Y%m')=DATE_FORMAT(CURDATE(), '%Y%m') AND dst='el', sum, 0 )) as el,
+SUM(IF(DATE_FORMAT(date, '%Y%m')=DATE_FORMAT(CURDATE(), '%Y%m') AND dst='wat' , sum, 0)) as wat,
+SUM(IF(DATE_FORMAT(date, '%Y%m')=DATE_FORMAT(CURDATE(), '%Y%m') AND dst='fee', sum, 0 )) as fee,
+SUM(IF(DATE_FORMAT(date, '%Y%m')=DATE_FORMAT(CURDATE(), '%Y%m') AND dst='inc', sum, 0)) as inc
 from payments;
 END$$
 
@@ -164,26 +230,25 @@ END$$
 
 DROP PROCEDURE IF EXISTS sp_recent15payments;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_recent15payments` ()  BEGIN
-select payments.sum as sum,
+select SUM(payments.sum) as sum,
 users.id as id,
 users.name as name,
 users.Balans as credit,
-users.IsActive,
 users.LastUpdationDate
-FROM payments LEFT JOIN users ON (payments.userId=users.id) ORDER BY payments.date DESC LIMIT 15;
+FROM payments LEFT JOIN users ON (payments.userId=users.id) GROUP BY users.id LIMIT 30;
 END$$
 
 DROP PROCEDURE IF EXISTS sp_addCounter;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_addCounter` (`uid` int(3), serial decimal(15), `name` VARCHAR(120), `info` VARCHAR(250)) BEGIN
-insert into counters (userId, number, name, info) values (uid,serial,name,info);
-insert into countValues (cId, tariffId, dCurrent, nCurrent) values ((SELECT id FROM counters WHERE userId=uid LIMIT 0,1), (SELECT TariffId FROM users WHERE id=uid LIMIT 0,1), 0, 0);
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_addCounter` (`uid` int(3), serial decimal(15), `name` VARCHAR(120), `info` VARCHAR(250), `type` VARCHAR(6), `dCurrent` DECIMAL(8,2), `nCurrent` DECIMAL(8,2)) BEGIN
+insert into counters (userId, number, name, info, type) values (uid,serial,name,info,type);
+insert into countValues (cId, tariffId, dPrevius, dCurrent, nPrevius, nCurrent) values ((SELECT id FROM counters WHERE userId=uid ORDER BY id DESC LIMIT 0,1), (SELECT TariffId FROM users WHERE id=uid LIMIT 0,1), dCurrent, dCurrent, nCurrent, nCurrent);
 END$$
 
 DROP PROCEDURE IF EXISTS sp_registration;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_registration` (`uid` int(3), `name` VARCHAR(120), `street` int(3), `phone` VARCHAR(120), `size` VARCHAR(20), `counterNum` DECIMAL(20), `counterName` VARCHAR(120), `counterInfo` VARCHAR(250), `dCurrent` DECIMAL(8,2), `nCurrent` DECIMAL(8,2)) BEGIN
-insert into users (id,Name,Size,StreetId,PhoneNumber) values (uid,name,size,street,phone);
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_registration` (`uid` int(3), `name` VARCHAR(120), `street` int(3), `phone` VARCHAR(120), `size` VARCHAR(20), `counterNum` DECIMAL(20), `counterName` VARCHAR(120), `counterInfo` VARCHAR(250), `dCurrent` DECIMAL(8,2), `nCurrent` DECIMAL(8,2), `email` VARCHAR(200)) BEGIN
+insert into users (id,Name,Size,StreetId,PhoneNumber,EmailId,Balans) values (uid,name,size,street,phone,email,0-Size*100);
 insert into counters (userId, number, name, info) values (uid,counterNum,counterName,counterInfo);
-insert into countValues (cId, tariffId, dPrevius, dCurrent, nPrevius, nCurrent) values ((SELECT id FROM counters WHERE userId=uid LIMIT 0,1), (SELECT TariffId FROM users WHERE id=uid LIMIT 0,1), 0, dCurrent, 0, nCurrent);
+insert into countValues (cId, tariffId, dPrevius, dCurrent, nPrevius, nCurrent) values ((SELECT id FROM counters WHERE userId=uid LIMIT 0,1), (SELECT TariffId FROM users WHERE id=uid LIMIT 0,1), dCurrent, dCurrent, nCurrent, nCurrent);
 END$$
 
 DROP PROCEDURE IF EXISTS sp_signup;

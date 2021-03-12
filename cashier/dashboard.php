@@ -66,10 +66,10 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
                                     <div class="row no-gutters align-items-center">
                                         <div class="col mr-2">
                                             <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                                Оплат за электричество сегодня
+                                                Электричество
                                             </div>
                                             <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                              <?php echo $result[eDailySum];?>
+                                              <?php echo $result[el];?>
                                             </div>
                                         </div>
                                         <div class="col-auto">
@@ -87,10 +87,10 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
                                     <div class="row no-gutters align-items-center">
                                         <div class="col mr-2">
                                             <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                                Оплат за электричество месяц
+                                                Вода
                                             </div>
                                             <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                              <?php echo $result[eMonthlySum];?>
+                                              <?php echo $result[wat];?>
                                             </div>
                                         </div>
                                         <div class="col-auto">
@@ -108,12 +108,12 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
                                     <div class="row no-gutters align-items-center">
                                         <div class="col mr-2">
                                             <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
-                                                Членские взносы сегодня
+                                                Членские взносы
                                             </div>
                                             <div class="row no-gutters align-items-center">
                                                 <div class="col-auto">
                                                     <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">
-                                                      <?php echo $result[aDailySum];?>
+                                                      <?php echo $result[fee];?>
                                                     </div>
                                                 </div>
                                             </div>
@@ -133,9 +133,10 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
                                     <div class="row no-gutters align-items-center">
                                         <div class="col mr-2">
                                             <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                               Членские взносы месяц</div>
+                                               Вступительные взносы
+                                            </div>
                                             <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                              <?php echo $result[aMonthlySum];?>
+                                              <?php echo $result[inc];?>
                                             </div>
                                         </div>
                                         <div class="col-auto">
@@ -156,7 +157,7 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
                           <div class="card shadow mb-4">
                               <!-- Card Header - Dropdown -->
                               <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                  <h6 class="m-0 font-weight-bold text-primary">15 последних платежей</h6>
+                                  <h6 class="m-0 font-weight-bold text-primary">Последние платежи</h6>
                               </div>
                                 <!-- Card Body -->
                               <div class="table-responsive">
@@ -168,8 +169,7 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
                                     <th>ФИО</th>
                                     <th>Сумма</th>
                                     <th>Баланс</th>
-                                    <th>Статус</th>
-                                    <th>Последний платеж</th>
+                                    <th>Время платежа</th>
                                   </tr>
                                 </thead>
                                 <tbody>
@@ -187,15 +187,6 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
                                           <td><?php echo $result['name'];?></td>
                                           <td><?php echo $result['sum'];?></td>
                                           <td><?php echo $result['credit'];?></td>
-                                          <td><?php $accountstatus=$result['IsActive'];
-if($accountstatus==1):
-  echo "Active";
-else:
-  echo "Blocked";
-endif;
-  ?>
-        
-                                          </td>
                                           <td><?php echo $result['LastUpdationDate'];?></td>
                                         </tr>
  <?php $cnt++; } ?>

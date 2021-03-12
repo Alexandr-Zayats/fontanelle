@@ -17,6 +17,6 @@ if (!$mysqli->set_charset("utf8")) {
 } else {
     printf("Current character set: %s\n", $mysqli->character_set_name());
 }
-//$mysqli->close();
+//mysqli->close();
 */
 ?>
