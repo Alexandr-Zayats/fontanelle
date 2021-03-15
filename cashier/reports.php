@@ -2,11 +2,6 @@
 session_start();
 //error_reporting(0);
 include('../includes/config.php');
-if(is_numeric($latest[nightLast])) {
-    echo $latest[nightLast];
-  } else {
-    echo 0;
-  }
 if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
   header('location:logout.php');
 } else {

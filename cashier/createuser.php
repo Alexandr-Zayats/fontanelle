@@ -109,45 +109,48 @@ if(isset($_POST['createuser'])) {
                                 <div class="form-group row">
                                   <div class="col-sm-6 mb-3 mb-sm-0">
                                     <input type="tel" class="form-control form-control-user" id="phone"
-                                    placeholder="+38 (067) 234 34 56" name="phone" required="true" pattern="+380 ([0-9]{2}) [0-9]{3} [0-9]{2} [0-9]{2}">
+                                    placeholder="+38 (067) 234 34 56" name="phone" required="true"
+                                    pattern="+380 ([0-9]{2}) [0-9]{3} [0-9]{2} [0-9]{2}">
                                   </div>
                                 </div>
                                 <div class="form-group row">
                                   <div class="col-sm-6 mb-3 mb-sm-0">
-                                    <input type="email" class="form-control form-control-user" id="email" required="true" name="email" placeholder="Email">
+                                    <input type="email" class="form-control form-control-user" id="email"
+                                     required="true" name="email" placeholder="Email">
                                   </div>
                                 </div>
                                 <div class="form-group row">
                                 <div class="col-sm-6 mb-3 mb-sm-0">
                                   <label for="counterNum">Серийный номер:</label>
-                                  <input type="number" class="form-control form-control-user" value="1111111111" id="counterNum" name="counterNum" required="true">
+                                  <input type="number" class="form-control form-control-user" 
+                                  id="counterNum" name="counterNum" required="true">
                                 </div>
                               </div>
                               <div class="form-group row">
                                 <div class="col-sm-6 mb-3 mb-sm-0">
                                   <label for="counterName">Счетчик (имя):</label>
                                   <input type="text" class="form-control form-control-user" id="counterName"
-                                  value="дом" name="counterName" required="true">
+                                  value="Электрчество" name="counterName" required="true">
                                 </div>
                               </div>
                               <div class="form-group row">
                                 <div class="col-sm-6 mb-3 mb-sm-0">
                                   <label for="counterInfo">Описание счетчика:</label>
-                                  <input type="text" class="form-control form-control-user" id="counterInfo" name="counterInfo" required="true" 
+                                  <input type="text" class="form-control form-control-user"
+                                  id="counterInfo" name="counterInfo" required="false"
                                   value="основной счетчик">
                                 </div>
                               </div>
                               <div class="form-group row">
                                 <div class="col-sm-6 mb-3 mb-sm-0">
                                   <label for="dCurrent">Первичные показания (день):</label>
-                                  <input type="number" class="form-control form-control-user" id="dCurrent"
-                                  value="0" name="dCurrent" required="true">
+                                  <input type="number" class="form-control form-control-user" id="dCurrent" name="dCurrent" required="true">
                                 </div>
                               </div>
                               <div class="form-group row">
                                 <div class="col-sm-6 mb-3 mb-sm-0">
                                   <label for="nCurrent">Первичные показания (ночь):</label>
-                                  <input type="number" class="form-control form-control-user" id="nCurrent" value="0" name="nCurrent" required="true">
+                                  <input type="number" class="form-control form-control-user" id="nCurrent" name="nCurrent" required="true">
                                 </div>
                               </div>
                               <button type="submit" name="createuser" class="btn btn-primary btn-user btn-block">
@@ -160,7 +163,6 @@ if(isset($_POST['createuser'])) {
                 </div>
             </div>
         </div>
-
     </div>
 
     <!-- Bootstrap core JavaScript-->

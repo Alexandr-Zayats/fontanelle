@@ -178,7 +178,7 @@ INSERT INTO `tariffs` (`day`, `night`, `water`) VALUES
 -- Table structure for table `payments`
 --
 
-DROP TABLE IF EXISTS `payments`;
+-- DROP TABLE IF EXISTS `payments`;
 CREATE TABLE IF NOT EXISTS `payments` (
   `cashierId` int(3) NOT NULL,
   `userId` int(3) NOT NULL,
@@ -190,6 +190,7 @@ CREATE TABLE IF NOT EXISTS `payments` (
 --
 -- Dumping data for table `payments`
 --
+/*
 LOCK TABLES `payments` WRITE;
 INSERT INTO `payments` (cashierId,userId,date,sum,dst) VALUES
 (3,169,'2021-03-07 08:34:59',600.00,'fee'),
@@ -200,6 +201,7 @@ INSERT INTO `payments` (cashierId,userId,date,sum,dst) VALUES
 (3,367,'2021-03-07 09:23:32',350.00,'el'),
 (3,231,'2021-03-07 09:29:32',500.00,'el');
 UNLOCK TABLES;
+*/
 --
 -- --------------------------------------------------
 
