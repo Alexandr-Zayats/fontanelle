@@ -87,38 +87,42 @@ if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
                                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                   <thead>
                                     <tr>
-                                      <th style="text-align:center">Участок</th>
-                                      <th style="text-align:center">ФИО</th>
-                                      <th style="text-align:center">Баланс</th>
-                                      <th style="text-align:center">КВт (день)</th>
-                                      <th style="text-align:center">КВт (ночь)</th>
-                                      <th style="text-align:center">Сумма (элек)</th>
+                                      <th rowspan="2" style="text-align:center">Участок</th>
+                                      <th rowspan="2" style="text-align:center">ФИО</th>
+                                      <th rowspan="2" style="text-align:center">Баланс</th>
+                                      <th colspan="4" style="text-align:center">Счетчик Электричество</th>
+                                      <th colspan="3" style="text-align:center">Счетчик Вода</th>
+                                      <th rowspan="2" style="text-align:center">Членские</th>
+                                      <th rowspan="2" style="text-align:center">Вступительные</th>
+                                    </tr>
+                                    <tr>
+                                      <th style="text-align:center">КВт день</th>
+                                      <th style="text-align:center">КВт ночь</th>
+                                      <th style="text-align:center">Сумма</th>
                                       <th style="text-align:center">Дата поверки</th>
                                       <th style="text-align:center">Кубов</th>
-                                      <th style="text-align:center">Сумма (вода)</th>
+                                      <th style="text-align:center">Сумма</th>
                                       <th style="text-align:center">Дата поверки</th>
-                                      <th style="text-align:center">Членские</th>
-                                      <th style="text-align:center">Вступительные</th>
-                                      <th style="text-align:center">Телефон</th>
-                                      <th style="text-align:center">Email</th>
                                     </tr>
                                   </thead>
                                   <tfoot>
                                     <tr>
-                                      <th style="text-align:center">Участок</th>
-                                      <th style="text-align:center">ФИО</th>
-                                      <th style="text-align:center">Баланс</th>
-                                      <th style="text-align:center">КВт (день)</th>
-                                      <th style="text-align:center">КВт (ночь)</th>
-                                      <th style="text-align:center">Сумма (элек)</th>
+                                      <th rowspan="2" style="text-align:center">Участок</th>
+                                      <th rowspan="2" style="text-align:center">ФИО</th>
+                                      <th rowspan="2" style="text-align:center">Баланс</th>
+                                      <th colspan="4" style="text-align:center">Счетчик Электричество</th>
+                                      <th colspan="3" style="text-align:center">Счетчик Вода</th>
+                                      <th rowspan="2" style="text-align:center">Членские</th>
+                                      <th rowspan="2" style="text-align:center">Вступительные</th>
+                                    </tr>
+                                    <tr>
+                                      <th style="text-align:center">КВт день</th>
+                                      <th style="text-align:center">КВт ночь</th>
+                                      <th style="text-align:center">Сумма</th>
                                       <th style="text-align:center">Дата поверки</th>
                                       <th style="text-align:center">Кубов</th>
-                                      <th style="text-align:center">Сумма (вода)</th>
+                                      <th style="text-align:center">Сумма</th>
                                       <th style="text-align:center">Дата поверки</th>
-                                      <th style="text-align:center">Членские</th>
-                                      <th style="text-align:center">Вступительные</th>
-                                      <th style="text-align:center">Телефон</th>
-                                      <th style="text-align:center">Email</th>
                                     </tr>
                                   </tfoot>
                                   <tbody>
@@ -140,7 +144,9 @@ if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
     )) { continue; }
 ?>
                                     <tr>
-                                      <td style="text-align:center"><?php echo $result['id'];?></td>
+                                      <td style="text-align:center">
+                                        <a href="../user/info.php?uid=<?php echo $result['id'];?>"</a><?php echo $result['id'];?>
+                                      </td>
                                       <td style="text-align:left"><?php echo $result['name'];?></td>
                                       <td style="text-align:right"><?php echo $result['balance']; $balans+=$result['balance'];?></td>
                                       <td style="text-align:right"><?php echo $result['kDay']; $kDay+=$result['kDay'];?></td>
@@ -152,8 +158,6 @@ if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
                                       <td style="text-align:center"><?php echo $result['watVerDate'];?></td>
                                       <td style="text-align:right"><?php echo $result['sumFee']; $sumFee+=$result['sumFee'];?></td>
                                       <td style="text-align:right"><?php echo $result['sumInc']; $sumInc+=$result['sumInc'];?></td>
-                                      <td style="text-align:right"><?php echo $result['phone'];?></td>
-                                      <td style="text-align:center"><?php echo $result['email'];?></td>
                                     </tr>
 <?php } ?>
                                   </tbody>
@@ -171,8 +175,6 @@ if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
                                       <td style="text-align:center"></td>
                                       <td style="text-align:right"><b><?php echo number_format($sumFee, 2, '.', ' ');?></b></td>
                                       <td style="text-align:right"><b><?php echo number_format($sumInc, 2, '.', ' ');?></b></td>
-                                      <td style="text-align:right"></td>
-                                      <td style="text-align:center"></td>
                                     </tr>
                                   </tfoot>
                             </table>
