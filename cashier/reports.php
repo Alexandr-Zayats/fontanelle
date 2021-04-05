@@ -9,7 +9,7 @@ if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
     $start=$_POST['start'];
     $stop=$_POST['stop'];
   } else {
-    $start="2021-03-01";
+    $start=date('Y-m-01');
     $stop=date("Y-m-d");
   }
   //echo "<script>alert('$start  $stop');</script>";
@@ -142,7 +142,7 @@ if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
                                     <tr>
                                       <td style="text-align:center"><?php echo $result['id'];?></td>
                                       <td style="text-align:left"><?php echo $result['name'];?></td>
-                                      <td style="text-align:right"><?php echo $result['balans']; $balans+=$result['balans'];?></td>
+                                      <td style="text-align:right"><?php echo $result['balans']; $balans+=$result['balance'];?></td>
                                       <td style="text-align:right"><?php echo $result['kDay']; $kDay+=$result['kDay'];?></td>
                                       <td style="text-align:right"><?php echo $result['kNight']; $kNight+=$result['kNight'];?></td>
                                       <td style="text-align:right"><?php echo $result['sumEl']; $sumEl+=$result['sumEl'];?></td>

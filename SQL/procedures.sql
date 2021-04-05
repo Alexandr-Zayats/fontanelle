@@ -27,23 +27,102 @@ DELIMITER $$
 -- Procedures
 --
 
+DROP PROCEDURE IF EXISTS fee_history;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `fee_history` (`uid` INT(5))  BEGIN
+SELECT
+  DATE_FORMAT(p.date, '%Y-%m') as date,
+  SUM(sum) as paid,
+  u.Size*100 as toPay,
+  u.BalanceFee as balance 
+FROM payments p LEFT JOIN users u ON (u.id=p.userId)
+WHERE userId=uid AND dst='fee'
+GROUP BY p.date
+ORDER BY p.date DESC
+LIMIT 36;
+END$$
+
+DROP PROCEDURE IF EXISTS el_history;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `el_history` (`uid` INT(5), `cid` INT(5))  BEGIN
+SELECT
+  SUM(p.sum) as paid,
+  SUM(c.dPrev) as dPrev,
+  SUM(c.dCur) as dCur,
+  SUM(c.dDelta) as dDelta,
+  SUM(c.nPrev) as nPrev,
+  SUM(c.nCur) as nCur,
+  SUM(c.nDelta) as nDelta,
+  SUM(c.sum) as toPay,
+  c.date
+FROM
+  (
+    SELECT
+      min(v.dPrevius) as dPrev,
+      max(v.dCurrent) as dCur,
+      max(v.dCurrent)-min(v.dPrevius) as dDelta,
+      min(v.nPrevius) as nPrev,
+      max(v.nCurrent) as nCur,
+      max(v.nCurrent)-min(v.nPrevius) as nDelta,
+      DATE_FORMAT(v.date, '%Y-%m') as date,
+      (max(v.dCurrent)-min(v.dPrevius))*t.day+(max(v.nCurrent)-min(v.nPrevius))*t.night as sum
+    FROM countValues v LEFT JOIN tariffs t ON (v.tariffId=t.id)
+    WHERE v.cId=cid AND v.dCurrent!=v.dPrevius
+    GROUP BY v.date, t.id
+  ) as c
+LEFT JOIN
+  (
+    SELECT
+      DATE_FORMAT(p.date, '%Y-%m') as dat,
+      SUM(SUM) as sum
+    FROM payments p
+    WHERE userId=uid AND dst="el"
+    GROUP BY dat
+    ORDER BY dat DESC
+  ) as p
+ON (p.dat=c.date)
+GROUP BY c.date
+ORDER BY c.date DESC
+LIMIT 36;
+END$$
+
+DROP PROCEDURE IF EXISTS counterInfo;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `counterInfo` (`cId` INT(5))  BEGIN
+SELECT * FROM counters c WHERE c.id=cId;
+END$$
+
+DROP PROCEDURE IF EXISTS el_userInfo;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `el_userInfo` (`uid` INT(5))  BEGIN
+
+SELECT u.id as uId, u.Name as uName, u.TariffId as tariff, u.BalanceEl as balance, group_concat(c.Id separator ';') as cId FROM users u LEFT JOIN counters c ON c.userId=u.id WHERE c.type='el' AND u.id=uid;
+END$$
+
+DROP PROCEDURE IF EXISTS sp_counterBalance;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_counterBalance` (`start` TIMESTAMP, `stop` TIMESTAMP) BEGIN
+SELECT c.type,
+  SUM(IF(c.id>1, dCurrent-dPrevius, 0)) as elDay,
+  SUM(IF(c.id>1, nCurrent-nPrevius, 0)) as elNight
+FROM countValues v LEFT JOIN counters c ON (c.id=v.cId)
+WHERE
+  DATE_FORMAT(v.date, '%Y%m%d') >= DATE_FORMAT(start, '%Y%m%d') AND
+  DATE_FORMAT(v.date, '%Y%m%d') <= DATE_FORMAT(stop, '%Y%m%d')
+GROUP BY c.type;
+END$$
+
 DROP PROCEDURE IF EXISTS sp_balance;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_balance` () BEGIN
-SELECT Balans as balance,
-(SELECT SUM(sum) from payments WHERE cashierId > 1) as inCome,
-(SELECT SUM(sum) from payments WHERE cashierId = 1) as outCome
-FROM users WHERE id=0;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_balance` (`start` TIMESTAMP, `stop` TIMESTAMP) BEGIN
+SELECT dst, SUM(IF(userId>1, sum, 0)) as inCome, SUM(IF(userId=1, sum, 0)) as outCome FROM payments p
+WHERE DATE_FORMAT(p.date, '%Y%m%d') >= DATE_FORMAT(start, '%Y%m%d') AND
+DATE_FORMAT(p.date, '%Y%m%d') <= DATE_FORMAT(stop, '%Y%m%d') GROUP BY dst;
 END$$
 
 DROP PROCEDURE IF EXISTS sp_totalReport;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_totalReport` (`start` TIMESTAMP, `stop` TIMESTAMP) BEGIN
-SELECT u.id as id, u.name as name, u.Balans as balans, u.PhoneNumber as phone, u.EmailId as email,
+SELECT u.id as id, u.name as name, (u.BalanceEl+u.BalanceWat+u.BalanceFee) as balance, u.PhoneNumber as phone, u.EmailId as email,
 (SELECT verDate FROM counters
   WHERE userId=u.id AND type="el"
-  ORDER BY verDate DESC LIMIT 0,1) as elVerDate,
+  ORDER BY verDate LIMIT 0,1) as elVerDate,
 (SELECT verDate FROM counters
   WHERE userId=u.id AND type="wat"
-  ORDER BY verDate DESC LIMIT 0,1) as watVerDate,
+  ORDER BY verDate LIMIT 0,1) as watVerDate,
 (SELECT SUM(v.dCurrent - v.dPrevius) FROM countValues v
   LEFT JOIN counters c ON (c.id=v.cId)
   WHERE
@@ -51,7 +130,7 @@ SELECT u.id as id, u.name as name, u.Balans as balans, u.PhoneNumber as phone, u
     DATE_FORMAT(v.date, '%Y%m%d') <= DATE_FORMAT(stop, '%Y%m%d') AND
     c.userId=u.id AND
     c.type='el'
-  GROUP BY c.id) as kDay,
+  GROUP BY u.id) as kDay,
 (SELECT SUM(v.nCurrent - v.nPrevius) FROM countValues v
   LEFT JOIN counters c ON (c.id=v.cId)
   WHERE
@@ -59,7 +138,7 @@ SELECT u.id as id, u.name as name, u.Balans as balans, u.PhoneNumber as phone, u
     DATE_FORMAT(v.date, '%Y%m%d') <= DATE_FORMAT(stop, '%Y%m%d') AND
     c.userId=u.id AND
     c.type='el'
-  GROUP BY c.id) as kNight,
+  GROUP BY u.id) as kNight,
 (SELECT SUM(v.dCurrent - v.dPrevius) FROM countValues v
   LEFT JOIN counters c ON (c.id=v.cId)
   WHERE
@@ -67,7 +146,7 @@ SELECT u.id as id, u.name as name, u.Balans as balans, u.PhoneNumber as phone, u
     DATE_FORMAT(v.date, '%Y%m%d') <= DATE_FORMAT(stop, '%Y%m%d') AND
     c.userId=u.id AND
     c.type='wat'
-  GROUP BY c.id) as kWater,
+  GROUP BY u.id) as kWater,
 SUM(
   IF(dst='el'
     AND DATE_FORMAT(p.date, '%Y%m%d') >= DATE_FORMAT(start, '%Y%m%d')
@@ -95,8 +174,14 @@ END$$
 
 DROP PROCEDURE IF EXISTS sp_addMoney;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_addMoney` (`cashier` INT(3),  `uid` INT(3), `sum` decimal(8,2), `dst` VARCHAR(15))  BEGIN
-IF (dst != 'inc') THEN
-  update users set Balans=(Balans + sum) WHERE id=uid;
+IF (dst = 'el') THEN
+  update users set BalanceEl=(BalanceEl + sum) WHERE id=uid;
+END IF;
+IF (dst = 'wat') THEN
+  update users set BalanceWat=(BalanceWat + sum) WHERE id=uid;
+END IF;
+IF (dst = 'fee') THEN
+  update users set BalanceFee=(BalanceFee + sum) WHERE id=uid;
 END IF;
 insert into payments (cashierId, userId, sum, dst) values (cashier, uid, sum, dst);
 END$$
@@ -105,15 +190,15 @@ DROP PROCEDURE IF EXISTS sp_addCounterValues;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_addCounterValues` (`uid` INT(3), `cuid` INT(5), dayP decimal(8,2), dayC decimal(8,2), nightP decimal(8,2), nightC decimal(8,2)) BEGIN
 IF ( (SELECT type FROM counters WHERE id=cuid) = "el" ) THEN
   IF ( (select count(dPrevius) FROM countValues WHERE cId=cuid AND dPrevius is NOT NULL) > 0 ) THEN
-    update users set Balans=(Balans - (SELECT day FROM tariffs WHERE id=users.tariffId) * ( dayC - dayP )) WHERE id=uid;
+    update users set BalanceEl=(BalanceEl - (SELECT day FROM tariffs WHERE id=users.tariffId) * ( dayC - dayP )) WHERE id=uid;
   END IF;
   IF ( (select count(nPrevius) FROM countValues WHERE cId=cuid AND nPrevius is NOT NULL) > 0 ) THEN
-    update users set Balans=(Balans - (SELECT night FROM tariffs WHERE id=users.tariffId) * ( nightC - nightP )) WHERE id=uid;
+    update users set BalanceEl=(BalanceEl - (SELECT night FROM tariffs WHERE id=users.tariffId) * ( nightC - nightP )) WHERE id=uid;
   END IF;
   insert into countValues (cId, tariffId, dPrevius, dCurrent, nPrevius, nCurrent) values (cuid, (SELECT TariffId FROM users WHERE id=uid), dayP, dayC, nightP, nightC);
 ELSE
   IF ( (select count(dPrevius) FROM countValues WHERE cId=cuid AND dPrevius is NOT NULL) > 0 ) THEN
-    update users set Balans=(Balans - (SELECT water FROM tariffs WHERE id=users.tariffId) * ( dayC - dayP )) WHERE id=uid;
+    update users set BalanceWat=(BalanceWat - (SELECT water FROM tariffs WHERE id=users.tariffId) * ( dayC - dayP )) WHERE id=uid;
     insert into countValues (cId, tariffId, dPrevius, dCurrent, nPrevius, nCurrent) values (cuid, (SELECT TariffId FROM users WHERE id=uid), dayP, dayC, nightP, nightC);
   END IF;
 END IF;
@@ -235,14 +320,13 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_checkidavailabilty` (`uid` int(5
 select * from users where id=uid;
 END$$
 
-DROP PROCEDURE IF EXISTS sp_recent15payments;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_recent15payments` ()  BEGIN
-select SUM(payments.sum) as sum,
-users.id as id,
-users.name as name,
-users.Balans as credit,
-users.LastUpdationDate
-FROM payments LEFT JOIN users ON (payments.userId=users.id) GROUP BY users.id LIMIT 30;
+DROP PROCEDURE IF EXISTS sp_recent30payments;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_recent30payments` ()  BEGIN
+select p.sum,
+u.id as id,
+u.name as name,
+p.date
+FROM payments p LEFT JOIN users u ON (p.userId=u.id) ORDER BY p.date DESC LIMIT 30;
 END$$
 
 DROP PROCEDURE IF EXISTS sp_addCounter;

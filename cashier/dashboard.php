@@ -168,7 +168,6 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
                                     <th>Участок</th>
                                     <th>ФИО</th>
                                     <th>Сумма</th>
-                                    <th>Баланс</th>
                                     <th>Время платежа</th>
                                   </tr>
                                 </thead>
@@ -176,7 +175,7 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
 <?php
   $query->close();
   $con->next_result();                                        
-  $sql=mysqli_query($con,"call sp_recent15payments()");
+  $sql=mysqli_query($con,"call sp_recent30payments()");
   $cnt=1;
   while ($result=mysqli_fetch_array($sql))
 { ?>
@@ -186,8 +185,7 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
                                           <td><?php echo $result['id'];?></td>
                                           <td><?php echo $result['name'];?></td>
                                           <td><?php echo $result['sum'];?></td>
-                                          <td><?php echo $result['credit'];?></td>
-                                          <td><?php echo $result['LastUpdationDate'];?></td>
+                                          <td><?php echo $result['date'];?></td>
                                         </tr>
  <?php $cnt++; } ?>
                                      </tbody>
