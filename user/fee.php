@@ -49,55 +49,89 @@ if (strlen($_SESSION['adid'] == 0 || ($_SESSION['type'] != "cashier" && $_SESSIO
     <!-- Page Wrapper -->
     <div id="wrapper">
 
-        <!-- Sidebar -->
-        <!-- Sidebar -->
-  <?php include_once('includes/sidebar.php');?>
-        <!-- End of Sidebar -->
+      <!-- Sidebar -->
+      <?php include_once('includes/sidebar.php');?>
+      <!-- End of Sidebar -->
 
-        <!-- Content Wrapper -->
-        <div id="content-wrapper" class="d-flex flex-column">
+      <!-- Content Wrapper -->
+      <div id="content-wrapper" class="d-flex flex-column">
+        <!-- Main Content -->
+        <div id="content">
+          <!-- Topbar -->
+          <?php include_once('includes/topbar.php');?>
+          <!-- End of Topbar -->
+          <div class="container-fluid">
+            <!-- Page Heading -->
+            <div class="d-sm-flex align-items-center justify-content-between mb-4">
+              <h1 class="h3 mb-0 text-gray-800">ЧЛЕНСКИЕ ВЗНОСЫ</h1>
+            </div>
 
-            <!-- Main Content -->
-            <div id="content">
-
-                <!-- Topbar -->
-                  <?php include_once('includes/topbar.php');?>
-                <!-- End of Topbar -->
-
-                <!-- Begin Page Content -->
-                <div class="container-fluid">
-
-                    <!-- Page Heading -->
-                    <h1 class="h3 mb-2 text-gray-800">ЧЛЕНСКИЕ ВЗНОСЫ</h1>
-                    <!-- DataTales Example -->
-                    <div class="card shadow mb-4">
-                        <div class="card-header py-3">
-                          <table width="100%">
-                            <tr>
-                              <td><h6 class="m-0 font-weight-bold text-primary"><?php echo "Участок №".$user['uId'].". ".$user['uName']; ?></h6></td>
-                              <td>
-                                <form action="user-payment.php">
-                                  <input type="hidden" id="uid" name="uid" value="<?php echo $uid ?>">
-                                  <input type="hidden" id="dst" name="dst" value="fee">
-                                  <input type="submit" value="Оплата" />
-                                </form>
-                              </td>
-                            </tr>
-                          </table>
+            <div class="row">
+              <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-primary shadow h-100 py-2">
+                  <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                      <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                          <?php echo "Участок № ".$user['uId'] ?>
                         </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                          <?php echo $user['uName'] ?>
+                        </div>
+                      </div>
+                      <div class="col-auto">
+                        <i class="fas fa-users fa-2x text-gray-300"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
 
-                        <!-- Card Body -->
-                        <!-- <div class="table-responsive"> -->
-                          <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                            <thead>
-                              <tr>
-                                <th style="text-align:center">Год</th>
-                                <th style="text-align:center">Начисленно</th>
-                                <th style="text-align:center">Оплоченно</th>
-                                <th style="text-align:center">Долг</th>
-                              </tr>
-                            </thead>
-                            <tbody>
+            </div>  <!-- row -->
+
+            <div class="row">
+              <div class="col-xl-12 col-lg-7">
+                <div class="card shadow mb-4">
+                  <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <table width="100%">
+                      <tr>
+                        <td>
+                          <form action="user-payment.php">
+                            <input type="hidden" id="uid" name="uid" value="<?php echo $uid ?>">
+                            <input type="hidden" id="dst" name="dst" value="fee">
+                            <input type="submit" value="Членские" class="btn btn-primary btn-user btn-block"/>
+                          </form>
+                        </td>
+                        <td>
+                          <form action="user-payment.php">
+                            <input type="hidden" id="uid" name="uid" value="<?php echo $uid ?>">
+                            <input type="hidden" id="dst" name="dst" value="inc">
+                            <input type="submit" value="Вступительные" class="btn btn-primary btn-user btn-block"/>
+                          </form>
+                        </td>
+                        <td>
+                          <form action="user-payment.php">
+                            <input type="hidden" id="uid" name="uid" value="<?php echo $uid ?>">
+                            <input type="hidden" id="dst" name="dst" value="other">
+                            <input type="submit" value="Прочие" class="btn btn-primary btn-user btn-block" />
+                          </form>
+                        </td>
+                      </tr>
+                    </table>
+                  </div>
+
+                  <div class="table-responsive">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                      <thead>
+                        <tr>
+                          <th style="text-align:center">Год</th>
+                          <th style="text-align:center">Начисленно</th>
+                          <th style="text-align:center">Оплоченно</th>
+                          <th style="text-align:center">Долг</th>
+                        </tr>
+                      </thead>
+
+                      <tbody>
 <?php
   $query->close();
   $con->next_result();
@@ -113,53 +147,17 @@ if (strlen($_SESSION['adid'] == 0 || ($_SESSION['type'] != "cashier" && $_SESSIO
                                 <td style="text-align:right"><?php printf("%.2f", $fee['balance']);?></td>
                               </tr>
  <?php $cnt++; } ?>
-                            </tbody>
-                          </table>
-                        <!-- </div> -->
-                      </div>
-                    </div>
+
+                      </tbody>
+                    </table>
                   </div>
                 </div>
-                <!-- /.container-fluid -->
+              </div>
             </div>
-            <!-- End of Main Content -->
-
-
-            <!-- Footer -->
-   <?php include_once('includes/footer.php');?>
-            <!-- End of Footer -->
-
-        </div>
-        <!-- End of Content Wrapper -->
-
-    </div>
-    <!-- End of Page Wrapper -->
-
-    <!-- Scroll to Top Button-->
-    <a class="scroll-to-top rounded" href="#page-top">
-        <i class="fas fa-angle-up"></i>
-    </a>
-
-    <!-- Logout Modal-->
-<?php include_once('includes/logout-modal.php');?>
-
-    <!-- Bootstrap core JavaScript-->
-    <script src="../vendor/jquery/jquery.min.js"></script>
-    <script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-
-    <!-- Core plugin JavaScript-->
-    <script src="../vendor/jquery-easing/jquery.easing.min.js"></script>
-
-    <!-- Custom scripts for all pages-->
-    <script src="../js/sb-admin-2.min.js"></script>
-
-    <!-- Page level plugins -->
-    <script src="../vendor/datatables/jquery.dataTables.min.js"></script>
-    <script src="../vendor/datatables/dataTables.bootstrap4.min.js"></script>
-
-    <!-- Page level custom scripts -->
-    <script src="../js/demo/datatables-demo.js"></script>
-
+          </div> <!-- container-fluid -->
+        </div> <!-- content -->
+      </div> <!-- content-wrapper -->
+    </div> <!-- wraper -->
 </body>
 </html>
 <?php } ?>

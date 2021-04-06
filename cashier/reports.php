@@ -131,7 +131,7 @@ if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
   //$con = mysqli_connect(DB_SERVER,DB_USER,DB_PASS,DB_NAME);
   //echo "<script>alert('$start  $stop');</script>";
   $query=mysqli_query($con,"call sp_totalReport('$start', '$stop')");
-  $balans=0; $kDay=0; $kNight=0; $sumEl=0; $kWater=0; $sumWat=0; $sumFee=0; $sumInc=0;
+  $balance=0; $kDay=0; $kNight=0; $sumEl=0; $kWater=0; $sumWat=0; $sumFee=0; $sumInc=0;
   while ($result=mysqli_fetch_array($query)) {
     if ( $result['id'] == 0 OR (
       $result['kDay'] == 0 and
@@ -148,7 +148,7 @@ if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
                                         <a href="../user/info.php?uid=<?php echo $result['id'];?>"</a><?php echo $result['id'];?>
                                       </td>
                                       <td style="text-align:left"><?php echo $result['name'];?></td>
-                                      <td style="text-align:right"><?php echo $result['balance']; $balans+=$result['balance'];?></td>
+                                      <td style="text-align:right"><?php echo $result['balance']; $balance+=$result['balance'];?></td>
                                       <td style="text-align:right"><?php echo $result['kDay']; $kDay+=$result['kDay'];?></td>
                                       <td style="text-align:right"><?php echo $result['kNight']; $kNight+=$result['kNight'];?></td>
                                       <td style="text-align:right"><?php echo $result['sumEl']; $sumEl+=$result['sumEl'];?></td>
@@ -165,7 +165,7 @@ if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
                                     <tr>
                                       <td style="text-align:center"></td>
                                       <td style="text-align:right"><b>Итого:</b></td>
-                                      <td style="text-align:right"><b><?php echo number_format($balans, 2, '.', ' ');?></b></td>
+                                      <td style="text-align:right"><b><?php echo number_format($balance, 2, '.', ' ');?></b></td>
                                       <td style="text-align:right"><b><?php echo number_format($kDay, 2, '.', ' ');?></b></td>
                                       <td style="text-align:right"><b><?php echo number_format($kNight, 2, '.', ' ');?></b></td> 
                                       <td style="text-align:right"><b><?php echo number_format($sumEl, 2, '.', ' ');?></b></td>

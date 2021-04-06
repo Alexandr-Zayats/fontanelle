@@ -10,6 +10,14 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
   if(isset($_POST['payment'])) {
     echo "<script>window.location.href='registered-users.php'</script>";
   }
+  if(isset($_POST['report'])) {
+    $start=$_POST['start'];
+    $stop=$_POST['stop'];
+  } else {
+    $start=date('Y-m-01');
+    $stop=date("Y-m-d");
+  }
+
 
 ?>
 <!DOCTYPE html>
@@ -35,57 +43,133 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
 </head>
 
 <body class="bg-gradient-primary">
-    <div class="container">
-        <div class="card o-hidden border-0 shadow-lg my-5">
-            <div class="card-body p-0">
-                <!-- Nested Row within Card Body -->
-                <div class="row">
-                    <div class="col-lg-5 d-none d-lg-block bg-register-image"></div>
-                    <div class="col-lg-7">
-                        <div class="p-5">
-                            <div class="text-center">
-                                <h5 style="color:blue">СТ "РУЧЕЕК"</h5>
-                                <h1 class="h4 text-gray-900 mb-4">Текущий Баланс</h1>
-                            </div>
+  <div class="container">
+    <div class="card o-hidden border-0 shadow-lg my-5">
+      <div class="card-body p-0">
+        <!-- Nested Row within Card Body -->
+        <div class="row">
+          <div class="col-lg-5 d-none d-lg-block bg-register-image"></div>
+            <div class="col-lg-7">
+              <div class="p-5">
+                <div class="text-center">
+                  <h5 style="color:blue">СТ "РУЧЕЕК"</h5>
+                  <h1 class="h4 text-gray-900 mb-4">Баланс</h1>
+                </div>
+
+                <div class="card-header py-3">
+                  <form class="date" name="report" method="post">
+                    <h6 class="m-0 font-weight-bold text-primary">Период
+                      <label for="start"> с </label>
+                      <input type="date" id="start" name="start" min="2021-03-01" value="<?php echo $start;?>">
+                      <label for="stop"> по </label>
+                      <input type="date" id="stop" name="stop" value="<?php echo $stop;?>">
+                      <button type="submit" name="report"  class="btn btn-primary btn-user btn-block">
+                        Сформировать
+                      </button>
+                    </h6>
+                  </form>
+                </div>
+
+                <form class="user" name="payment" method="post">
+                  <button type="submit" name="payment" class="btn btn-primary btn-user btn-block">
+                    Закрыть
+                  </button>
+                </form>
+
+                <div class="table-responsive">
+                  <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                      <tr>
+                        <td></td>
+                        <td style="text-align:center">Приход</td>
+                        <td style="text-align:center">Расход</td>
+                        <td style="text-align:center">Баланс</td>
+                      </tr>
+                    </thead>
+                    <tbody>
 <?php
-  $query=mysqli_query($con,"call sp_balance()");
+  $stop=date("Y-m-d");
+  $query=mysqli_query($con,"call sp_balance('$start', '$stop')");
+  $income=0; $outcome=0;
   while ($result=mysqli_fetch_array($query)) {
 ?>
-                            <form class="user" name="payment" method="post">
-                                <div class="form-group row">
-                                    <div class="col-sm-6 mb-3 mb-sm-0">
-                                      <label for="outcash">Текущи баланс</label>
-                                      <input type="number" class="form-control form-control-user" id="outcash" name="outcash" value="<?php echo $result['inCome']-$result['outCome']; ?>" readonly>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <div class="col-sm-6 mb-3 mb-sm-0">
-                                      <label for="outcash">К оплате за электричество</label>
-                                      <input type="number" class="form-control form-control-user" id="outcash" name="outcash" value="<?php echo $result['balance']; ?>" readonly>
-                                    </div>
-                                </div>
-                                <button type="submit" name="payment" class="btn btn-primary btn-user btn-block">
-                                  Закрыть
-                                </button>
-                            </form>
+                      <tr>
+                        <td style="text-align:center">Электричество КВт (день)</td>
+                        <td style="text-align:right"><?php printf("%.2f", $result['dK']) ?></td>
+                        <td style="text-align:right"><?php printf("%.2f", $result['tdK']) ?></td>
+                        <td style="text-align:right"><?php printf("%.2f", $result['dK']-$result['tdK']) ?></td>
+                      </tr>
+                      <tr>
+                        <td style="text-align:center">Электричество КВт (ночь)</td>
+                        <td style="text-align:right"><?php printf("%.2f", $result['nK']) ?></td>
+                        <td style="text-align:right"><?php printf("%.2f", $result['tnK']) ?></td>
+                        <td style="text-align:right"><?php printf("%.2f", $result['nK']-$result['tnK']) ?></td>
+                      </tr>
+                      <tr>
+                        <td style="text-align:center">Электричество (грн)</td>
+                        <td style="text-align:right"><?php printf("%.2f", $result['pEl']); echo " из "; printf("%.2f", $result['toPay']) ?></td>
+                        <td style="text-align:right"><?php printf("%.2f", $result['toSpend']) ?></td>
+                        <td style="text-align:right"><?php printf("%.2f", $result['pEl']-$result['toSpend']) ?></td>
+                      </tr>
+                       <tr>
+                        <td style="text-align:center">Вода (кубы)</td>
+                        <td style="text-align:right"><?php printf("%.2f", $result['wat']) ?></td>
+                        <td style="text-align:right"><?php printf("%.2f", $result['tWat']) ?></td>
+                        <td style="text-align:right"><?php printf("%.2f", $result['wat']-$result['tWat']) ?></td>
+                      </tr>
+                       <tr>
+                        <td style="text-align:center">Вода (грн)</td>
+                        <td style="text-align:right"><?php printf("%.2f", $result['pWat']) ?></td>
+                        <td style="text-align:right"><?php printf("%.2f", $result['sWat']) ?></td>
+                        <td style="text-align:right"><?php printf("%.2f", $result['pWat']-$result['sWat']) ?></td>
+                      </tr>
+                      <tr>
+                        <td style="text-align:center">Членские взносы (грн)</td>
+                        <td style="text-align:right"><?php printf("%.2f", $result['pFee']) ?></td>
+                        <td style="text-align:right"></td>
+                        <td style="text-align:right"></td>
+                      </tr>
+                      <tr>
+                        <td style="text-align:center">Вступительные взносы (грн)</td>
+                        <td style="text-align:right"><?php printf("%.2f", $result['pIncome']) ?></td>
+                        <td style="text-align:right"></td>
+                        <td style="text-align:right"></td>
+                      </tr>
+                      <tr>
+                        <td style="text-align:center">Прочие (грн)</td>
+                        <td style="text-align:right"><?php printf("%.2f", $result['pOther']) ?></td>
+                        <td style="text-align:right"><?php printf("%.2f", $result['tpOther']) ?></td>
+                        <td style="text-align:right"><?php printf("%.2f", $result['pOther']-$result['tpOther']) ?></td>
+                      </tr>
+                    </tbody>
+                    <tfoot>
+                      <td style="text-align:right"><b>Итого (грн):</b></td>
+                      <td style="text-align:right"><b><?php $income=($result['pEl'] + $result['pFee'] + $result['pIncome'] + $result['pOther'] +  $result['pWat']); printf("%.2f", $income) ?></b></td>
+                      <td style="text-align:right"><b><?php $outcome=($result['toSpend']+$result['tpOther']+$result['sWat']); printf("%.2f", $outcome) ?></b></td>
+                      <td style="text-align:right"><b><?php printf("%.2f", $income-$outcome) ?></b></td>
+                      </tr>
+                    </tfoot>
 <?php } ?>
-                            <hr>
-                        </div>
-                    </div>
+                  </table>
                 </div>
+                <hr>
+              </div>
             </div>
+          </div>
         </div>
+      </div>
     </div>
+  </div
 
-    <!-- Bootstrap core JavaScript-->
-    <script src="../vendor/jquery/jquery.min.js"></script>
-    <script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <!-- Bootstrap core JavaScript-->
+  <script src="../vendor/jquery/jquery.min.js"></script>
+  <script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
-    <!-- Core plugin JavaScript-->
-    <script src="../vendor/jquery-easing/jquery.easing.min.js"></script>
+  <!-- Core plugin JavaScript-->
+  <script src="../vendor/jquery-easing/jquery.easing.min.js"></script>
 
-    <!-- Custom scripts for all pages-->
-    <script src="../js/sb-admin-2.min.js"></script>
+  <!-- Custom scripts for all pages-->
+  <script src="../js/sb-admin-2.min.js"></script>
 
 </body>
 

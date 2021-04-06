@@ -32,7 +32,7 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
     <div id="wrapper">
 
         <!-- Sidebar -->
-  <?php include_once('includes/sidebar.php');?>
+        <?php include_once('includes/sidebar.php');?>
         <!-- End of Sidebar -->
 
         <!-- Content Wrapper -->

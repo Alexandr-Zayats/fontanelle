@@ -109,18 +109,51 @@ END$$
 
 DROP PROCEDURE IF EXISTS sp_balance;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_balance` (`start` TIMESTAMP, `stop` TIMESTAMP) BEGIN
-SELECT dst, SUM(IF(userId>1, sum, 0)) as inCome, SUM(IF(userId=1, sum, 0)) as outCome FROM payments p
-WHERE DATE_FORMAT(p.date, '%Y%m%d') >= DATE_FORMAT(start, '%Y%m%d') AND
-DATE_FORMAT(p.date, '%Y%m%d') <= DATE_FORMAT(stop, '%Y%m%d') GROUP BY dst;
+SELECT
+  count.dK,
+  count.nK,
+  count.tdK,
+  count.tnK,
+  count.toPay,
+  count.toSpend,
+  pay.pEl,
+  pay.pWater,
+  pay.pFee,
+  pay.pIncome,
+  pay.pOther
+FROM
+  (
+    SELECT
+      SUM(IF(v.cId>1, (v.dCurrent - v.dPrevius), 0)) as dK,
+      SUM(IF(v.cId>1, (v.nCurrent - v.nPrevius), 0)) as nK,
+      SUM(IF(v.cId=1, (v.dCurrent - v.dPrevius), 0))*40.64 as tdK,
+      SUM(IF(v.cId=1, (v.nCurrent - v.nPrevius), 0))*40.64 as tnK,
+      SUM(IF(v.cId>1, (v.dCurrent - v.dPrevius), 0))*t.day+SUM(IF(v.cId>1, (v.nCurrent - v.nPrevius), 0))*t.night as toPay,
+      SUM(IF(v.cId=1, (v.dCurrent - v.dPrevius), 0))*68.28+SUM(IF(v.cId=1, (v.nCurrent - v.nPrevius), 0))*34.14 as toSpend
+    FROM countValues v LEFT JOIN tariffs t ON (t.id=v.tariffId)
+    WHERE
+      DATE_FORMAT(v.date, '%Y%m%d') >= DATE_FORMAT(start, '%Y%m%d') AND
+      DATE_FORMAT(v.date, '%Y%m%d') <= DATE_FORMAT(stop, '%Y%m%d') ) as count,
+  (
+    SELECT
+      SUM(IF(dst="el", sum, 0)) as pEl,
+      SUM(IF(dst="wat", sum, 0)) as pWater,
+      SUM(IF(dst="fee", sum, 0)) as pFee,
+      SUM(IF(dst="inc", sum, 0)) as pIncome,
+      SUM(IF(dst="other", sum, 0)) as pOther
+    FROM payments
+    WHERE
+      DATE_FORMAT(date, '%Y%m%d') >= DATE_FORMAT(start, '%Y%m%d') AND
+      DATE_FORMAT(date, '%Y%m%d') <= DATE_FORMAT(stop, '%Y%m%d') ) as pay;
 END$$
 
 DROP PROCEDURE IF EXISTS sp_totalReport;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_totalReport` (`start` TIMESTAMP, `stop` TIMESTAMP) BEGIN
 SELECT u.id as id, u.name as name, (u.BalanceEl+u.BalanceWat+u.BalanceFee) as balance, u.PhoneNumber as phone, u.EmailId as email,
-(SELECT verDate FROM counters
+(SELECT DATE_FORMAT(verDate, '%Y-%m-%d') as verDate FROM counters
   WHERE userId=u.id AND type="el"
   ORDER BY verDate LIMIT 0,1) as elVerDate,
-(SELECT verDate FROM counters
+(SELECT DATE_FORMAT(verDate,  '%Y-%m-%d') as verDate FROM counters
   WHERE userId=u.id AND type="wat"
   ORDER BY verDate LIMIT 0,1) as watVerDate,
 (SELECT SUM(v.dCurrent - v.dPrevius) FROM countValues v

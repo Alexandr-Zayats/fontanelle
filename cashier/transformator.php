@@ -3,6 +3,7 @@ session_start();
 //error_reporting(0);
 include('../includes/config.php');
 $uid=0;
+$counter=1;
 if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
   header('location:logout.php');
 } else {
@@ -10,7 +11,9 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
     $counter=$_POST['counter'];
     $dCurrent=$_POST['dCurrent'];
     $nCurrent=$_POST['nCurrent'];
-    $latest=mysqli_fetch_assoc(mysqli_query($con,"call sp_getLastCounterValues($counter)"));
+  }
+  $latest=mysqli_fetch_assoc(mysqli_query($con,"call sp_getLastCounterValues($counter)"));
+  if(isset($_POST['addvalues'])) {
     if($latest[nightLast] > $nCurrent || $latest[dayLast] > $dCurrent) {
       echo "<script>alert('Введеные показания ниже предыдущих!');</script>";
     } else {

@@ -2,6 +2,7 @@
 session_start();
 //error_reporting(0);
 include('../includes/config.php');
+$uid=$_GET['uid'];
 if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
   header('location:logout.php');
   } else {
@@ -11,13 +12,12 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
     $email=$_POST['email'];
     $phone=$_POST['phone'];
     $size=$_POST['size'];
-    $uid=$_GET['uid'];
 
     //$updatetTime = date( 'd-m-Y h:i:s A', time () );
     //echo "<script>alert('$uid $name $email $phone $size');</script>";
     $query=mysqli_query($con,"call sp_userupdateprofile('$uid','$name','$email','$phone','$size')"); 
-    echo "<script>alert('Профайл участка успешно обновлен');</script>";  
-    echo "<script>window.location.href='registered-users.php'</script>";
+    echo "<script>alert('Профайл участка успешно обновлен');</script>";
+    echo "<script>window.location.href='info.php?uid=$uid'</script>";
   }
 ?>
 <!DOCTYPE html>
@@ -124,17 +124,6 @@ while ($result=mysqli_fetch_array($query)) {
                                       <input type="email" class="form-control form-control-user" id="email" value="<?php echo $result['EmailId'];?>" name="email" required="false">
                                     </td>
                                   </tr>
-                                  <tr><th>Счетчики</th>
-                                    <td>
-                                      <a href="add-counter.php?uid=<?php echo $result['id'];?>">Добавть счетчик</a>
-                                    <td>
-                                  </tr>
-                                  <?php while ($counter=mysqli_fetch_array($counters)) { ?>
-                                  <tr>
-                                    <th style="text-align:center"><?php echo "Имя: [ ".$counter['name']." ] "; ?></th>
-                                    <td><?php echo "Номер: [ ".$counter['number']." ] "; ?></td>
-                                  </tr>
-                                  <?php } ?>
                                   <tr>
                                     <th>Последние изменения </th>
                                     <td><?php echo $result['LastUpdationDate'];?></td>
