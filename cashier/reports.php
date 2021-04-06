@@ -76,7 +76,7 @@ if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
                               <input type="date" id="start" name="start" min="2021-03-01" value="<?php echo $start;?>">
                               <label for="stop"> по </label>
                               <input type="date" id="stop" name="stop" value="<?php echo $stop;?>">
-                              <button type="submit" name="report">
+                              <button type="submit" name="report" class="btn btn-primary btn-user btn-block">
                                 Сформировать
                               </button>
                             </h6>
