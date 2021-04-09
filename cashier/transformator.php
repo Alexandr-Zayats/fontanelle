@@ -58,7 +58,7 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
 <?php
   mysqli_close($con);
   $con = mysqli_connect(DB_SERVER,DB_USER,DB_PASS,DB_NAME);
-  $uid=$_GET['uid'];
+  //$uid=$_GET['uid'];
   $counters=mysqli_query($con,"call sp_counterList($uid)");
 ?>
 
@@ -106,8 +106,8 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
                                         <label for="nCurrent">Ночь:</label>
                                         <input type="number" class="form-control form-control-user" id="nCurrent"
                                         value="<?php
-  if(is_numeric($latest[nightLast])) {
-    echo $latest[nightLast];
+  if(is_numeric($latest['nightLast'])) {
+    echo $latest['nightLast'];
   } else {
     echo 0;
   }

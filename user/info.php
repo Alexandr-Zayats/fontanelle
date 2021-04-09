@@ -3,6 +3,7 @@ session_start();
 //error_reporting(0);
 include('../includes/config.php');
 if (strlen($_SESSION['adid'] == 0 || ($_SESSION['type'] != "cashier" && $_SESSION['type'] != "regularUser")) ) {
+//if (false) {
   header('location:logout.php');
 } else {
   $uid=$_GET['uid'];
@@ -41,6 +42,8 @@ if (strlen($_SESSION['adid'] == 0 || ($_SESSION['type'] != "cashier" && $_SESSIO
 </head>
 
 <?php
+  // $uid=397;
+  $con->next_result();
   $query=mysqli_query($con,"call el_userInfo($uid)");
   while ($user=mysqli_fetch_assoc($query)) {
 ?>
@@ -108,7 +111,7 @@ if (strlen($_SESSION['adid'] == 0 || ($_SESSION['type'] != "cashier" && $_SESSIO
                               <!-- <label for="counter">Счетчики: </label> -->
                               <select id="counter" name="counter" onchange="window.location = this.options[this.selectedIndex].value" class="btn btn-primary btn-user btn-block">
                                 <?php foreach ( explode(";", $user['cId']) as &$cId ) {
-                                  $query->close();
+                                  // $query->close();
                                   $con->next_result();
                                   $sql=mysqli_query($con,"call counterInfo($cId)");
                                   while ($counter=mysqli_fetch_array($sql)) {
@@ -164,9 +167,10 @@ if (strlen($_SESSION['adid'] == 0 || ($_SESSION['type'] != "cashier" && $_SESSIO
 
                       <tbody>
 <?php
-  $query->close();
+  //$query->close();
   $con->next_result();
   $sql=mysqli_query($con,"call el_history($uid, $cid)");
+  // $sql=mysqli_query($con,"call el_history(397, 74)");
   $cnt=1;
   while ($countValues=mysqli_fetch_array($sql)) { ?>
                         <tr>

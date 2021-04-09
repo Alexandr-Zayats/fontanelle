@@ -172,7 +172,7 @@ while ($result=mysqli_fetch_array($query)) {
 
                                     <tbody>
                                         <?php
-$query->close();
+//$query->close();
 $con->next_result();                                        
 $sql=mysqli_query($con,"call sp_recent15users()");
 $cnt=1;

@@ -2,8 +2,9 @@
 session_start();
 //error_reporting(0);
 include('../includes/config.php');
+
 if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
-//if(true) {
+//if(false) {
   header('location:logout.php');
 } else {
 ?>
@@ -69,7 +70,7 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
                                                 Электричество
                                             </div>
                                             <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                              <?php echo $result[el];?>
+                                              <?php echo $result['el'];?>
                                             </div>
                                         </div>
                                         <div class="col-auto">
@@ -90,7 +91,7 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
                                                 Вода
                                             </div>
                                             <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                              <?php echo $result[wat];?>
+                                              <?php echo $result['wat'];?>
                                             </div>
                                         </div>
                                         <div class="col-auto">
@@ -113,7 +114,7 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
                                             <div class="row no-gutters align-items-center">
                                                 <div class="col-auto">
                                                     <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">
-                                                      <?php echo $result[fee];?>
+                                                      <?php echo $result['fee'];?>
                                                     </div>
                                                 </div>
                                             </div>
@@ -136,7 +137,7 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
                                                Вступительные взносы
                                             </div>
                                             <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                              <?php echo $result[inc];?>
+                                              <?php echo $result['inc'];?>
                                             </div>
                                         </div>
                                         <div class="col-auto">
@@ -173,7 +174,7 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
                                 </thead>
                                 <tbody>
 <?php
-  $query->close();
+  // $query->close();
   $con->next_result();                                        
   $sql=mysqli_query($con,"call sp_recent30payments()");
   $cnt=1;
@@ -182,10 +183,12 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
         
                                         <tr>
                                           <td><?php echo $cnt;?></td>
-                                          <td><?php echo $result['id'];?></td>
-                                          <td><?php echo $result['name'];?></td>
-                                          <td><?php echo $result['sum'];?></td>
-                                          <td><?php echo $result['date'];?></td>
+                                          <td>
+                                            <a href="../user/info.php?uid=<?php echo $result['id'];?>"</a><?php echo $result['id'] ?>
+                                          </td>
+                                          <td><?php echo $result['name'] ?></td>
+                                          <td><?php echo $result['sum'] ?></td>
+                                          <td><?php echo $result['date'] ?></td>
                                         </tr>
  <?php $cnt++; } ?>
                                      </tbody>

@@ -174,7 +174,7 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
                                 </thead>
                                 <tbody>
 <?php
-  $query->close();
+  //$query->close();
   $con->next_result();                                        
   $sql=mysqli_query($con,"call sp_recent15payments()");
   $cnt=1;

@@ -133,7 +133,7 @@ if (strlen($_SESSION['adid'] == 0 || ($_SESSION['type'] != "cashier" && $_SESSIO
 
                       <tbody>
 <?php
-  $query->close();
+  //$query->close();
   $con->next_result();
   $sql=mysqli_query($con,"call fee_history($uid)");
   $cnt=1;

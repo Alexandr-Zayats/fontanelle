@@ -98,7 +98,7 @@ echo "<script>window.location.href='info.php?uid=$uid'</script>";
                                   <select id="counter" name="counter" class="form-control" onchange="window.location = this.options[this.selectedIndex].value">
                                     <?php
                                       foreach ( explode(";", $user['cId']) as &$cId ) {
-                                        $query->close();
+                                        // $query->close();
                                         $con->next_result();
                                         $sql=mysqli_query($con,"call counterInfo($cId)");
                                         while ($counter=mysqli_fetch_array($sql)) {
@@ -148,7 +148,7 @@ echo "<script>window.location.href='info.php?uid=$uid'</script>";
                             </thead>
                             <tbody>
 <?php
-  $query->close();
+  // $query->close();
   $con->next_result();
   $sql=mysqli_query($con,"call el_history($uid, $cid)");
   $cnt=1;

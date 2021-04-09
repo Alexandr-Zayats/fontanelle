@@ -4,7 +4,11 @@ define('DB_SERVER','localhost');
 define('DB_USER','web');
 define('DB_PASS' ,'webPassword');
 define('DB_NAME', 'fontanelle');
+
+mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 $con = mysqli_connect(DB_SERVER,DB_USER,DB_PASS,DB_NAME);
+//$mysqli = new mysqli(DB_SERVER,DB_USER,DB_PASS);
+//$mysqli->select_db(DB_NAME);
 
 // Check connection
 if (mysqli_connect_errno()) {
