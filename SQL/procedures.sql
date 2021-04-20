@@ -28,17 +28,18 @@ DELIMITER $$
 --
 
 DROP PROCEDURE IF EXISTS fee_history;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `fee_history` (`uid` INT(5))  BEGIN
-SELECT
-  DATE_FORMAT(p.date, '%Y') as date,
-  SUM(sum) as paid,
-  u.Size*100 as toPay,
-  u.BalanceFee as balance 
-FROM payments p LEFT JOIN users u ON (u.id=p.userId)
-WHERE userId=uid AND dst='fee'
-GROUP BY DATE_FORMAT(p.date, '%Y')
-ORDER BY date DESC
-LIMIT 36;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `fee_history` (`uid` INT(5))
+BEGIN
+  SELECT
+    DATE_FORMAT(p.dstDate, '%Y') as date,
+    SUM(sum) as paid,
+    u.Size*100 as toPay,
+    u.BalanceFee as balance 
+  FROM payments p LEFT JOIN users u ON (u.id=p.userId)
+  WHERE userId=uid AND dst='fee'
+  GROUP BY DATE_FORMAT(p.dstDate, '%Y')
+  ORDER BY dstDate DESC
+  LIMIT 36;
 END$$
 
 DROP PROCEDURE IF EXISTS el_history;
@@ -258,20 +259,23 @@ BEGIN
 DECLARE payDate DATE;
 IF ( dat = '2000-01-01' ) THEN
   SET payDate = DATE(NOW());
+  
+  IF (dst = 'el') THEN
+    update users set BalanceEl=(BalanceEl + sum) WHERE id=uid;
+  END IF;
+  IF (dst = 'wat') THEN
+    update users set BalanceWat=(BalanceWat + sum) WHERE id=uid;
+  END IF;
+  IF (dst = 'fee') THEN
+    update users set BalanceFee=(BalanceFee + sum) WHERE id=uid;
+  END IF;
+
 ELSE
   SET payDate = DATE(dat);
 END IF;
-  
-IF (dst = 'el') THEN
-  update users set BalanceEl=(BalanceEl + sum) WHERE id=uid;
-END IF;
-IF (dst = 'wat') THEN
-  update users set BalanceWat=(BalanceWat + sum) WHERE id=uid;
-END IF;
-IF (dst = 'fee') THEN
-  update users set BalanceFee=(BalanceFee + sum) WHERE id=uid;
-END IF;
-insert into payments (cashierId, userId, sum, dst, date) values (cashier, uid, sum, dst, payDate);
+
+
+insert into payments (cashierId, userId, sum, dst, dstDate) values (cashier, uid, sum, dst, payDate);
 END$$
 
 DROP PROCEDURE IF EXISTS sp_addCounterValues;
