@@ -44,7 +44,7 @@ if (strlen($_SESSION['adid'] == 0 || ($_SESSION['type'] != "cashier" && $_SESSIO
 <?php
   // $uid=397;
   $con->next_result();
-  $query=mysqli_query($con,"call el_userInfo($uid)");
+  $query=mysqli_query($con,"call userInfo($uid, 'el')");
   while ($user=mysqli_fetch_assoc($query)) {
 ?>
 
@@ -91,7 +91,25 @@ if (strlen($_SESSION['adid'] == 0 || ($_SESSION['type'] != "cashier" && $_SESSIO
                   </div>
                 </div>
               </div>
-
+              <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-success shadow h-100 py-2">
+                  <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                      <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                          Баланс
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                          <?php echo $user['balance']; $toPay=$user['balance'] ?> грн.
+                        </div>
+                      </div>
+                      <div class="col-auto">
+                        <i class="fas fa-users fa-2x text-gray-300"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>  <!-- row -->
 
             <div class="row">
@@ -131,13 +149,15 @@ if (strlen($_SESSION['adid'] == 0 || ($_SESSION['type'] != "cashier" && $_SESSIO
                           <form action="user-counter.php">
                             <input type="hidden" id="uid" name="uid" value="<?php echo $uid ?>">
                             <input type="hidden" id="cid" name="cid" value="<?php echo $cid ?>">
+                            <input type="hidden" id="type" name="type" value="el">
                             <input type="submit" value="Внести показания" class="btn btn-primary btn-user btn-block"/>
                           </form>
                         </td>
                         <td style="text-align:right">
                           <form action="user-payment.php">
                             <input type="hidden" id="uid" name="uid" value="<?php echo $uid ?>">
-                            <input type="hidden" id="dst" name="dst" value="el">
+                            <input type="hidden" id="type" name="type" value="el">
+                            <input type="hidden" id="toPay" name="toPay" value="<?php echo $toPay ?>">
                             <input type="submit" value="Оплата" class="btn btn-primary btn-user btn-block"/>
                           </form>
                         </td>
@@ -167,12 +187,13 @@ if (strlen($_SESSION['adid'] == 0 || ($_SESSION['type'] != "cashier" && $_SESSIO
 
                       <tbody>
 <?php
-  //$query->close();
   $con->next_result();
-  $sql=mysqli_query($con,"call el_history($uid, $cid)");
-  // $sql=mysqli_query($con,"call el_history(397, 74)");
   $cnt=1;
-  while ($countValues=mysqli_fetch_array($sql)) { ?>
+  if (mysqli_multi_query($con, "call el_history($uid, $cid)")) {
+    do {
+      if ($result = mysqli_store_result($con)) {
+        while ($countValues = mysqli_fetch_array($result)) {
+          if ( ! is_null($countValues['date']) ) { ?>
                         <tr>
                           <td style="text-align:right"><?php echo $countValues['date'] ?></td>
                           <td style="text-align:right"><?php echo $countValues['dPrev'];?></td>
@@ -184,7 +205,13 @@ if (strlen($_SESSION['adid'] == 0 || ($_SESSION['type'] != "cashier" && $_SESSIO
                           <td style="text-align:right"><?php printf("%.2f", $countValues['toPay']);?></td>
                           <td style="text-align:right"><?php echo $countValues['paid'];?></td>
                         </tr>
- <?php $cnt++; } ?>
+ <?php    }
+        } 
+        mysqli_free_result($result);
+        $cnt++;
+      }
+    } while (mysqli_next_result($con));
+  } ?>
                       </tbody>
                     </table>
                   </div>

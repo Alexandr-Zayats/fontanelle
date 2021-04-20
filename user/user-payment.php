@@ -2,22 +2,46 @@
 session_start();
 //error_reporting(0);
 include('../includes/config.php');
+
 $uid=$_GET['uid'];
-$dst=$_GET['dst'];
+$type=$_GET['type'];
+$toPay=$_GET['toPay'];
+
+if ($toPay < 0) {
+  $toPay = $toPay*(0-1);
+} else {
+  $toPay="0.00";
+}
+
 $cashier=$_SESSION['adid'];
 if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
   header('location:logout.php');
 } else {
   if(isset($_POST['payment'])) {
-    $sum=$_POST['sum'];
-    $fee=$_POST['type'];
+    $sum = $_POST['sum'];
+    $fee = $_POST['type'];
+    $type = $_POST['type'];
+
+    if (isset($_POST['year'])) {
+      $year = $_POST['year']."-01-01";
+    } else {
+      $year = "2000-01-01";
+    }
+
     mysqli_close($con);
     $con = mysqli_connect(DB_SERVER,DB_USER,DB_PASS,DB_NAME);
     //echo "<script>alert('$cashier $uid $sum $fee');</script>";
-    $query=mysqli_query($con,"call sp_addMoney($cashier, $uid, '$sum', '$fee')");
+    $query=mysqli_query($con,"call sp_addMoney($cashier, $uid, '$sum', '$fee', '$year')");
+
     if ($query) {
       echo "<script>alert('Счет успешно пополнен');</script>";
-      echo "<script>window.location.href='info.php?uid=$uid'</script>";
+      if ( $type == "el" ) {
+        echo "<script>window.location.href='info.php?uid=$uid'</script>";
+      } elseif ( $type == "wat" )  {
+        echo "<script>window.location.href='water.php?uid=$uid'</script>";
+      } else {
+        echo "<script>window.location.href='fee.php?uid=$uid'</script>";
+      }
     } else {
       echo "<script>alert('Что-то пошло не так!. Попробуйте еще раз.');</script>";
     }
@@ -60,7 +84,15 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
                         <div class="p-5">
                             <div class="text-center">
                                 <h5 style="color:blue">СТ "РУЧЕЕК"</h5>
-                                <h1 class="h4 text-gray-900 mb-4">Внесение наличных</h1>
+                                <h1 class="h4 text-gray-900 mb-4"><?php
+                                  if ( $type == "el" ) {
+                                    echo "Оплата электроенергии";
+                                  } elseif ( $type == "wat" )  {
+                                    echo "Оплата за воду";
+                                  } else {
+                                    echo "Членские взносы";
+                                  }
+                                ?></h1>
                             </div>
                             <form class="user" name="payment" method="post">
                                 <div class="form-group row">
@@ -69,13 +101,31 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
                                       <input type="number" class="form-control form-control-user" id="uid" name="uid" value="<?php echo $uid ?>" readonly>
                                     </div>
                                 </div>
+                                <?php if ( $type == "fee" ) { ?>
                                 <div class="form-group row">
                                     <div class="col-sm-6 mb-3 mb-sm-0">
-                                        <input type="number" min="0.00" max="50000.00" step="0.01" class="form-control form-control-user" id="sum" placeholder="Сумма (грн)" name="sum" required="true">
+                                      <select id="year" name="year" class="btn btn-primary btn-user btn-block">
+                                        <?php
+                                        $curYear = date("Y");
+                                        $lastYear = $curYear - 10;
+                                        echo "<option value=".$curYear." selected>".$curYear."</option>";
+                                        for ( $year = $curYear-1; $year >= $lastYear; $year-- ) {
+                                          echo "<option value=".$year.">".$year."</option>";
+                                        }
+                                        ?>
+                                      </select>
                                     </div>
                                 </div>
-                                <input type="hidden" id="type" name="type" value="<?php echo $dst ?>">
-                                <!--
+                                <?php } ?>
+                                <div class="form-group row">
+                                    <div class="col-sm-6 mb-3 mb-sm-0">
+                                        <input type="number" min="0.00" max="50000.00" step="0.01"
+                                          class="form-control form-control-user" id="sum" name="sum" required="true"
+                                          value="<?php echo $toPay ?>">
+                                    </div>
+                                </div>
+                                <input type="hidden" id="type" name="type" value="<?php echo $type ?>">
+                                <!-- 
                                 <div class="form-group row">
                                   <div class="col-sm-6 mb-3 mb-sm-0">
                                     <input type="radio" id="type" name="type" value="el" required>

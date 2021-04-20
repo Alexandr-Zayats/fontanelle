@@ -3,6 +3,7 @@ session_start();
 //error_reporting(0);
 include('../includes/config.php');
 $uid=$_GET['uid'];
+$type=$_GET['type'];
 $dCurrent=0;
 $nCurrent=0;
 
@@ -13,21 +14,29 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
 } else {
   if(isset($_POST['addvalues'])) {
     $cid=$_POST['cid'];
+    $type=$_POST['type'];
     $dCurrent=$_POST['dCurrent'];
     $nCurrent=$_POST['nCurrent'];
   }
   $latest=mysqli_fetch_assoc(mysqli_query($con,"call sp_getLastCounterValues($cid)"));
   if(isset($_POST['addvalues'])) {
-    if($latest[nightLast] > $nCurrent || $latest[dayLast] > $dCurrent) {
+    $dayLast=$latest['dayLast'];
+    $nightLast=$latest['nightLast'];
+    if($nightLast > $nCurrent || $dayLast > $dCurrent) {
+      //echo "<script>alert('$nightLast; $nCurrent; $dayLast; $dCurrent');</script>";
       echo "<script>alert('Введеные показания ниже предыдущих!');</script>";
     } else {
       mysqli_close($con);
       $con = mysqli_connect(DB_SERVER,DB_USER,DB_PASS,DB_NAME);
       //echo "<script>alert('uid=$uid cid=$cid latesD=$latest[dayLast] currentD=$dCurrent latestN=$latest[nightLast] currentN=$nCurrent');</script>";
-      $query=mysqli_query($con,"call sp_addCounterValues($uid, $cid,'$latest[dayLast]','$dCurrent','$latest[nightLast]','$nCurrent')");
+      $query=mysqli_query($con,"call sp_addCounterValues($uid, $cid,'$dayLast','$dCurrent','$nightLast','$nCurrent')");
       if ($query) {
         echo "<script>alert('Показания успешно занесены');</script>";
-        echo "<script>window.location.href='info.php?uid=$uid&cid=$cid'</script>";
+        if ( $type == "el" ) {
+          echo "<script>window.location.href='info.php?uid=$uid&cid=$cid'</script>";
+        } else {
+          echo "<script>window.location.href='water.php?uid=$uid&cid=$cid'</script>";
+        }
       } else {
         echo "<script>alert('Что-то пошло не так!. Попробуйте еще раз.');</script>";
       }
@@ -85,7 +94,7 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
                                       value="<?php echo $uid ?>" readonly>
                                   </div>
                                 </div>
-
+                                <input type="hidden" id="type" name="type" value="<?php echo $type ?>">
                                 <input type="hidden" id="cid" name="cid" value="<?php echo $cid ?>">
 
                                 <div class="form-group row">
@@ -98,7 +107,7 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
 
                                 <div class="form-group row">
                                   <div class="col-sm-6 mb-3 mb-sm-0">
-                                    <label for="dCurrent">День:</label>
+                                    <label for="dCurrent"><?php if ( $type == "el" ) { echo "День:"; } else { echo "Текущие показания:"; } ?></label>
                                     <input type="number" class="form-control form-control-user" id="dCurrent"
                                       value="<?php
                                         if(is_numeric($latest['dayLast']) && isset($latest['dayLast'])) {
@@ -110,14 +119,14 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
                                       name="dCurrent" required="true">
                                   </div>
                                 </div>
-
+                                <?php if ( $type == "el" ) { ?>
                                 <div class="form-group row">
                                   <div class="col-sm-6 mb-3 mb-sm-0">
                                     <label for="nCurrent">Ночь:</label>
                                     <input type="number" class="form-control form-control-user" id="nCurrent"
                                       value="<?php
-                                        if(is_numeric($latest[nightLast])) {
-                                          echo $latest[nightLast];
+                                        if(is_numeric($latest['nightLast'])) {
+                                          echo $latest['nightLast'];
                                         } else {
                                           echo 0;
                                         }
@@ -125,6 +134,9 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
                                       name="nCurrent" required="false">
                                   </div>
                                 </div>
+                                <?php } else {?>
+                                    <input type="hidden" id="nCurrent" name="nCurrent" value=0>
+                                <?php } ?>
                                 <button type="submit" name="addvalues" class="btn btn-primary btn-user btn-block">
                                     Внести
                                 </button>

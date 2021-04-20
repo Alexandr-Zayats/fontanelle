@@ -30,58 +30,97 @@ DELIMITER $$
 DROP PROCEDURE IF EXISTS fee_history;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `fee_history` (`uid` INT(5))  BEGIN
 SELECT
-  DATE_FORMAT(p.date, '%Y-%m') as date,
+  DATE_FORMAT(p.date, '%Y') as date,
   SUM(sum) as paid,
   u.Size*100 as toPay,
   u.BalanceFee as balance 
 FROM payments p LEFT JOIN users u ON (u.id=p.userId)
 WHERE userId=uid AND dst='fee'
-GROUP BY p.date
-ORDER BY p.date DESC
+GROUP BY DATE_FORMAT(p.date, '%Y')
+ORDER BY date DESC
 LIMIT 36;
 END$$
 
 DROP PROCEDURE IF EXISTS el_history;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `el_history` (`uid` INT(5), `cid` INT(5))  BEGIN
-SELECT
-  SUM(p.sum) as paid,
-  SUM(c.dPrev) as dPrev,
-  SUM(c.dCur) as dCur,
-  SUM(c.dDelta) as dDelta,
-  SUM(c.nPrev) as nPrev,
-  SUM(c.nCur) as nCur,
-  SUM(c.nDelta) as nDelta,
-  SUM(c.sum) as toPay,
-  c.date
-FROM
-  (
+CREATE DEFINER=`root`@`localhost` PROCEDURE `el_history` (`uid` INT(5), `cid` INT(5))
+BEGIN
+  DECLARE dNow DATE;
+  DECLARE dEnd DATE;
+  SET dNow = DATE(NOW());
+  SET dEnd = DATE_SUB(NOW(), INTERVAL 3 MONTH);
+  WHILE DATE(dNow) >= DATE(dEnd) DO
     SELECT
-      min(v.dPrevius) as dPrev,
-      max(v.dCurrent) as dCur,
-      max(v.dCurrent)-min(v.dPrevius) as dDelta,
-      min(v.nPrevius) as nPrev,
-      max(v.nCurrent) as nCur,
-      max(v.nCurrent)-min(v.nPrevius) as nDelta,
-      DATE_FORMAT(v.date, '%Y-%m') as date,
-      (max(v.dCurrent)-min(v.dPrevius))*t.day+(max(v.nCurrent)-min(v.nPrevius))*t.night as sum
-    FROM countValues v LEFT JOIN tariffs t ON (v.tariffId=t.id)
-    WHERE v.cId=cid AND v.dCurrent!=v.dPrevius
-    GROUP BY v.date, t.id
-  ) as c
-LEFT JOIN
-  (
+      SUM(p.sum) as paid,
+      SUM(c.dPrev) as dPrev,
+      SUM(c.dCur) as dCur,
+      SUM(c.dDelta) as dDelta,
+      SUM(c.nPrev) as nPrev,
+      SUM(c.nCur) as nCur,
+      SUM(c.nDelta) as nDelta,
+      SUM(c.sum) as toPay,
+      c.date
+    FROM
+      ( SELECT
+        min(v.dPrevius) as dPrev,
+        max(v.dCurrent) as dCur,
+        max(v.dCurrent)-min(v.dPrevius) as dDelta,
+        min(v.nPrevius) as nPrev,
+        max(v.nCurrent) as nCur,
+        max(v.nCurrent)-min(v.nPrevius) as nDelta,
+        DATE_FORMAT(v.date, '%Y-%m') as date,
+        (max(v.dCurrent)-min(v.dPrevius))*t.day+(max(v.nCurrent)-min(v.nPrevius))*t.night as sum
+      FROM countValues v INNER JOIN tariffs t ON (v.tariffId=t.id)
+      WHERE v.cId=cid
+        AND v.dCurrent!=v.dPrevius
+        AND  DATE_FORMAT(v.date, '%Y-%m')=DATE_FORMAT(dNow, '%Y-%m')
+      GROUP BY t.id ) as c, 
+      ( SELECT
+        SUM(SUM) as sum
+      FROM payments p
+      WHERE userId=uid
+        AND dst="el"
+        AND DATE_FORMAT(p.date, '%Y-%m')=DATE_FORMAT(dNow, '%Y-%m')
+      ) as p;
+    SET dNow = DATE_SUB(dNow, INTERVAL 1 MONTH);
+  END WHILE;
+END$$
+
+DROP PROCEDURE IF EXISTS wat_history;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `wat_history` (`uid` INT(5), `cid` INT(5))
+BEGIN
+  DECLARE dNow DATE;
+  DECLARE dEnd DATE;
+  SET dNow = DATE(NOW());
+  SET dEnd = DATE_SUB(NOW(), INTERVAL 3 MONTH);
+  WHILE DATE(dNow) >= DATE(dEnd) DO
     SELECT
-      DATE_FORMAT(p.date, '%Y-%m') as dat,
-      SUM(SUM) as sum
-    FROM payments p
-    WHERE userId=uid AND dst="el"
-    GROUP BY dat
-    ORDER BY dat DESC
-  ) as p
-ON (p.dat=c.date)
-GROUP BY c.date
-ORDER BY c.date DESC
-LIMIT 36;
+      SUM(p.sum) as paid,
+      SUM(c.dPrev) as dPrev,
+      SUM(c.dCur) as dCur,
+      SUM(c.dDelta) as dDelta,
+      SUM(c.sum) as toPay,
+      c.date
+    FROM
+      ( SELECT
+        min(v.dPrevius) as dPrev,
+        max(v.dCurrent) as dCur,
+        max(v.dCurrent)-min(v.dPrevius) as dDelta,
+        DATE_FORMAT(v.date, '%Y-%m') as date,
+        (max(v.dCurrent)-min(v.dPrevius))*t.water as sum
+      FROM countValues v INNER JOIN tariffs t ON (v.tariffId=t.id)
+      WHERE v.cId=cid
+        AND v.dCurrent!=v.dPrevius
+        AND  DATE_FORMAT(v.date, '%Y-%m')=DATE_FORMAT(dNow, '%Y-%m')
+      GROUP BY t.id ) as c,
+      ( SELECT
+        SUM(SUM) as sum
+      FROM payments p
+      WHERE userId=uid
+        AND dst="wat"
+        AND DATE_FORMAT(p.date, '%Y-%m')=DATE_FORMAT(dNow, '%Y-%m')
+      ) as p;
+    SET dNow = DATE_SUB(dNow, INTERVAL 1 MONTH);
+  END WHILE;
 END$$
 
 DROP PROCEDURE IF EXISTS counterInfo;
@@ -89,10 +128,18 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `counterInfo` (`cId` INT(5))  BEGIN
 SELECT * FROM counters c WHERE c.id=cId;
 END$$
 
-DROP PROCEDURE IF EXISTS el_userInfo;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `el_userInfo` (`uid` INT(5))  BEGIN
+DROP PROCEDURE IF EXISTS userInfo;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `userInfo` (`uid` INT(5), `type` VARCHAR(10))  BEGIN
+IF (type = 'el') THEN
+  SELECT u.id as uId, u.Name as uName, u.TariffId as tariff, u.BalanceEl as balance, group_concat(c.Id separator ';') as cId FROM users u LEFT JOIN counters c ON c.userId=u.id WHERE c.type=type AND u.id=uid;
+END IF;
+IF (type = 'wat') THEN
+  SELECT u.id as uId, u.Name as uName, u.TariffId as tariff, u.BalanceWat as balance, group_concat(c.Id separator ';') as cId FROM users u LEFT JOIN counters c ON c.userId=u.id WHERE c.type=type AND u.id=uid;
+END IF;
+IF (type = 'fee') THEN
+  SELECT u.id as uId, u.Name as uName, u.TariffId as tariff, u.BalanceFee as balance, group_concat(c.Id separator ';') as cId FROM users u LEFT JOIN counters c ON c.userId=u.id WHERE c.type=type AND u.id=uid;
+END IF;
 
-SELECT u.id as uId, u.Name as uName, u.TariffId as tariff, u.BalanceEl as balance, group_concat(c.Id separator ';') as cId FROM users u LEFT JOIN counters c ON c.userId=u.id WHERE c.type='el' AND u.id=uid;
 END$$
 
 DROP PROCEDURE IF EXISTS sp_counterBalance;
@@ -206,7 +253,15 @@ GROUP BY u.id ORDER BY u.id;
 END$$
 
 DROP PROCEDURE IF EXISTS sp_addMoney;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_addMoney` (`cashier` INT(3),  `uid` INT(3), `sum` decimal(8,2), `dst` VARCHAR(15))  BEGIN
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_addMoney` (`cashier` INT(3),  `uid` INT(3), `sum` decimal(8,2), `dst` VARCHAR(15), `dat` DATE )
+BEGIN
+DECLARE payDate DATE;
+IF ( dat = '2000-01-01' ) THEN
+  SET payDate = DATE(NOW());
+ELSE
+  SET payDate = DATE(dat);
+END IF;
+  
 IF (dst = 'el') THEN
   update users set BalanceEl=(BalanceEl + sum) WHERE id=uid;
 END IF;
@@ -216,7 +271,7 @@ END IF;
 IF (dst = 'fee') THEN
   update users set BalanceFee=(BalanceFee + sum) WHERE id=uid;
 END IF;
-insert into payments (cashierId, userId, sum, dst) values (cashier, uid, sum, dst);
+insert into payments (cashierId, userId, sum, dst, date) values (cashier, uid, sum, dst, payDate);
 END$$
 
 DROP PROCEDURE IF EXISTS sp_addCounterValues;
@@ -262,7 +317,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_totalPayment` ()  BEGIN
 select SUM(IF(DATE_FORMAT(date, '%Y%m')=DATE_FORMAT(CURDATE(), '%Y%m') AND dst='el', sum, 0 )) as el,
 SUM(IF(DATE_FORMAT(date, '%Y%m')=DATE_FORMAT(CURDATE(), '%Y%m') AND dst='wat' , sum, 0)) as wat,
 SUM(IF(DATE_FORMAT(date, '%Y%m')=DATE_FORMAT(CURDATE(), '%Y%m') AND dst='fee', sum, 0 )) as fee,
-SUM(IF(DATE_FORMAT(date, '%Y%m')=DATE_FORMAT(CURDATE(), '%Y%m') AND dst='inc', sum, 0)) as inc
+SUM(IF(DATE_FORMAT(date, '%Y%m')=DATE_FORMAT(CURDATE(), '%Y%m') AND ( dst='inc' OR dst='other'), sum, 0)) as inc
 from payments;
 END$$
 

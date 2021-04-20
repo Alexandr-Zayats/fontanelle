@@ -41,7 +41,7 @@ if (strlen($_SESSION['adid'] == 0 || ($_SESSION['type'] != "cashier" && $_SESSIO
 </head>
 
 <?php
-  $query=mysqli_query($con,"call el_userInfo($uid)");
+  $query=mysqli_query($con,"call userInfo($uid, 'fee')");
   while ($user=mysqli_fetch_assoc($query)) {
 ?>
 
@@ -86,7 +86,25 @@ if (strlen($_SESSION['adid'] == 0 || ($_SESSION['type'] != "cashier" && $_SESSIO
                   </div>
                 </div>
               </div>
-
+              <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-success shadow h-100 py-2">
+                  <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                      <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                          Баланс
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                          <?php echo $user['balance']; $toPay=$user['balance'] ?> грн.
+                        </div>
+                      </div>
+                      <div class="col-auto">
+                        <i class="fas fa-users fa-2x text-gray-300"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>  <!-- row -->
 
             <div class="row">
@@ -98,21 +116,22 @@ if (strlen($_SESSION['adid'] == 0 || ($_SESSION['type'] != "cashier" && $_SESSIO
                         <td>
                           <form action="user-payment.php">
                             <input type="hidden" id="uid" name="uid" value="<?php echo $uid ?>">
-                            <input type="hidden" id="dst" name="dst" value="fee">
+                            <input type="hidden" id="type" name="type" value="fee">
+                            <input type="hidden" id="toPay" name="toPay" value="<?php echo $toPay ?>">
                             <input type="submit" value="Членские" class="btn btn-primary btn-user btn-block"/>
                           </form>
                         </td>
                         <td>
                           <form action="user-payment.php">
                             <input type="hidden" id="uid" name="uid" value="<?php echo $uid ?>">
-                            <input type="hidden" id="dst" name="dst" value="inc">
+                            <input type="hidden" id="type" name="type" value="inc">
                             <input type="submit" value="Вступительные" class="btn btn-primary btn-user btn-block"/>
                           </form>
                         </td>
                         <td>
                           <form action="user-payment.php">
                             <input type="hidden" id="uid" name="uid" value="<?php echo $uid ?>">
-                            <input type="hidden" id="dst" name="dst" value="other">
+                            <input type="hidden" id="type" name="type" value="other">
                             <input type="submit" value="Прочие" class="btn btn-primary btn-user btn-block" />
                           </form>
                         </td>
@@ -141,10 +160,10 @@ if (strlen($_SESSION['adid'] == 0 || ($_SESSION['type'] != "cashier" && $_SESSIO
 { ?>
 
                               <tr>
-                                <td style="text-align:right"><?php echo date("Y", strtotime("$fee[date]")) ?></td>
-                                <td style="text-align:right"><?php echo $fee['toPay'];?></td>
-                                <td style="text-align:right"><?php echo $fee['paid'];?></td>
-                                <td style="text-align:right"><?php printf("%.2f", $fee['balance']);?></td>
+                                <td style="text-align:right"><?php echo $fee['date'] ?></td>
+                                <td style="text-align:right"><?php echo $fee['toPay'] ?></td>
+                                <td style="text-align:right"><?php echo $fee['paid'] ?></td>
+                                <td style="text-align:right"><?php printf("%.2f", $fee['paid']-$fee['toPay']) ?></td>
                               </tr>
  <?php $cnt++; } ?>
 

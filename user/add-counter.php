@@ -21,7 +21,11 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
     $query=mysqli_query($con,"call sp_addCounter('$uid','$number', '$name', '$info', '$type', $dCurrent, $nCurrent)");
     if ($query) {
       echo "<script>alert('Счетчик добавлен');</script>";
-      echo "<script>window.location.href='info.php?uid=$uid'</script>";
+      if ( $type == "el" ) {
+        echo "<script>window.location.href='info.php?uid=$uid'</script>";
+      } else {
+        echo "<script>window.location.href='water.php?uid=$uid'</script>";
+      }
     } else {
       echo "<script>alert('Что-то пошло не так!. Попробуйте еще раз.');</script>";
     }
@@ -62,7 +66,7 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
                         <div class="p-5">
                             <div class="text-center">
                                 <h5 style="color:blue">СТ "РУЧЕЕК"</h5>
-                                <h1 class="h4 text-gray-900 mb-4">Добавление счетчика</h1>
+                                <h1 class="h4 text-gray-900 mb-4">Cчетчик <?php if ($type == "el") { echo "електрический";} else { echo "воды";} ?> </h1>
                             </div>
                             <form class="user" name="payment" method="post">
                               <div class="form-group row">
@@ -102,17 +106,21 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
                               </div>
                               <div class="form-group row">
                                 <div class="col-sm-6 mb-3 mb-sm-0">
-                                  <label for="dCurrent">Первичные показания (день):</label>
+                                  <label for="dCurrent">Первичные показания <?php if ($type == "el") { echo "(день)"; } ?>:</label>
                                   <input type="number" class="form-control form-control-user" id="dCurrent"
                                   value="0" name="dCurrent" required="true">
                                 </div>
                               </div>
+                              <?php if ($type == "el") { echo ""; ?>
                               <div class="form-group row">
                                 <div class="col-sm-6 mb-3 mb-sm-0">
                                   <label for="nCurrent">Первичные показания (ночь):</label>
                                   <input type="number" class="form-control form-control-user" id="nCurrent" value="0" name="nCurrent" required="true">
                                 </div>
                               </div>
+                              <?php } else { ?>
+                                  <input type="hidden" id="nCurrent" value="0" name="nCurrent">
+                              <?php } ?>
                               <button type="submit" name="payment" class="btn btn-primary btn-user btn-block">
                                 Добавить
                               </button>
