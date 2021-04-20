@@ -233,13 +233,14 @@ INSERT INTO `tariffs` (`day`, `night`, `water`) VALUES
 --
 
 DROP TABLE IF EXISTS `payments`;
-CREATE TABLE IF NOT EXISTS `payments` (
+CREATE TABLE `payments` (
   `cashierId` int(3) NOT NULL,
   `userId` int(3) NOT NULL,
-  `date` TIMESTAMP NOT NULL DEFAULT current_timestamp(),
-  `sum` DECIMAL(15,2) NOT NULL,
-  `tId` int(3) NOT NULL DEFAULT 1,
-  `dst` VARCHAR(10) NOT NULL DEFAULT "el"
+  `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `sum` decimal(15,2) NOT NULL,
+  `tId` int(3) NOT NULL DEFAULT '1',
+  `dst` varchar(10) NOT NULL DEFAULT 'el',
+  `dstDate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --

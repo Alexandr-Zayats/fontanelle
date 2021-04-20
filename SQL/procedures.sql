@@ -256,26 +256,25 @@ END$$
 DROP PROCEDURE IF EXISTS sp_addMoney;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_addMoney` (`cashier` INT(3),  `uid` INT(3), `sum` decimal(8,2), `dst` VARCHAR(15), `dat` DATE )
 BEGIN
-DECLARE payDate DATE;
-IF ( dat = '2000-01-01' ) THEN
-  SET payDate = DATE(NOW());
-  
-  IF (dst = 'el') THEN
-    update users set BalanceEl=(BalanceEl + sum) WHERE id=uid;
-  END IF;
-  IF (dst = 'wat') THEN
-    update users set BalanceWat=(BalanceWat + sum) WHERE id=uid;
-  END IF;
-  IF (dst = 'fee') THEN
-    update users set BalanceFee=(BalanceFee + sum) WHERE id=uid;
+  DECLARE payDate DATE;
+  IF ( dat = '2000-01-01' ) THEN
+    SET payDate = DATE(NOW());
+  ELSE
+    SET payDate = DATE(dat);
   END IF;
 
-ELSE
-  SET payDate = DATE(dat);
-END IF;
-
-
-insert into payments (cashierId, userId, sum, dst, dstDate) values (cashier, uid, sum, dst, payDate);
+  IF ( payDate BETWEEN DATE("2020-12-31") AND CURDATE() ) THEN
+    IF (dst = 'el') THEN
+      update users set BalanceEl=(BalanceEl + sum) WHERE id=uid;
+    END IF;
+    IF (dst = 'wat') THEN
+      update users set BalanceWat=(BalanceWat + sum) WHERE id=uid;
+    END IF;
+    IF (dst = 'fee') THEN
+      update users set BalanceFee=(BalanceFee + sum) WHERE id=uid;
+    END IF;
+  END IF;
+  INSERT INTO payments (cashierId, userId, sum, dst, dstDate) VALUES (cashier, uid, sum, dst, payDate);
 END$$
 
 DROP PROCEDURE IF EXISTS sp_addCounterValues;
