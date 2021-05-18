@@ -130,7 +130,7 @@ if(isset($_POST['createuser'])) {
                                 <div class="col-sm-6 mb-3 mb-sm-0">
                                   <label for="counterName">Счетчик (имя):</label>
                                   <input type="text" class="form-control form-control-user" id="counterName"
-                                  value="Электрчество" name="counterName" required="true">
+                                  value="Дом" name="counterName" required="true">
                                 </div>
                               </div>
                               <div class="form-group row">
