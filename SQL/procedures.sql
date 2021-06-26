@@ -257,23 +257,35 @@ DROP PROCEDURE IF EXISTS sp_addMoney;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_addMoney` (`cashier` INT(3),  `uid` INT(3), `sum` decimal(8,2), `dst` VARCHAR(15), `dat` DATE )
 BEGIN
   DECLARE payDate DATE;
+  DECLARE firstPAY DATE;
+  DECLARE YEAR_INT INT(100);
   IF ( dat = '2000-01-01' ) THEN
     SET payDate = DATE(NOW());
   ELSE
     SET payDate = DATE(dat);
   END IF;
 
-  IF ( payDate BETWEEN DATE("2020-12-31") AND CURDATE() ) THEN
-    IF (dst = 'el') THEN
-      update users set BalanceEl=(BalanceEl + sum) WHERE id=uid;
-    END IF;
-    IF (dst = 'wat') THEN
-      update users set BalanceWat=(BalanceWat + sum) WHERE id=uid;
-    END IF;
-    IF (dst = 'fee') THEN
-      update users set BalanceFee=(BalanceFee + sum) WHERE id=uid;
+  IF ( payDate BETWEEN DATE("1970-01-01") AND DATE("2020-12-31") ) THEN
+    SET firstPAY = (SELECT DATE(min(dstDate)) FROM payments WHERE userId=uid);
+    SELECT Size INTO @SIZE FROM users WHERE id=uid;
+    SET YEAR_INT = (SELECT TIMESTAMPDIFF( YEAR, payDate, firstPAY ));
+    IF ( payDate BETWEEN DATE("1970-01-01") AND firstPAY ) THEN
+      IF ( dst = 'fee' ) THEN
+        update users set BalanceFee=(BalanceFee - YEAR_INT*SIZE*100) WHERE id=uid;
+      END IF;
     END IF;
   END IF;
+
+  IF (dst = 'el') THEN
+    update users set BalanceEl=(BalanceEl + sum) WHERE id=uid;
+  END IF;
+  IF (dst = 'wat') THEN
+    update users set BalanceWat=(BalanceWat + sum) WHERE id=uid;
+  END IF;
+  IF (dst = 'fee') THEN
+    update users set BalanceFee=(BalanceFee + sum) WHERE id=uid;
+  END IF;
+
   INSERT INTO payments (cashierId, userId, sum, dst, dstDate) VALUES (cashier, uid, sum, dst, payDate);
 END$$
 
