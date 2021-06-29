@@ -267,6 +267,9 @@ BEGIN
 
   IF ( payDate BETWEEN DATE("1970-01-01") AND DATE("2020-12-31") ) THEN
     SET firstPAY = (SELECT DATE(min(dstDate)) FROM payments WHERE userId=uid);
+    IF firstPAY is NULL THEN
+      SET firstPAY = DATE(NOW());
+    END IF;
     SELECT Size INTO @SIZE FROM users WHERE id=uid;
     SET YEAR_INT = (SELECT TIMESTAMPDIFF( YEAR, payDate, firstPAY ));
     IF ( payDate BETWEEN DATE("1970-01-01") AND firstPAY ) THEN
