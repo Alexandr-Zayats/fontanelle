@@ -107,8 +107,8 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
                               <div class="form-group row">
                                 <div class="col-sm-6 mb-3 mb-sm-0">
                                   <label for="dCurrent">Первичные показания <?php if ($type == "el") { echo "(день)"; } ?>:</label>
-                                  <input type="number" class="form-control form-control-user" id="dCurrent"
-                                  value="0" name="dCurrent" required="true">
+                                  <input type="number" min="0.00" step="0.01" class="form-control form-control-user" id="dCurrent"
+                                  value="0.00" name="dCurrent" required="true">
                                 </div>
                               </div>
                               <?php if ($type == "el") { echo ""; ?>

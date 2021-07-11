@@ -108,7 +108,7 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
                                 <div class="form-group row">
                                   <div class="col-sm-6 mb-3 mb-sm-0">
                                     <label for="dCurrent"><?php if ( $type == "el" ) { echo "День:"; } else { echo "Текущие показания:"; } ?></label>
-                                    <input type="number" class="form-control form-control-user" id="dCurrent"
+                                    <input type="number" step="0.01" class="form-control form-control-user" id="dCurrent"
                                       value="<?php
                                         if(is_numeric($latest['dayLast']) && isset($latest['dayLast'])) {
                                           echo $latest['dayLast'];

@@ -103,7 +103,7 @@ while ($result=mysqli_fetch_array($query)) {
                                   <tr>
                                     <th>Размер участка (соток)</th>
                                     <td>
-                                      <input type="number" min="0.50" max="100.00" step="0.01" class="form-control form-control-user" id="size" value="<?php echo $result['Size'];?>" name="size" required="true">
+                                      <input type="number" min="0.30" max="100.00" step="0.01" class="form-control form-control-user" id="size" value="<?php echo $result['Size'];?>" name="size" required="true">
                                     </td>
                                   </tr>
                                   <tr>
