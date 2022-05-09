@@ -48,7 +48,7 @@ BEGIN
   DECLARE dNow DATE;
   DECLARE dEnd DATE;
   SET dNow = DATE(NOW());
-  SET dEnd = DATE_SUB(NOW(), INTERVAL 3 MONTH);
+  SET dEnd = DATE_SUB(NOW(), INTERVAL 36 MONTH);
   WHILE DATE(dNow) >= DATE(dEnd) DO
     SELECT
       SUM(p.sum) as paid,
@@ -92,7 +92,7 @@ BEGIN
   DECLARE dNow DATE;
   DECLARE dEnd DATE;
   SET dNow = DATE(NOW());
-  SET dEnd = DATE_SUB(NOW(), INTERVAL 3 MONTH);
+  SET dEnd = DATE_SUB(NOW(), INTERVAL 36 MONTH);
   WHILE DATE(dNow) >= DATE(dEnd) DO
     SELECT
       SUM(p.sum) as paid,
