@@ -2,6 +2,7 @@
 session_start();
 //error_reporting(0);
 include('../includes/config.php');
+$cashier=$_SESSION['adid'];
 if (strlen($_SESSION['adid'] == 0 || ($_SESSION['type'] != "cashier" && $_SESSION['type'] != "regularUser")) ) {
 //if (false) {
   header('location:logout.php');
@@ -119,8 +120,12 @@ if (strlen($_SESSION['adid'] == 0 || ($_SESSION['type'] != "cashier" && $_SESSIO
                     <table width="100%">
                       <tr>
                         <td><h6 class="m-0 font-weight-bold text-primary">Абонентская книжка. </h6></td>
-                        <td style="text-align:right">
-                          <a href="add-counter.php?uid=<?php echo $uid;?>&type=el" class="btn btn-primary btn-user btn-block">Cчетчики (добавить):</a>
+			<td style="text-align:right">
+			<?php if ($cashier == 1) { ?>
+			  <a href="add-counter.php?uid=<?php echo $uid;?>&type=el" class="btn btn-primary btn-user btn-block">Cчетчики (добавить):</a>
+			<?php } else { ?>
+			  <a class="btn btn-primary btn-user btn-block">Cчетчики:</a>
+			<?php }?>
                         </td>
                         <td style="text-align:left">
                           <!--<h6 class="m-0 font-weight-bold text-primary"> -->

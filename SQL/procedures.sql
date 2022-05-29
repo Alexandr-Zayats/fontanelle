@@ -132,13 +132,13 @@ END$$
 DROP PROCEDURE IF EXISTS userInfo;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `userInfo` (`uid` INT(5), `type` VARCHAR(10))  BEGIN
 IF (type = 'el') THEN
-  SELECT u.id as uId, u.Name as uName, u.TariffId as tariff, u.BalanceEl as balance, group_concat(c.Id separator ';') as cId FROM users u LEFT JOIN counters c ON c.userId=u.id WHERE c.type=type AND u.id=uid;
+  SELECT u.id as uId, u.Name as uName, u.TariffId as tariff, u.BalanceEl as balance, group_concat(c.Id ORDER BY c.verDate DESC separator ';') as cId FROM users u LEFT JOIN counters c ON c.userId=u.id WHERE c.type=type AND u.id=uid;
 END IF;
 IF (type = 'wat') THEN
-  SELECT u.id as uId, u.Name as uName, u.TariffId as tariff, u.BalanceWat as balance, group_concat(c.Id separator ';') as cId FROM users u LEFT JOIN counters c ON c.userId=u.id WHERE c.type=type AND u.id=uid;
+  SELECT u.id as uId, u.Name as uName, u.TariffId as tariff, u.BalanceWat as balance, group_concat(c.Id ORDER BY c.verDate DESC separator ';') as cId FROM users u LEFT JOIN counters c ON c.userId=u.id WHERE c.type=type AND u.id=uid;
 END IF;
 IF (type = 'fee') THEN
-  SELECT u.id as uId, u.Name as uName, u.TariffId as tariff, u.BalanceFee as balance, group_concat(c.Id separator ';') as cId FROM users u LEFT JOIN counters c ON c.userId=u.id WHERE c.type=type AND u.id=uid;
+  SELECT u.id as uId, u.Name as uName, u.TariffId as tariff, u.BalanceFee as balance, group_concat(c.Id ORDER BY c.verDate DESC separator ';') as cId FROM users u LEFT JOIN counters c ON c.userId=u.id WHERE c.type=type AND u.id=uid;
 END IF;
 
 END$$

@@ -123,7 +123,7 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
                                 <div class="form-group row">
                                   <div class="col-sm-6 mb-3 mb-sm-0">
                                     <label for="nCurrent">Ночь:</label>
-                                    <input type="number" class="form-control form-control-user" id="nCurrent"
+                                    <input type="number" step="0.01" class="form-control form-control-user" id="nCurrent"
                                       value="<?php
                                         if(is_numeric($latest['nightLast'])) {
                                           echo $latest['nightLast'];
