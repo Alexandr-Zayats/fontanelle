@@ -254,7 +254,7 @@ GROUP BY u.id ORDER BY u.id;
 END$$
 
 DROP PROCEDURE IF EXISTS sp_addMoney;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_addMoney` (`cashier` INT(3),  `uid` INT(3), `sum` decimal(8,2), `dst` VARCHAR(15), `dat` DATE )
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_addMoney` (`cashier` INT(3),  `uid` INT(3), `sum` decimal(8,2), `dst` VARCHAR(15), `dat` DATE, `bank` BOOLEAN )
 BEGIN
   DECLARE payDate DATE;
   DECLARE firstPAY DATE;
@@ -289,7 +289,7 @@ BEGIN
     update users set BalanceFee=(BalanceFee + sum) WHERE id=uid;
   END IF;
 
-  INSERT INTO payments (cashierId, userId, sum, dst, dstDate) VALUES (cashier, uid, sum, dst, payDate);
+  INSERT INTO payments (cashierId, userId, type, sum, dst, dstDate) VALUES (cashier, uid, bank, sum, dst, payDate);
 END$$
 
 DROP PROCEDURE IF EXISTS sp_addCounterValues;
@@ -335,7 +335,9 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_totalPayment` ()  BEGIN
 select SUM(IF(DATE_FORMAT(date, '%Y%m')=DATE_FORMAT(CURDATE(), '%Y%m') AND dst='el', sum, 0 )) as el,
 SUM(IF(DATE_FORMAT(date, '%Y%m')=DATE_FORMAT(CURDATE(), '%Y%m') AND dst='wat' , sum, 0)) as wat,
 SUM(IF(DATE_FORMAT(date, '%Y%m')=DATE_FORMAT(CURDATE(), '%Y%m') AND dst='fee', sum, 0 )) as fee,
-SUM(IF(DATE_FORMAT(date, '%Y%m')=DATE_FORMAT(CURDATE(), '%Y%m') AND ( dst='inc' OR dst='other'), sum, 0)) as inc
+SUM(IF(DATE_FORMAT(date, '%Y%m')=DATE_FORMAT(CURDATE(), '%Y%m') AND ( dst='inc' OR dst='other' ), sum, 0)) as inc,
+SUM(IF(DATE_FORMAT(date, '%Y%m')=DATE_FORMAT(CURDATE(), '%Y%m') AND type=true, sum, 0 )) as bank,
+SUM(IF(DATE_FORMAT(date, '%Y%m')=DATE_FORMAT(CURDATE(), '%Y%m') AND type=false, sum, 0 )) as cash
 from payments;
 END$$
 

@@ -59,9 +59,25 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
   while ($result=mysqli_fetch_array($query)) {
 ?>
                     <!-- Content Row -->
-                    <div class="row">
+		    <div class="row">
+			<div class="col-xl-2 col-md-4 mb-4">
+                            <div class="card border-left-primary shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+					    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+						Касса: <p style="color:red; display:inline; font-size:14px"> <?php echo $result['cash'];?> </p>
+                                            </div>
+					    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+						Банк: <p style="color:red; display:inline; font-size:14px"><?php echo $result['bank'];?> </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <!-- Earnings (Monthly) Card Example -->
-                        <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="col-xl-2 col-md-6 mb-4">
                             <div class="card border-left-primary shadow h-100 py-2">
                                 <div class="card-body">
                                     <div class="row no-gutters align-items-center">
@@ -82,7 +98,7 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
                         </div>
 
                         <!-- Earnings (Monthly) Card Example -->
-                        <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="col-xl-2 col-md-6 mb-4">
                             <div class="card border-left-success shadow h-100 py-2">
                                 <div class="card-body">
                                     <div class="row no-gutters align-items-center">
@@ -103,7 +119,7 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
                         </div>
 
                         <!-- Earnings (Monthly) Card Example -->
-                        <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="col-xl-2 col-md-6 mb-4">
                             <div class="card border-left-info shadow h-100 py-2">
                                 <div class="card-body">
                                     <div class="row no-gutters align-items-center">
@@ -152,7 +168,6 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
                     <!-- Content Row -->
 
                     <div class="row">
-
                         <!-- Area Chart -->
                         <div class="col-xl-12 col-lg-7">
                           <div class="card shadow mb-4">

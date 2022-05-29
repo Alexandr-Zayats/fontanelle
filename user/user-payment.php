@@ -27,11 +27,16 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
     } else {
       $year = "2000-01-01";
     }
+    if (isset($_POST['bank'])) {
+      $bank = true;
+    } else {
+      $bank = false;
+    }
 
     mysqli_close($con);
     $con = mysqli_connect(DB_SERVER,DB_USER,DB_PASS,DB_NAME);
-    //echo "<script>alert('$cashier $uid $sum $fee');</script>";
-    $query=mysqli_query($con,"call sp_addMoney($cashier, $uid, '$sum', '$fee', '$year')");
+    // echo "<script>alert('$cashier $uid $sum $fee');</script>";
+    $query=mysqli_query($con,"call sp_addMoney($cashier, $uid, '$sum', '$fee', '$year', $bank)");
 
     if ($query) {
       echo "<script>alert('Счет успешно пополнен');</script>";
@@ -119,9 +124,13 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
                                 <?php } ?>
                                 <div class="form-group row">
                                     <div class="col-sm-6 mb-3 mb-sm-0">
-                                        <input type="number" min="0.00" max="50000.00" step="0.01"
+                                        <input type="number" min="0.10" max="50000.00" step="0.01"
                                           class="form-control form-control-user" id="sum" name="sum" required="true"
-                                          value="<?php echo $toPay ?>">
+					  value="<?php echo $toPay ?>">
+				    </div>
+				    <div class="col-sm-6 mb-3 mb-sm-0">
+					<input type="checkbox" id="bank" name="bank">
+      					  <label for="bank">  На счет</label>
                                     </div>
                                 </div>
                                 <input type="hidden" id="type" name="type" value="<?php echo $type ?>">
