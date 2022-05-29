@@ -376,7 +376,8 @@ CREATE TABLE IF NOT EXISTS `countValues` (
   `dCurrent` decimal(8,2) DEFAULT NULL,
   `nPrevius` decimal(8,2) DEFAULT NULL,
   `nCurrent` decimal(8,2) DEFAULT NULL,
-  `date` TIMESTAMP NOT NULL DEFAULT current_timestamp()
+  `date` TIMESTAMP NOT NULL DEFAULT current_timestamp(),
+  `type` varchar(6) NOT NULL DEFAULT "el"
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --

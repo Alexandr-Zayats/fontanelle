@@ -113,15 +113,15 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
                       </tr>
                        <tr>
                         <td style="text-align:center">Вода (кубы)</td>
-                        <td style="text-align:right"><?php printf("%.2f", $result['wat']) ?></td>
-                        <td style="text-align:right"><?php printf("%.2f", $result['tWat']) ?></td>
-                        <td style="text-align:right"><?php printf("%.2f", $result['wat']-$result['tWat']) ?></td>
+                        <td style="text-align:right"><?php printf("%.2f", $result['kInWater']) ?></td>
+                        <td style="text-align:right"><?php printf("%.2f", $result['kOutWater']) ?></td>
+                        <td style="text-align:right"><?php printf("%.2f", $result['kInWater']-$result['kOutWater']) ?></td>
                       </tr>
                        <tr>
                         <td style="text-align:center">Вода (грн)</td>
-                        <td style="text-align:right"><?php printf("%.2f", $result['pWat']) ?></td>
-                        <td style="text-align:right"><?php printf("%.2f", $result['sWat']) ?></td>
-                        <td style="text-align:right"><?php printf("%.2f", $result['pWat']-$result['sWat']) ?></td>
+                        <td style="text-align:right"><?php printf("%.2f", $result['pWater']) ?></td>
+                        <td style="text-align:right"><?php printf("%.2f", $result['sWater']) ?></td>
+                        <td style="text-align:right"><?php printf("%.2f", $result['pWater']-$result['sWater']) ?></td>
                       </tr>
                       <tr>
                         <td style="text-align:center">Членские взносы (грн)</td>

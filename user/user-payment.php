@@ -28,14 +28,14 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
       $year = "2000-01-01";
     }
     if (isset($_POST['bank'])) {
-      $bank = true;
+      $bank = "TRUE";
     } else {
-      $bank = false;
+      $bank = "FALSE";
     }
 
     mysqli_close($con);
     $con = mysqli_connect(DB_SERVER,DB_USER,DB_PASS,DB_NAME);
-    // echo "<script>alert('$cashier $uid $sum $fee');</script>";
+    echo "<script>alert('$cashier $uid $sum $fee $bank');</script>";
     $query=mysqli_query($con,"call sp_addMoney($cashier, $uid, '$sum', '$fee', '$year', $bank)");
 
     if ($query) {

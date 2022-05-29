@@ -164,6 +164,8 @@ SELECT
   count.tnK,
   count.toPay,
   count.toSpend,
+  count.kInWater,
+  count.kOutWater,
   pay.pEl,
   pay.pWater,
   pay.pFee,
@@ -172,11 +174,13 @@ SELECT
 FROM
   (
     SELECT
-      SUM(IF(v.cId>1, (v.dCurrent - v.dPrevius), 0)) as dK,
-      SUM(IF(v.cId>1, (v.nCurrent - v.nPrevius), 0)) as nK,
+      SUM(IF(v.cId>5 AND v.type="el", (v.dCurrent - v.dPrevius), 0)) as dK,
+      SUM(IF(v.cId>5 AND v.type="el", (v.nCurrent - v.nPrevius), 0)) as nK,
       SUM(IF(v.cId=1, (v.dCurrent - v.dPrevius), 0))*40.64 as tdK,
       SUM(IF(v.cId=1, (v.nCurrent - v.nPrevius), 0))*40.64 as tnK,
-      SUM(IF(v.cId>1, (v.dCurrent - v.dPrevius), 0))*t.day+SUM(IF(v.cId>1, (v.nCurrent - v.nPrevius), 0))*t.night as toPay,
+      SUM(IF(v.cId=2, (v.dCurrent - v.dPrevius), 0)) as kOutWater,
+      SUM(IF(v.cId>5 AND v.type="wat", (v.dCurrent - v.dPrevius), 0)) as kInWater,
+      SUM(IF(v.cId>5 AND v.type="el", (v.dCurrent - v.dPrevius), 0))*t.day+SUM(IF(v.cId>1, (v.nCurrent - v.nPrevius), 0))*t.night as toPay,
       SUM(IF(v.cId=1, (v.dCurrent - v.dPrevius), 0))*68.28+SUM(IF(v.cId=1, (v.nCurrent - v.nPrevius), 0))*34.14 as toSpend
     FROM countValues v LEFT JOIN tariffs t ON (t.id=v.tariffId)
     WHERE
@@ -301,11 +305,13 @@ IF ( (SELECT type FROM counters WHERE id=cuid) = "el" ) THEN
   IF ( (select count(nPrevius) FROM countValues WHERE cId=cuid AND nPrevius is NOT NULL) > 0 ) THEN
     update users set BalanceEl=(BalanceEl - (SELECT night FROM tariffs WHERE id=users.tariffId) * ( nightC - nightP )) WHERE id=uid;
   END IF;
-  insert into countValues (cId, tariffId, dPrevius, dCurrent, nPrevius, nCurrent) values (cuid, (SELECT TariffId FROM users WHERE id=uid), dayP, dayC, nightP, nightC);
+  insert into countValues (cId, tariffId, dPrevius, dCurrent, nPrevius, nCurrent, type)
+	values (cuid, (SELECT TariffId FROM users WHERE id=uid), dayP, dayC, nightP, nightC, (SELECT type FROM counters WHERE id=cuid));
 ELSE
   IF ( (select count(dPrevius) FROM countValues WHERE cId=cuid AND dPrevius is NOT NULL) > 0 ) THEN
     update users set BalanceWat=(BalanceWat - (SELECT water FROM tariffs WHERE id=users.tariffId) * ( dayC - dayP )) WHERE id=uid;
-    insert into countValues (cId, tariffId, dPrevius, dCurrent, nPrevius, nCurrent) values (cuid, (SELECT TariffId FROM users WHERE id=uid), dayP, dayC, nightP, nightC);
+    insert into countValues (cId, tariffId, dPrevius, dCurrent, nPrevius, nCurrent, type)
+	values (cuid, (SELECT TariffId FROM users WHERE id=uid), dayP, dayC, nightP, nightC, (SELECT type FROM counters WHERE id=cuid));
   END IF;
 END IF;
 END$$
@@ -440,14 +446,26 @@ END$$
 DROP PROCEDURE IF EXISTS sp_addCounter;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_addCounter` (`uid` int(3), serial decimal(15), `name` VARCHAR(120), `info` VARCHAR(250), `type` VARCHAR(6), `dCurrent` DECIMAL(8,2), `nCurrent` DECIMAL(8,2)) BEGIN
 insert into counters (userId, number, name, info, type) values (uid,serial,name,info,type);
-insert into countValues (cId, tariffId, dPrevius, dCurrent, nPrevius, nCurrent) values ((SELECT id FROM counters WHERE userId=uid ORDER BY id DESC LIMIT 0,1), (SELECT TariffId FROM users WHERE id=uid LIMIT 0,1), dCurrent, dCurrent, nCurrent, nCurrent);
+insert into countValues (cId, tariffId, dPrevius, dCurrent, nPrevius, nCurrent, type)
+  values (
+    (SELECT id FROM counters WHERE userId=uid ORDER BY id DESC LIMIT 0,1),
+    (SELECT TariffId FROM users WHERE id=uid LIMIT 0,1),
+    dCurrent, dCurrent, nCurrent, nCurrent,
+    (SELECT type FROM counters WHERE userId=uid ORDER BY id DESC LIMIT 0,1)
+  );
 END$$
 
 DROP PROCEDURE IF EXISTS sp_registration;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_registration` (`uid` int(3), `name` VARCHAR(120), `street` int(3), `phone` VARCHAR(120), `size` VARCHAR(20), `counterNum` DECIMAL(20), `counterName` VARCHAR(120), `counterInfo` VARCHAR(250), `dCurrent` DECIMAL(8,2), `nCurrent` DECIMAL(8,2), `email` VARCHAR(200)) BEGIN
 insert into users (id,Name,Size,StreetId,PhoneNumber,EmailId,BalanceFee) values (uid,name,size,street,phone,email,0-Size*100);
 insert into counters (userId, number, name, info) values (uid,counterNum,counterName,counterInfo);
-insert into countValues (cId, tariffId, dPrevius, dCurrent, nPrevius, nCurrent) values ((SELECT id FROM counters WHERE userId=uid LIMIT 0,1), (SELECT TariffId FROM users WHERE id=uid LIMIT 0,1), dCurrent, dCurrent, nCurrent, nCurrent);
+insert into countValues (cId, tariffId, dPrevius, dCurrent, nPrevius, nCurrent, type)
+  values (
+    (SELECT id FROM counters WHERE userId=uid LIMIT 0,1),
+    (SELECT TariffId FROM users WHERE id=uid LIMIT 0,1),
+    dCurrent, dCurrent, nCurrent, nCurrent,
+    (SELECT type FROM counters WHERE userId=uid LIMIT 0,1)
+  );
 END$$
 
 DROP PROCEDURE IF EXISTS sp_signup;
