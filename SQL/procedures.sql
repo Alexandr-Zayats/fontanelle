@@ -176,12 +176,12 @@ FROM
     SELECT
       SUM(IF(v.cId>5 AND v.type="el", (v.dCurrent - v.dPrevius), 0)) as dK,
       SUM(IF(v.cId>5 AND v.type="el", (v.nCurrent - v.nPrevius), 0)) as nK,
-      SUM(IF(v.cId=1, (v.dCurrent - v.dPrevius), 0))*40.64 as tdK,
-      SUM(IF(v.cId=1, (v.nCurrent - v.nPrevius), 0))*40.64 as tnK,
+      SUM(IF(v.cId=1, (v.dCurrent - v.dPrevius), 0))*41.876 as tdK,
+      SUM(IF(v.cId=1, (v.nCurrent - v.nPrevius), 0))*41.876 as tnK,
       SUM(IF(v.cId=2, (v.dCurrent - v.dPrevius), 0)) as kOutWater,
       SUM(IF(v.cId>5 AND v.type="wat", (v.dCurrent - v.dPrevius), 0)) as kInWater,
       SUM(IF(v.cId>5 AND v.type="el", (v.dCurrent - v.dPrevius), 0))*t.day+SUM(IF(v.cId>1, (v.nCurrent - v.nPrevius), 0))*t.night as toPay,
-      SUM(IF(v.cId=1, (v.dCurrent - v.dPrevius), 0))*68.28+SUM(IF(v.cId=1, (v.nCurrent - v.nPrevius), 0))*34.14 as toSpend
+      SUM(IF(v.cId=1, (v.dCurrent - v.dPrevius), 0))*70.35+SUM(IF(v.cId=1, (v.nCurrent - v.nPrevius), 0))*35.1758 as toSpend
     FROM countValues v LEFT JOIN tariffs t ON (t.id=v.tariffId)
     WHERE
       DATE_FORMAT(v.date, '%Y%m%d') >= DATE_FORMAT(start, '%Y%m%d') AND

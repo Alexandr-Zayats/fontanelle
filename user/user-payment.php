@@ -35,7 +35,7 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
 
     mysqli_close($con);
     $con = mysqli_connect(DB_SERVER,DB_USER,DB_PASS,DB_NAME);
-    echo "<script>alert('$cashier $uid $sum $fee $bank');</script>";
+    // echo "<script>alert('$cashier $uid $sum $fee $bank');</script>";
     $query=mysqli_query($con,"call sp_addMoney($cashier, $uid, '$sum', '$fee', '$year', $bank)");
 
     if ($query) {
