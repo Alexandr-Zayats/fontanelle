@@ -144,8 +144,8 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
                     </tbody>
                     <tfoot>
                       <td style="text-align:right"><b>Итого (грн):</b></td>
-                      <td style="text-align:right"><b><?php $income=($result['pEl'] + $result['pFee'] + $result['pIncome'] + $result['pOther'] +  $result['pWat']); printf("%.2f", $income) ?></b></td>
-                      <td style="text-align:right"><b><?php $outcome=($result['toSpend']+$result['tpOther']+$result['sWat']); printf("%.2f", $outcome) ?></b></td>
+                      <td style="text-align:right"><b><?php $income=($result['pEl'] + $result['pFee'] + $result['pIncome'] + $result['pOther'] +  $result['pWater']); printf("%.2f", $income) ?></b></td>
+                      <td style="text-align:right"><b><?php $outcome=($result['toSpend']+$result['tpOther']+$result['sWater']); printf("%.2f", $outcome) ?></b></td>
                       <td style="text-align:right"><b><?php printf("%.2f", $income-$outcome) ?></b></td>
                       </tr>
                     </tfoot>

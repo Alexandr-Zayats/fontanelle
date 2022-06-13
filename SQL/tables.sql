@@ -70,6 +70,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `BalanceWat` decimal(15,2) NOT NULL DEFAULT '0.00',
   `RegDate` timestamp NULL DEFAULT current_timestamp(),
   `IsActive` int(1) DEFAULT 1,
+  `Info` varchar(250),
   `LastUpdationDate` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

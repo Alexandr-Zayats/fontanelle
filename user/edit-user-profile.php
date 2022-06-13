@@ -12,10 +12,11 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
     $email=$_POST['email'];
     $phone=$_POST['phone'];
     $size=$_POST['size'];
+    $info=$_POST['info'];
 
     //$updatetTime = date( 'd-m-Y h:i:s A', time () );
     //echo "<script>alert('$uid $name $email $phone $size');</script>";
-    $query=mysqli_query($con,"call sp_userupdateprofile('$uid','$name','$email','$phone','$size')"); 
+    $query=mysqli_query($con,"call sp_userupdateprofile('$uid','$name','$email','$phone','$size','$info')"); 
     echo "<script>alert('Профайл участка успешно обновлен');</script>";
     echo "<script>window.location.href='info.php?uid=$uid'</script>";
   }
@@ -122,6 +123,12 @@ while ($result=mysqli_fetch_array($query)) {
                                     <th>Email</th>
                                     <td>
                                       <input type="email" class="form-control form-control-user" id="email" value="<?php echo $result['EmailId'];?>" name="email" required="false">
+                                    </td>
+				  </tr>
+				  <tr>
+                                    <th>Дополнительная Информация</th>
+                                    <td>
+                                      <input type="text" class="form-control form-control-user" id="info" value="<?php echo $result['Info'];?>" name="info" required="false">
                                     </td>
                                   </tr>
                                   <tr>
