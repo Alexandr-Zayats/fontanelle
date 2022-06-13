@@ -96,7 +96,7 @@ while ($result=mysqli_fetch_array($query)) {
                                 <table class="table table-bordered dataTable" id="dataTable" width="100%" cellspacing="0"
                                   role="grid" aria-describedby="dataTable_info" style="width: 100%;">              
                                   <tr>
-                                    <th>Участок</th>
+                                    <th style="width:20%">Участок</th>
                                     <td>
                                       <input type="number" class="form-control form-control-user" id="id" value="<?php echo $result['id'];?>" name="id" readonly="true">
                                     </td>
