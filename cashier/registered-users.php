@@ -71,8 +71,9 @@ if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
                                     <tr>
                                       <th style="width: 3%; text-align:center">#</th>
                                       <th style="width: 3%; text-align:center">№</th>
-                                      <th style="width: 54%; text-align:center">ФИО</th>
-                                      <th style="width: 32%; text-align:center">Телефон</th>
+                                      <th style="width: 30%; text-align:center">ФИО</th>
+				      <th style="width: 15%; text-align:center">Телефон</th>
+				      <th style="width: 39%; text-align:center">Примечание</th>
                                       <th style="width: 8%; text-align:center">Баланс</th>
                                     </tr>
                                   </thead>
@@ -81,7 +82,8 @@ if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
                                       <th style="text-align:center">#</th>
                                       <th style="text-align:center">№</th>
                                       <th style="text-align:center">ФИО</th>
-                                      <th style="text-align:center">Телефон</th>
+				      <th style="text-align:center">Телефон</th>
+				      <th style="width: 32%; text-align:center">Примечание</th>
                                       <th style="text-align:center">Баланс</th>
                                     </tr>
                                   </tfoot>
@@ -101,10 +103,20 @@ if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
                                         <?php echo $result['Name'];?></td>
                                       <td style="text-align:right">
                                         <a href="../user/info.php?uid=<?php echo $result['id'];?>"</a>
-                                        <?php echo $result['PhoneNumber'];?></td>
+					<?php
+					  if( preg_match( '/.*(\d{2})(\d{3})(\d{2})(\d{2})$/', $result['PhoneNumber'],  $matches ) )
+					  {
+    					    echo "+380 ($matches[1]) $matches[2]-$matches[3]-$matches[4]";
+					  } else {
+					    echo $result['PhoneNumber'];
+					  }  
+					?></td>
+				      <td style="text-align:right">
+                                        <a href="../user/info.php?uid=<?php echo $result['id'];?>"</a>
+                                        <?php echo $result['Info'];?></td>
                                       <td style="text-align:right">
                                         <a href="../user/info.php?uid=<?php echo $result['id'];?>"</a>
-                                        <?php echo $result['BalanceEl']+$result['BalanceWat']+$result['BalanceFee'];?></td>
+                                        <?php printf("%.2f", $result['BalanceEl']+$result['BalanceWat']+$result['BalanceFee']);?></td>
                                     </td>
                                     </tr>
 <?php $cnt++; } ?>

@@ -514,8 +514,8 @@ select id from users where Name=name and EmailId=useremail;
 END$$
 
 DROP PROCEDURE IF EXISTS sp_userupdateprofile;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_userupdateprofile` (`uid` INT(5), `name` VARCHAR(120), `email` VARCHAR(120), `phone` VARCHAR(30), size DECIMAL(15,2))  BEGIN
-update users set Name=name, LastUpdationDate=current_timestamp(), EmailId=email, PhoneNumber=phone, Size=size WHERE id=uid;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_userupdateprofile` (`uid` INT(5), `name` VARCHAR(120), `email` VARCHAR(120), `phone` VARCHAR(30), size DECIMAL(15,2), `info` VARCHAR(250))  BEGIN
+update users set Name=name, LastUpdationDate=current_timestamp(), EmailId=email, PhoneNumber=phone, Size=size, Info=info WHERE id=uid;
 END$$
 
 DELIMITER ;
