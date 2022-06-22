@@ -436,7 +436,7 @@ END$$
 
 DROP PROCEDURE IF EXISTS sp_recent30payments;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_recent30payments` ()  BEGIN
-select p.sum,
+select p.sum, p.type,
 u.id as id,
 u.name as name,
 p.date

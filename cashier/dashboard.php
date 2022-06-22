@@ -201,8 +201,12 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
                                           <td>
                                             <a href="../user/info.php?uid=<?php echo $result['id'];?>"</a><?php echo $result['id'] ?>
                                           </td>
-                                          <td><?php echo $result['name'] ?></td>
-                                          <td><?php echo $result['sum'] ?></td>
+					  <td><?php echo $result['name'] ?></td>
+					  <?php if($result['type']): ?>
+					  <td style="text-align:right; background-color:powderblue;"><?php echo $result['sum'] ?></td>
+					  <?php else: ?>
+					  <td style="text-align:right"><?php echo $result['sum'] ?></td>
+					  <?php endif ?>
                                           <td><?php echo $result['date'] ?></td>
                                         </tr>
  <?php $cnt++; } ?>
