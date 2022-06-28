@@ -174,30 +174,19 @@ SELECT
 FROM
   (
     SELECT
-	SUM(x.dK) as dK,
-	SUM(x.nK) as nK,
-	SUM(x.tdK) as tdK,
-	SUM(x.tnK) as tnK,
-	SUM(x.kOutWater) as kOutWater,
-	SUM(x.kInWater) as kInWater,
-	SUM(x.toPay) as toPay,
-	SUM(x.toSpend) as toSpend
-    FROM (
-      SELECT
-        SUM(IF(v.cId>5 AND v.type="el", (v.dCurrent - v.dPrevius), 0)) as dK,
-        SUM(IF(v.cId>5 AND v.type="el", (v.nCurrent - v.nPrevius), 0)) as nK,
-        SUM(IF(v.cId=1, (v.dCurrent - v.dPrevius), 0))*40 as tdK,
-        SUM(IF(v.cId=1, (v.nCurrent - v.nPrevius), 0))*40 as tnK,
-        SUM(IF(v.cId=2, (v.dCurrent - v.dPrevius), 0)) as kOutWater,
-        SUM(IF(v.cId>5 AND v.type="wat", (v.dCurrent - v.dPrevius), 0)) as kInWater,
-        SUM(IF(v.cId>5 AND v.type="el", (v.dCurrent - v.dPrevius), 0))*t.day+SUM(IF(v.cId>1, (v.nCurrent - v.nPrevius), 0))*t.night as toPay,
-        SUM(IF(v.cId=1, (v.dCurrent - v.dPrevius), 0))*t.day+SUM(IF(v.cId=1, (v.nCurrent - v.nPrevius), 0))*t.night as toSpend
-      FROM countValues v LEFT JOIN tariffs t ON (t.id=v.tariffId)
-      WHERE
-        DATE_FORMAT(v.date, '%Y%m%d') >= DATE_FORMAT(start, '%Y%m%d') AND
-        DATE_FORMAT(v.date, '%Y%m%d') <= DATE_FORMAT(stop, '%Y%m%d')
-      GROUP BY t.day, t.night ) x
-  ) as count,
+      SUM(IF(v.cId>5 AND v.type="el", (v.dCurrent - v.dPrevius), 0)) as dK,
+      SUM(IF(v.cId>5 AND v.type="el", (v.nCurrent - v.nPrevius), 0)) as nK,
+      SUM(IF(v.cId=1, (v.dCurrent - v.dPrevius), 0))*40 as tdK,
+      SUM(IF(v.cId=1, (v.nCurrent - v.nPrevius), 0))*40 as tnK,
+      SUM(IF(v.cId=2, (v.dCurrent - v.dPrevius), 0)) as kOutWater,
+      SUM(IF(v.cId>5 AND v.type="wat", (v.dCurrent - v.dPrevius), 0)) as kInWater,
+      SUM(IF(v.cId>5 AND v.type="el", (v.dCurrent - v.dPrevius), 0))*t.day+SUM(IF(v.cId>1, (v.nCurrent - v.nPrevius), 0))*t.night as toPay,
+      SUM(IF(v.cId=1, (v.dCurrent - v.dPrevius), 0))*t.day+SUM(IF(v.cId=1, (v.nCurrent - v.nPrevius), 0))*t.night as toSpend
+    FROM countValues v LEFT JOIN tariffs t ON (t.id=v.tariffId)
+    WHERE
+      DATE_FORMAT(v.date, '%Y%m%d') >= DATE_FORMAT(start, '%Y%m%d') AND
+      DATE_FORMAT(v.date, '%Y%m%d') <= DATE_FORMAT(stop, '%Y%m%d')
+    GROUP BY t.day, t.night ) as count,
   (
     SELECT
       SUM(IF(dst="el", sum, 0)) as pEl,

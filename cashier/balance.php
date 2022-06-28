@@ -88,7 +88,7 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
                     </thead>
                     <tbody>
 <?php
-  $stop=date("Y-m-d");
+  // $stop=date("Y-m-d");
   $query=mysqli_query($con,"call sp_balance('$start', '$stop')");
   $income=0; $outcome=0;
   while ($result=mysqli_fetch_array($query)) {
