@@ -132,15 +132,38 @@ END$$
 DROP PROCEDURE IF EXISTS userInfo;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `userInfo` (`uid` INT(5), `type` VARCHAR(10))  BEGIN
 IF (type = 'el') THEN
-  SELECT u.id as uId, u.Name as uName, u.TariffId as tariff, u.BalanceEl as balance, group_concat(c.Id ORDER BY c.verDate DESC separator ';') as cId FROM users u LEFT JOIN counters c ON c.userId=u.id WHERE c.type=type AND u.id=uid;
+  SELECT u.id as uId,
+    concat(r.surName, " ", r.name, " ", r.middlName ) as uName,
+    u.TariffId as tariff,
+    u.BalanceEl as balance,
+    group_concat(c.Id ORDER BY c.verDate DESC separator ';') as cId
+ FROM users u
+ LEFT JOIN counters c ON c.userId=u.id
+ LEFT JOIN residents r ON u.residentId=r.id
+ WHERE c.type=type AND u.id=uid;
 END IF;
 IF (type = 'wat') THEN
-  SELECT u.id as uId, u.Name as uName, u.TariffId as tariff, u.BalanceWat as balance, group_concat(c.Id ORDER BY c.verDate DESC separator ';') as cId FROM users u LEFT JOIN counters c ON c.userId=u.id WHERE c.type=type AND u.id=uid;
+  SELECT u.id as uId,
+    concat(r.surName, " ", r.name, " ", r.middlName ) as uName,
+    u.TariffId as tariff,
+    u.BalanceWat as balance,
+    group_concat(c.Id ORDER BY c.verDate DESC separator ';') as cId
+  FROM users u
+  LEFT JOIN counters c ON c.userId=u.id
+  LEFT JOIN residents r ON u.residentId=r.id
+  WHERE c.type=type AND u.id=uid;
 END IF;
 IF (type = 'fee') THEN
-  SELECT u.id as uId, u.Name as uName, u.TariffId as tariff, u.BalanceFee as balance, group_concat(c.Id ORDER BY c.verDate DESC separator ';') as cId FROM users u LEFT JOIN counters c ON c.userId=u.id WHERE c.type=type AND u.id=uid;
+  SELECT u.id as uId,
+    concat(r.surName, " ", r.name, " ", r.middlName ) as uName,
+    u.TariffId as tariff,
+    u.BalanceFee as balance,
+    group_concat(c.Id ORDER BY c.verDate DESC separator ';') as cId
+  FROM users u
+  LEFT JOIN counters c ON c.userId=u.id
+  LEFT JOIN residents r ON u.residentId=r.id
+  WHERE c.type=type AND u.id=uid;
 END IF;
-
 END$$
 
 DROP PROCEDURE IF EXISTS sp_counterBalance;
@@ -433,7 +456,13 @@ END$$
 
 DROP PROCEDURE IF EXISTS sp_allregisteredusers;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_allregisteredusers` ()  BEGIN
-select * from users where id > 0;
+select u.id as id,
+  concat(r.surName, " ", r.name, " ", r.middlName ) as Name,
+  r.phone1 as phone1,
+  r.phone2 as phone2,
+  u.info as info,
+  (u.BalanceEl+u.BalanceFee+u.BalanceWat) as balance
+FROM users u LEFT JOIN residents r ON u.residentId=r.id where u.id > 0;
 END$$
 
 DROP PROCEDURE IF EXISTS sp_checkemailavailabilty;
