@@ -522,16 +522,27 @@ insert into countValues (cId, tariffId, dPrevius, dCurrent, nPrevius, nCurrent, 
 END$$
 
 DROP PROCEDURE IF EXISTS sp_registration;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_registration` (`uid` int(3), `name` VARCHAR(120), `street` int(3), `phone` VARCHAR(120), `size` VARCHAR(20), `counterNum` DECIMAL(20), `counterName` VARCHAR(120), `counterInfo` VARCHAR(250), `dCurrent` DECIMAL(8,2), `nCurrent` DECIMAL(8,2), `email` VARCHAR(200)) BEGIN
-insert into users (id,Name,Size,StreetId,PhoneNumber,EmailId,BalanceFee) values (uid,name,size,street,phone,email,0-Size*100);
-insert into counters (userId, number, name, info) values (uid,counterNum,counterName,counterInfo);
-insert into countValues (cId, tariffId, dPrevius, dCurrent, nPrevius, nCurrent, type)
-  values (
-    (SELECT id FROM counters WHERE userId=uid LIMIT 0,1),
-    (SELECT TariffId FROM users WHERE id=uid LIMIT 0,1),
-    dCurrent, dCurrent, nCurrent, nCurrent,
-    (SELECT type FROM counters WHERE userId=uid LIMIT 0,1)
-  );
+CREATE DEFINER=`root`@`localhost`
+PROCEDURE `sp_registration` (
+  `uid` int(3),
+  `street` int(3), 
+  `size` VARCHAR(20), 
+  `resident` int(5), 
+  `counterNum` DECIMAL(20), 
+  `counterName` VARCHAR(120), 
+  `counterInfo` VARCHAR(250), 
+  `dCurrent` DECIMAL(8,2), 
+  `nCurrent` DECIMAL(8,2)) 
+BEGIN
+  INSERT into users (id, Size, StreetId, residentId, BalanceFee) values (uid, size, street, resident, 0-Size*100);
+  INSERT into counters (userId, number, name, info) values (uid, counterNum, counterName, counterInfo);
+  INSERT into countValues (cId, tariffId, dPrevius, dCurrent, nPrevius, nCurrent, type)
+    values (
+      (SELECT id FROM counters WHERE userId=uid LIMIT 0,1),
+      (SELECT TariffId FROM users WHERE id=uid LIMIT 0,1),
+      dCurrent, dCurrent, nCurrent, nCurrent,
+      (SELECT type FROM counters WHERE userId=uid LIMIT 0,1)
+    );
 END$$
 
 DROP PROCEDURE IF EXISTS sp_signup;
@@ -592,7 +603,12 @@ select id from users where Name=name and EmailId=useremail;
 END$$
 
 DROP PROCEDURE IF EXISTS sp_userupdateprofile;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_userupdateprofile` (`uid` INT(5), `name` VARCHAR(120), `email` VARCHAR(120), `phone` VARCHAR(30), size DECIMAL(15,2), `info` VARCHAR(250))  BEGIN
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_userupdateprofile` (`uid` INT(5), `street` INT(3), `resident` INT(5), size DECIMAL(15,2), `info` VARCHAR(250))  BEGIN
+update users set StreetId=street, LastUpdationDate=current_timestamp(), residentId=resident, Size=size, Info=info WHERE id=uid;
+END$$
+
+DROP PROCEDURE IF EXISTS residentprofile;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `residentprofile` (`uid` INT(5), `name` VARCHAR(120), `email` VARCHAR(120), `phone` VARCHAR(30), size DECIMAL(15,2), `info` VARCHAR(250))  BEGIN
 update users set Name=name, LastUpdationDate=current_timestamp(), EmailId=email, PhoneNumber=phone, Size=size, Info=info WHERE id=uid;
 END$$
 

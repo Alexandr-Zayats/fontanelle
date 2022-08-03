@@ -8,15 +8,14 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
   } else {
 
   if(isset($_POST['update'])) {
-    $name=$_POST['name'];
-    $email=$_POST['email'];
-    $phone=$_POST['phone'];
+    $resident=$_POST['resident'];
+    $street=$_POST['street'];
     $size=$_POST['size'];
     $info=$_POST['info'];
 
     //$updatetTime = date( 'd-m-Y h:i:s A', time () );
     //echo "<script>alert('$uid $name $email $phone $size $info');</script>";
-    $query=mysqli_query($con,"call sp_userupdateprofile('$uid','$name','$email','$phone','$size','$info')"); 
+    $query=mysqli_query($con,"call sp_userupdateprofile('$uid','$street','$resident','$size','$info')"); 
     echo "<script>alert('Профайл участка успешно обновлен');</script>";
     echo "<script>window.location.href='info.php?uid=$uid'</script>";
   }
@@ -133,9 +132,9 @@ while ($result=mysqli_fetch_array($query)) {
                                         while ($resident=mysqli_fetch_array($sql)) {
                                           $resId=$resident['id'];
                                           if ($resident['id'] == $owner) {
-                                            echo "<option value=".$resident['id']." selected>".$resident['resName']."</option>";
+                                            echo "<option value=".$resident['id']." selected>".$resident['resName']." ( ".$resident['phone1']." )</option>";
                                           } else {
-                                            echo "<option value=".$resident['id'].">".$resident['name']."</option>";
+                                            echo "<option value=".$resident['id'].">".$resident['resName']." ( ".$resident['phone1']." )</option>";
                                           }
                                         }
                                       ?>

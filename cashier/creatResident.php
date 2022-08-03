@@ -5,7 +5,9 @@ include('../includes/config.php');
 if(isset($_POST['createuser'])) {
   $id=intval($_POST['id']);
   $street=$_POST['street'];
-  $resident=$_POST['resident'];
+  $name=$_POST['name'];
+  $phone=$_POST['phone'];
+  $email=$_POST['email'];
   $size=$_POST['size'];
   $counterNum=$_POST['counterNum'];
   $counterName=$_POST['counterName'];
@@ -18,8 +20,8 @@ if(isset($_POST['createuser'])) {
   } else {
     mysqli_close($con);
     $con = mysqli_connect(DB_SERVER,DB_USER,DB_PASS,DB_NAME);
-    //echo "<script>alert('$id $street $size $resident $counterNum $counterName $counterInfo $dCurrent $nCurrent $email');</script>";
-    $query=mysqli_query($con, "call sp_registration($id, $street, '$size', $resident, $counterNum, '$counterName', '$counterInfo', '$dCurrent', '$nCurrent')");
+    //echo "<script>alert('$id $name $street $phone $size $counterNum $counterName $counterInfo $dCurrent $nCurrent $email');</script>";
+    $query=mysqli_query($con, "call sp_registration($id, '$name', $street, '$phone', '$size', '$counterNum', '$counterName', '$counterInfo', '$dCurrent', '$nCurrent', '$email')");
     if ($query) {
       echo "<script>alert('Новый садовый участок успешно добавлен');</script>";
       echo "<script>window.location.href='registered-users.php'</script>";
@@ -82,7 +84,7 @@ if(isset($_POST['createuser'])) {
                                 <div class="form-group row">
                                     <div class="col-sm-6 mb-3 mb-sm-0">
                                         <label for="street">Улица: </label>
-                                        <select id="street" name="street" class="btn btn-primary btn-user btn-block">
+                                        <select id="street" name="street">
                                           <?php
                                           while ($street=mysqli_fetch_array($streets)) {
                                             echo "<option value=".$street['id'].">".$street['name']."</option>";
@@ -92,38 +94,43 @@ if(isset($_POST['createuser'])) {
                                     </div>
                                 </div>
                                 <div class="form-group row">
+                                    <div class="col-sm-6 mb-3 mb-sm-0">
+                                        <label for="size">Размер участка (сотки):</label>
+                                        <input type="number" min="0.50" max="100.00" step="0.01" class="form-control form-control-user"
+                                        value="5.50" id="size" name="size" required="true">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-sm-6 mb-3 mb-sm-0">
+                                        <input type="text" class="form-control form-control-user" id="name"
+                                        placeholder="ФИО" name="name" required="true">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
                                   <div class="col-sm-6 mb-3 mb-sm-0">
-                                    <label for="size">Размер участка (сотки):</label>
-                                    <input type="number" min="0.50" max="100.00" step="0.01" class="form-control form-control-user"
-                                      value="5.50" id="size" name="size" required="true">
+                                    <input type="tel" class="form-control form-control-user" id="phone"
+                                    placeholder="+38 (067) 234 34 56" name="phone" required="true"
+                                    pattern="+380 ([0-9]{2}) [0-9]{3} [0-9]{2} [0-9]{2}">
                                   </div>
                                 </div>
                                 <div class="form-group row">
                                   <div class="col-sm-6 mb-3 mb-sm-0">
-                                    <label for="size">Владелец</label>
-                                    <select id="resident" name="resident" class="btn btn-primary btn-user btn-block">
-                                      <?php
-                                        $con->next_result();
-                                        $sql=mysqli_query($con,"call residents(0)");
-                                        while ($resident=mysqli_fetch_array($sql)) {
-                                          echo "<option value=".$resident['id'].">".$resident['resName']." ( ".$resident['phone1']." )</option>";
-                                        }
-                                      ?>
-                                    </select>
+                                    <input type="email" class="form-control form-control-user" id="email"
+                                     required="true" name="email" placeholder="Email">
                                   </div>
                                 </div>
                                 <div class="form-group row">
                                 <div class="col-sm-6 mb-3 mb-sm-0">
                                   <label for="counterNum">Серийный номер:</label>
                                   <input type="number" class="form-control form-control-user" 
-                                  id="counterNum" name="counterNum" required="false">
+                                  id="counterNum" name="counterNum" required="true">
                                 </div>
                               </div>
                               <div class="form-group row">
                                 <div class="col-sm-6 mb-3 mb-sm-0">
                                   <label for="counterName">Счетчик (имя):</label>
                                   <input type="text" class="form-control form-control-user" id="counterName"
-                                  value="Дом" name="counterName" required="false">
+                                  value="Дом" name="counterName" required="true">
                                 </div>
                               </div>
                               <div class="form-group row">
