@@ -101,22 +101,38 @@ if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
                                       <td style="text-align:left">
                                         <a href="../user/info.php?uid=<?php echo $result['id'];?>"</a>
                                         <?php echo $result['Name'];?></td>
-                                      <td style="text-align:right">
+				      <td style="text-align:right">
+					<table>
+					<tr><td>
                                         <a href="../user/info.php?uid=<?php echo $result['id'];?>"</a>
 					<?php
-					  if( preg_match( '/.*(\d{2})(\d{3})(\d{2})(\d{2})$/', $result['PhoneNumber'],  $matches ) )
+					  if( preg_match( '/.*(\d{2})(\d{3})(\d{2})(\d{2})$/', $result['phone1'],  $matches ) )
 					  {
     					    echo "+380 ($matches[1]) $matches[2]-$matches[3]-$matches[4]";
 					  } else {
-					    echo $result['PhoneNumber'];
-					  }  
-					?></td>
+					    echo $result['phone1'];
+					  }
+					?></td></tr>
+					<?php if($result['phone2'] != "") { ?>
+					<tr><td>
+                                        <a href="../user/info.php?uid=<?php echo $result['id'];?>"</a>
+                                        <?php
+                                          if( preg_match( '/.*(\d{2})(\d{3})(\d{2})(\d{2})$/', $result['phone2'],  $matches ) )
+                                          {
+                                            echo "+380 ($matches[1]) $matches[2]-$matches[3]-$matches[4]";
+                                          } else {
+                                            echo $result['phone2'];
+                                          }
+					?></td></tr>
+					<?php } ?>
+					</table>
+				      </td>
 				      <td style="text-align:right">
                                         <a href="../user/info.php?uid=<?php echo $result['id'];?>"</a>
-                                        <?php echo $result['Info'];?></td>
+                                        <?php echo $result['info'];?></td>
                                       <td style="text-align:right">
                                         <a href="../user/info.php?uid=<?php echo $result['id'];?>"</a>
-                                        <?php printf("%.2f", $result['BalanceEl']+$result['BalanceWat']+$result['BalanceFee']);?></td>
+                                        <?php printf("%.2f", $result['balance']);?></td>
                                     </td>
                                     </tr>
 <?php $cnt++; } ?>
