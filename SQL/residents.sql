@@ -1,13 +1,14 @@
 DROP TABLE IF EXISTS `residents`;
 CREATE TABLE IF NOT EXISTS `residents` (
   `id` int(4) NOT NULL PRIMARY KEY AUTO_INCREMENT,
-  `Surname` varchar(40) NOT NULL,
-  `Name` varchar(30) NOT NULL,
-  `MiddlName` varchar(50),
-  `Password` BINARY(16),
-  `Email` VARCHAR(255),
-  `Phone1` CHAR (15),
-  `Phone2` CHAR (15),
+  `surName` varchar(40) NOT NULL,
+  `name` varchar(30) NOT NULL,
+  `middlName` varchar(50),
+  `userName` varchar(15),
+  `password` BINARY(16),
+  `email` VARCHAR(255),
+  `phone1` CHAR (15),
+  `phone2` CHAR (15),
   `isMember` BOOLEAN DEFAULT true,
   `plant` int(3)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -15,7 +16,7 @@ CREATE TABLE IF NOT EXISTS `residents` (
 --
 -- Dumping data for table `residents`
 --
-INSERT INTO `residents` (`Surname`, `Name`, `MiddlName`,  `Email`, `Phone1`, `Phone2`, plant) VALUES
+INSERT INTO `residents` (`surName`, `name`, `middlName`,  `email`, `phone1`, `phone2`, `plant`) VALUES
 ( "Абросова", "Татьяна", "Борисовна", "w@w", "0667119188", "", 34 ),
 ( "Андрющенко", "Антонина", "Юрьевна", "09antonina@gmail.com", "0982248904", "", 101 ),
 ( "Астафьев", "Виктор", "Всеволодович", "w@w", "0988409450", "", 14 ),
@@ -299,4 +300,4 @@ INSERT INTO `residents` (`Surname`, `Name`, `MiddlName`,  `Email`, `Phone1`, `Ph
 ( "Якубовская", "Валентина", "Брониславивна", "4vbf@i.ua", "0955471574", "", 228 ),
 ( "Ярош", "Владимир", "Виталиевич", "w@w", "0674073246", "", 260 ),
 ( "Яценко", "Людмила", "Станиславовна", "w@w", "0679684294", "", 275 ),
-( "Ячменева", "Вера", "Петровна", "w@w", "098", "", 73 ),
+( "Ячменева", "Вера", "Петровна", "w@w", "098", "", 73 )
