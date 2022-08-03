@@ -9,6 +9,7 @@
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
+SET GLOBAL event_scheduler = ON;
 START TRANSACTION;
 SET time_zone = "+00:00";
 
@@ -26,6 +27,11 @@ DELIMITER $$
 
 -- --------------------------------------------------------
 
+CREATE EVENT rentAccrual
+  ON SCHEDULE EVERY 1 Year
+  STARTS '2023-01-01 00:00:00'
+  DO
+  update users set BalanceFee=BalanceFee-Size*(select fee from tariffs where id=users.TariffId);
 --
 -- Table structure for table `admin`
 --
@@ -217,16 +223,17 @@ CREATE TABLE IF NOT EXISTS `tariffs` (
   `day` decimal(4,2) NOT NULL,
   `night` decimal(4,2) NOT NULL,
   `water` decimal(4,2) NOT NULL,
+  `fee` decimal(5,2) NOT NULL,
   `created` TIMESTAMP NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `tariffs`
 --
-INSERT INTO `tariffs` (`day`, `night`, `water`) VALUES
-(2.00, 1.00, 17.27),
-(1.85, 0.90, 17.27),
-(1.68*40.64,1.68*0.5*40.64,0);
+INSERT INTO `tariffs` (`day`, `night`, `water`, `fee`) VALUES
+(2.00, 1.00, 26.0, 100),
+(1.85, 0.90, 17.27, 100),
+(1.68*40.64, 1.68*0.5*40.64, 0, 0);
 -- -------------------------------------------------------
 
 --
@@ -237,6 +244,7 @@ DROP TABLE IF EXISTS `payments`;
 CREATE TABLE `payments` (
   `cashierId` int(3) NOT NULL,
   `userId` int(3) NOT NULL,
+  `type` BOOLEAN DEFAULT False,
   `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `sum` decimal(15,2) NOT NULL,
   `tId` int(3) NOT NULL DEFAULT '1',
