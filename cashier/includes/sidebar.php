@@ -31,7 +31,14 @@
             <li class="nav-item">
                 <a class="nav-link" href="registered-users.php">
                     <i class="fas fa-fw fa-user"></i>
-                    <span>Список участков</span></a>
+                    <span>Участки</span></a>
+            </li>
+
+            <!-- Nav Item - Charts -->
+            <li class="nav-item">
+                <a class="nav-link" href="residents.php">
+                    <i class="fas fa-fw fa-user"></i>
+                    <span>Дачники</span></a>
             </li>
 
             <!-- Nav Item - Charts -->

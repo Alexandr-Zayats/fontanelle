@@ -129,6 +129,28 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `counterInfo` (`cId` INT(5))  BEGIN
 SELECT * FROM counters c WHERE c.id=cId;
 END$$
 
+DROP PROCEDURE IF EXISTS residents;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `residents` (`id` INT(5))  BEGIN
+IF (id = 0) THEN
+  SELECT r.id as id,
+    surName, name, middlName,
+    userName, password, email,
+    phone1, phone2, isMember, 
+    concat(surName, " ", name, " ", middlName ) as resName
+  FROM residents r
+  ORDER BY r.surName;
+ELSE
+  SELECT r.id as id,
+    surName, name, middlName,
+    userName, password, email,
+    phone1, phone2, isMember,
+    concat(surName, " ", name, " ", middlName ) as resName
+  FROM residents r
+  WHERE r.id=id
+  ORDER BY r.surName;
+END IF;
+END$$
+
 DROP PROCEDURE IF EXISTS userInfo;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `userInfo` (`uid` INT(5), `type` VARCHAR(10))  BEGIN
 IF (type = 'el') THEN
@@ -368,7 +390,10 @@ END$$
 
 DROP PROCEDURE IF EXISTS sp_streetList;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_streetList` ()  BEGIN
-select * from streets;
+  SELECT s.id as id,
+  name
+  FROM streets s
+  ORDER BY name;
 END$$
 
 DROP PROCEDURE IF EXISTS sp_totalPayment;
@@ -546,7 +571,19 @@ END$$
 
 DROP PROCEDURE IF EXISTS sp_userprofile;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_userprofile` (`uid` INT(5))  BEGIN
-select * from users where id=uid;
+  SELECT
+    u.id as id,
+    u.StreetId as streetId,
+    u.RegDate as RegDate,
+    u.Size as Size,
+    u.LastUpdationDate as LastUpdationDate,
+    r.id as residentId,
+    r.isMember as isMember,
+    concat(r.surName, " ", r.name, " ", r.middlName ) as Name,
+    u.Info as Info
+  FROM users u
+  LEFT JOIN residents r ON u.residentId=r.id
+  WHERE u.id=uid;
 END$$
 
 DROP PROCEDURE IF EXISTS sp_userpwdrecoveryvalidation;

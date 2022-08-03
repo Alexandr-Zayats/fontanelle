@@ -72,16 +72,16 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
 $uid=$_GET['uid'];
 $query=mysqli_query($con,"call sp_userprofile($uid)");
 
-//mysqli_close($con);
-//$con = mysqli_connect(DB_SERVER,DB_USER,DB_PASS,DB_NAME);
-//$counters=mysqli_query($con,"call sp_counterList($uid)");
+mysqli_close($con);
+$con = mysqli_connect(DB_SERVER,DB_USER,DB_PASS,DB_NAME);
+$counters=mysqli_query($con,"call sp_counterList($uid)");
 
 while ($result=mysqli_fetch_array($query)) {
 
 ?>
                     <!-- Page Heading -->
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                      <h1 class="h3 mb-0 text-gray-800"><?php echo "Участок № ".$result['id'];?> </h1>
+ <h1 class="h3 mb-0 text-gray-800"><?php echo $result['Name'];?> | Изменить данные</h1>
                     </div>
                     <div class="row">
                         <div class="col-lg-12">
@@ -96,53 +96,36 @@ while ($result=mysqli_fetch_array($query)) {
                                 <table class="table table-bordered dataTable" id="dataTable" width="100%" cellspacing="0"
                                   role="grid" aria-describedby="dataTable_info" style="width: 100%;">              
                                   <tr>
-                                    <th style="width:20%">Адрес</th>
-                                    <td style="text-align:left">
-                                      <select id="street" name="street" class="btn btn-primary btn-user btn-block">
-                                      <?php
-                                        $con->next_result();
-                                        $sql=mysqli_query($con,"call sp_streetList()");
-                                        while ($street=mysqli_fetch_array($sql)) {
-                                          if ( $street['id'] == $result['streetId'] ) {
-                                            echo "<option value=".$street['id']." selected>".$street['name']."</option>";
-                                          } else {
-                                            echo "<option value=".$street['id'].">".$street['name']."</option>";
-                                          }
-                                        }
-                                      ?>
-                                      </select>
-                                    </td>                  
+                                    <th style="width:20%">Участок</th>
+                                    <td>
+                                      <input type="number" class="form-control form-control-user" id="id" value="<?php echo $result['id'];?>" name="id" readonly="true">
+                                    </td>
                                   </tr>
                                   <tr>
                                     <th>Размер участка (соток)</th>
                                     <td>
-                                      <input type="number" min="0.30" max="100.00" step="0.01"
-                                        class="form-control form-control-user" id="size"
-                                        value="<?php echo $result['Size'];?>" name="size" required="true"
-                                      >
+                                      <input type="number" min="0.30" max="100.00" step="0.01" class="form-control form-control-user" id="size" value="<?php echo $result['Size'];?>" name="size" required="true">
                                     </td>
                                   </tr>
                                   <tr>
-                                    <th>Владелец</th>
-                                    <td style="text-align:left">
-                                      <select id="resident" name="resident" class="btn btn-primary btn-user btn-block">
-                                      <?php
-                                        $con->next_result();
-                                        $owner=$result['residentId'];
-                                        $sql=mysqli_query($con,"call residents(0)");
-                                        while ($resident=mysqli_fetch_array($sql)) {
-                                          $resId=$resident['id'];
-                                          if ($resident['id'] == $owner) {
-                                            echo "<option value=".$resident['id']." selected>".$resident['resName']."</option>";
-                                          } else {
-                                            echo "<option value=".$resident['id'].">".$resident['name']."</option>";
-                                          }
-                                        }
-                                      ?>
-                                      </select>
+                                    <th>ФИО</th>
+                                    <td>
+                                      <input type="text" class="form-control form-control-user" id="name" value="<?php echo $result['Name'];?>" name="name" required="true">
                                     </td>
                                   </tr>
-				                          <tr>
+                                  <tr>
+                                    <th>Телефон</th>
+                                    <td>
+                                      <input type="tel" class="form-control form-control-user" id="phone" value="<?php echo $result['PhoneNumber'];?>" name="phone" required="false">
+                                    </td>
+                                  </tr>
+                                  <tr>
+                                    <th>Email</th>
+                                    <td>
+                                      <input type="email" class="form-control form-control-user" id="email" value="<?php echo $result['EmailId'];?>" name="email" required="false">
+                                    </td>
+				  </tr>
+				  <tr>
                                     <th>Дополнительная Информация</th>
                                     <td>
                                       <input type="text" class="form-control form-control-user" id="info" value="<?php echo $result['Info'];?>" name="info" required=false>
@@ -156,8 +139,8 @@ while ($result=mysqli_fetch_array($query)) {
                                     <th>Статус</th>
                                     <td>
                                       <input type="text" class="form-control form-control-user" id="fname" value="
-                                        <?php  $accountstatus=$result['isMember'];
-                                          if($accountstatus==1): echo "Член кооператива"; else: echo "Потребитель"; endif;
+                                        <?php  $accountstatus=$result['IsActive'];
+                                          if($accountstatus==1): echo "Active"; else: echo "Blocked"; endif;
                                         ?>" name="fname" required="true">
                                     </td>
                                   </tr>
