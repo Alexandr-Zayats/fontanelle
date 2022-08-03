@@ -72,8 +72,8 @@ if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
                                       <th style="width: 3%; text-align:center">#</th>
                                       <th style="width: 3%; text-align:center">№</th>
                                       <th style="width: 30%; text-align:center">ФИО</th>
-				      <th style="width: 15%; text-align:center">Телефон</th>
-				      <th style="width: 39%; text-align:center">Примечание</th>
+				                              <th style="width: 15%; text-align:center">Телефон</th>
+				                              <th style="width: 39%; text-align:center">Примечание</th>
                                       <th style="width: 8%; text-align:center">Баланс</th>
                                     </tr>
                                   </thead>
@@ -82,8 +82,8 @@ if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
                                       <th style="text-align:center">#</th>
                                       <th style="text-align:center">№</th>
                                       <th style="text-align:center">ФИО</th>
-				      <th style="text-align:center">Телефон</th>
-				      <th style="width: 32%; text-align:center">Примечание</th>
+				                              <th style="text-align:center">Телефон</th>
+				                              <th style="width: 32%; text-align:center">Примечание</th>
                                       <th style="text-align:center">Баланс</th>
                                     </tr>
                                   </tfoot>

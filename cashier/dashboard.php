@@ -181,10 +181,11 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
                                 <thead>
                                   <tr>
                                     <td>#</td>
-                                    <th>Участок</th>
-                                    <th>ФИО</th>
-                                    <th>Сумма</th>
-                                    <th>Время платежа</th>
+                                    <th style="width: 5%; text-align:center">Участок</th>
+                                    <th style="width: 30%; text-align:center">ФИО</th>
+                                    <th style="width: 15%; text-align:center">Назначение</th>
+                                    <th style="width: 10%; text-align:center">Сумма</th>
+                                    <th style="width: 30%; text-align:center">Дата и время платежа</th>
                                   </tr>
                                 </thead>
                                 <tbody>
@@ -197,17 +198,24 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
 { ?>
         
                                         <tr>
-                                          <td><?php echo $cnt;?></td>
-                                          <td>
+                                          <td style="text-align:center"><?php echo $cnt;?></td>
+                                          <td style="text-align:right">
                                             <a href="../user/info.php?uid=<?php echo $result['id'];?>"</a><?php echo $result['id'] ?>
                                           </td>
-					  <td><?php echo $result['name'] ?></td>
-					  <?php if($result['type']): ?>
-					  <td style="text-align:right; background-color:powderblue;"><?php echo $result['sum'] ?></td>
-					  <?php else: ?>
-					  <td style="text-align:right"><?php echo $result['sum'] ?></td>
-					  <?php endif ?>
-                                          <td><?php echo $result['date'] ?></td>
+					                                <td><?php echo $result['name'] ?></td>
+                                          <td style="text-align:right"><?php
+                                            if ($result['dst'] == 'el') {echo "Электричество"; }
+                                            elseif ($result['dst'] == "wat") { echo "Вода"; }
+                                            elseif ($result['dst'] == "fee") { echo "Членские"; }
+                                            elseif ($result['dst'] == "inc") { echo "Вступительный"; }
+                                            else { echo "Прочее"; }
+                                          ?></td>
+					                                <?php if($result['type']): ?>
+					                                  <td style="text-align:right; background-color:powderblue;"><?php echo $result['sum']; ?></td>
+					                                <?php else: ?>
+					                                  <td style="text-align:right"><?php echo $result['sum']; ?></td>
+					                                <?php endif ?>
+                                          <td style="text-align:right"><?php echo $result['date']; ?></td>
                                         </tr>
  <?php $cnt++; } ?>
                                      </tbody>
@@ -224,10 +232,8 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
             <!-- Footer -->
    <?php include_once('includes/footer.php');?>
             <!-- End of Footer -->
-
         </div>
         <!-- End of Content Wrapper -->
-
     </div>
     <!-- End of Page Wrapper -->
 

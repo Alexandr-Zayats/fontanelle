@@ -258,7 +258,12 @@ END$$
 
 DROP PROCEDURE IF EXISTS sp_totalReport;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_totalReport` (`start` TIMESTAMP, `stop` TIMESTAMP) BEGIN
-SELECT u.id as id, u.name as name, (u.BalanceEl+u.BalanceWat+u.BalanceFee) as balance, u.PhoneNumber as phone, u.EmailId as email,
+SELECT 
+  u.id as id, 
+  concat(r.surName, " ", r.name, " ", r.middlName ) as name,
+  (u.BalanceEl+u.BalanceWat+u.BalanceFee) as balance, 
+  r.phone1 as phone, 
+  r.email as email,
 (SELECT DATE_FORMAT(verDate, '%Y-%m-%d') as verDate FROM counters
   WHERE userId=u.id AND type="el"
   ORDER BY verDate LIMIT 0,1) as elVerDate,
@@ -310,7 +315,8 @@ SUM(
     AND DATE_FORMAT(p.date, '%Y%m%d') <= DATE_FORMAT(stop, '%Y%m%d'),
     p.sum, 0)) as sumInc
 FROM users u
-  LEFT JOIN payments p ON (p.userId=u.id)
+LEFT JOIN payments p ON (p.userId=u.id)
+LEFT JOIN residents r ON u.residentId=r.id
 GROUP BY u.id ORDER BY u.id;
 END$$
 
@@ -481,13 +487,15 @@ END$$
 
 DROP PROCEDURE IF EXISTS sp_allregisteredusers;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_allregisteredusers` ()  BEGIN
-select u.id as id,
+SELECT u.id as id,
   concat(r.surName, " ", r.name, " ", r.middlName ) as Name,
   r.phone1 as phone1,
   r.phone2 as phone2,
   u.info as info,
   (u.BalanceEl+u.BalanceFee+u.BalanceWat) as balance
-FROM users u LEFT JOIN residents r ON u.residentId=r.id where u.id > 0;
+FROM users u
+LEFT JOIN residents r ON u.residentId=r.id 
+WHERE u.id > 0;
 END$$
 
 DROP PROCEDURE IF EXISTS sp_checkemailavailabilty;
@@ -502,11 +510,16 @@ END$$
 
 DROP PROCEDURE IF EXISTS sp_recent30payments;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_recent30payments` ()  BEGIN
-select p.sum, p.type,
-u.id as id,
-u.name as name,
-p.date
-FROM payments p LEFT JOIN users u ON (p.userId=u.id) ORDER BY p.date DESC LIMIT 30;
+SELECT 
+  p.sum, p.type,
+  u.id as id,
+  concat(r.surName, " ", r.name, " ", r.middlName ) as name,
+  p.date,
+  p.dst
+FROM payments p 
+LEFT JOIN users u ON p.userId=u.id
+LEFT JOIN residents r ON u.residentId=r.id
+ORDER BY p.date DESC LIMIT 50;
 END$$
 
 DROP PROCEDURE IF EXISTS sp_addCounter;
