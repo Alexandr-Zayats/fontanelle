@@ -7,11 +7,11 @@ if(isset($_POST['createuser'])) {
   $street=$_POST['street'];
   $resident=$_POST['resident'];
   $size=$_POST['size'];
-  $counterNum=$_POST['counterNum'];
-  $counterName=$_POST['counterName'];
-  $counterInfo=$_POST['counterInfo'];
-  $dCurrent=$_POST['dCurrent'];
-  $nCurrent=$_POST['nCurrent'];
+  $counterNum=$_POST['counterNum'] ?? '123456';
+  $counterName=$_POST['counterName'] ?? 'основной';
+  $counterInfo=$_POST['counterInfo'] ?? '';
+  $dCurrent=$_POST['dCurrent'] ?? '0';
+  $nCurrent=$_POST['nCurrent'] ?? '';
   $result=count(mysqli_fetch_array(mysqli_query($con,"call sp_checkidavailabilty($id)")));
   if($result>0){
     echo "<script>alert('Участок уже заерегистрирован!');</script>";
@@ -114,36 +114,36 @@ if(isset($_POST['createuser'])) {
                                 </div>
                                 <div class="form-group row">
                                 <div class="col-sm-6 mb-3 mb-sm-0">
-                                  <label for="counterNum">Серийный номер:</label>
+                                  <label for="counterNum">Счетчик, серийный номер:</label>
                                   <input type="number" class="form-control form-control-user" 
-                                  id="counterNum" name="counterNum" required="false">
+                                  id="counterNum" name="counterNum">
                                 </div>
                               </div>
                               <div class="form-group row">
                                 <div class="col-sm-6 mb-3 mb-sm-0">
-                                  <label for="counterName">Счетчик (имя):</label>
+                                  <label for="counterName">Счетчик (псевдоним):</label>
                                   <input type="text" class="form-control form-control-user" id="counterName"
-                                  value="Дом" name="counterName" required="false">
+                                  value="Дом" name="counterName">
                                 </div>
                               </div>
                               <div class="form-group row">
                                 <div class="col-sm-6 mb-3 mb-sm-0">
                                   <label for="counterInfo">Описание счетчика:</label>
                                   <input type="text" class="form-control form-control-user"
-                                  id="counterInfo" name="counterInfo" required="false"
+                                  id="counterInfo" name="counterInfo"
                                   value="основной счетчик">
                                 </div>
                               </div>
                               <div class="form-group row">
                                 <div class="col-sm-6 mb-3 mb-sm-0">
                                   <label for="dCurrent">Первичные показания (день):</label>
-                                  <input type="number" class="form-control form-control-user" id="dCurrent" name="dCurrent" required="true">
+                                  <input type="number" class="form-control form-control-user" id="dCurrent" name="dCurrent">
                                 </div>
                               </div>
                               <div class="form-group row">
                                 <div class="col-sm-6 mb-3 mb-sm-0">
                                   <label for="nCurrent">Первичные показания (ночь):</label>
-                                  <input type="number" class="form-control form-control-user" id="nCurrent" name="nCurrent" required="true">
+                                  <input type="number" class="form-control form-control-user" id="nCurrent" name="nCurrent">
                                 </div>
                               </div>
                               <button type="submit" name="createuser" class="btn btn-primary btn-user btn-block">

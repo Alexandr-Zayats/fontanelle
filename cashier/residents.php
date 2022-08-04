@@ -63,6 +63,9 @@ if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
                             <h6 class="m-0 font-weight-bold text-primary">Дачники</h6>
+                            <a class="nav-link" href="createResident.php">
+                            <i class="fas fa-fw fa-user"></i>
+                              <span>Добавить</span></a>
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
@@ -71,11 +74,12 @@ if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
                                     <tr>
                                       <th style="width: 3%; text-align:center">#</th>
                                       <th style="width: 3%; text-align:center">ID</th>
-                                      <th style="width: 25%; text-align:center">ФИО</th>
+                                      <th style="width: 22%; text-align:center">ФИО</th>
                                       <th style="width: 10%; text-align:center">Логин</th>
-                                      <th style="width: 10%; text-align:center">Телефон</th>
-				                              <th style="width: 15%; text-align:center">Автомобиль</th>
-                                      <th style="width: 20%; text-align:center">Участки</th>
+                                      <th style="width: 11%; text-align:center">Телефон</th>
+                                      <th style="width: 14%; text-align:center">Email</th>
+				                              <th style="width: 21%; text-align:center">Автомобиль</th>
+                                      <th style="width: 5%; text-align:center">Участки</th>
                                       <th style="width: 9%; text-align:center">Баланс</th>
                                     </tr>
                                   </thead>
@@ -100,22 +104,22 @@ if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
                                     <tr>
                                       <td style="text-align:right"><?php echo $cnt;?></td>
                                       <td style="text-align:center">
-                                        <a href="../user/resident.php?uid=<?php echo $result['id'];?>"</a>
+                                        <a href="../cashier/residentEdit.php?uid=<?php echo $result['id'];?>"</a>
                                         <?php echo $result['id'];?>
                                       </td>
 
                                       <td style="text-align:left">
-                                        <a href="../user/resident.php?uid=<?php echo $result['id'];?>"</a>
+                                        <a href="createResident.php?uid=<?php echo $result['id'];?>"</a>
                                         <?php echo $result['resName'];?>
                                       </td>
 
                                       <td style="text-align:left">
-                                        <a href="../user/resident.php?uid=<?php echo $result['id'];?>"</a>
+                                        <a href="../cashier/residentEdit.php?uid=<?php echo $result['id'];?>"</a>
                                         <?php echo $result['userName'];?>
                                       </td>
 
 				                              <td style="text-align:right">
-                                        <a href="../user/resident.php?uid=<?php echo $result['id'];?>"</a>
+                                        <a href="../cashier/residentEdit.php?uid=<?php echo $result['id'];?>"</a>
 					                              <?php
 					                              if (preg_match( '/.*(\d{2})(\d{3})(\d{2})(\d{2})$/', $result['phone1'],  $matches)) {
     					                            echo "+380 ($matches[1]) $matches[2]-$matches[3]-$matches[4]";
@@ -123,6 +127,9 @@ if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
 					                                echo $result['phone1'];
 					                              }
 					                              ?>
+                                      </td>
+                                      <td style="text-align:right">
+                                        <?php echo $result['email'];?>
                                       </td>
 
 				                              <td style="text-align:right">
@@ -134,7 +141,7 @@ if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
                                       </td>
 
                                       <td style="text-align:right">
-                                        <a href="../user/resident.php?uid=<?php echo $result['id'];?>"</a>
+                                        <a href="../cashier/residentEdit.php?uid=<?php echo $result['id'];?>"</a>
                                         <?php printf("%.2f", $result['balance']);?></td>
                                       </td>
                                     </tr>

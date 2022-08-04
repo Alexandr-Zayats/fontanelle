@@ -80,7 +80,7 @@ while ($result=mysqli_fetch_array($query)) {
 ?>
                     <!-- Page Heading -->
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
- <h1 class="h3 mb-0 text-gray-800"><?php echo $result['Name'];?> | Изменить данные</h1>
+                      <h1 class="h3 mb-0 text-gray-800"><?php echo $result['Name'];?> | Изменить данные</h1>
                     </div>
                     <div class="row">
                         <div class="col-lg-12">
@@ -97,13 +97,16 @@ while ($result=mysqli_fetch_array($query)) {
                                   <tr>
                                     <th>Участок</th>
                                     <td>
-                                      <input type="number" class="form-control form-control-user" id="id" value="<?php echo $result['id'];?>" name="id" readonly="true">
+                                      <input type="number" class="form-control form-control-user" 
+                                        id="id" value="<?php echo $result['id'];?>" name="id" readonly="true">
                                     </td>
                                   </tr>
                                   <tr>
                                     <th>Размер участка (соток)</th>
                                     <td>
-                                      <input type="number" min="0.50" max="100.00" step="0.01" class="form-control form-control-user" id="size" value="<?php echo $result['Size'];?>" name="size" required="true">
+                                      <input type="number" min="0.50" max="100.00" step="0.01" 
+                                        class="form-control form-control-user" id="size" 
+                                        value="<?php echo $result['Size'];?>" name="size" required="true">
                                     </td>
                                   </tr>
                                   <tr>

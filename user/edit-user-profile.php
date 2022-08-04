@@ -144,7 +144,8 @@ while ($result=mysqli_fetch_array($query)) {
 				                          <tr>
                                     <th>Дополнительная Информация</th>
                                     <td>
-                                      <input type="text" class="form-control form-control-user" id="info" value="<?php echo $result['Info'];?>" name="info" required=false>
+                                      <input type="text" class="form-control form-control-user" 
+                                        id="info" value="<?php echo $result['Info'];?>" name="info">
                                     </td>
                                   </tr>
                                   <tr>
