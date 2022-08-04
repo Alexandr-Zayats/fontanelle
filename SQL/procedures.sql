@@ -138,10 +138,11 @@ IF (id = 0) THEN
     phone1, phone2, isMember, 
     "feature" as auto,
     concat(surName, " ", name, " ", middlName ) as resName,
-    (SELECT GROUP_CONCAT(u.id separator ';') FROM users u WHERE residentId=r.id GROUP BY u.residentId) as plants,
+    (SELECT GROUP_CONCAT(u.id separator '; ') FROM users u WHERE residentId=r.id GROUP BY u.residentId) as plants,
     (u.BalanceEl+u.BalanceFee+u.BalanceWat) as balance
   FROM residents r
   LEFT JOIN users u ON u.residentId=r.id
+  GROUP BY r.id
   ORDER BY r.surName;
 ELSE
   SELECT r.id as id,
