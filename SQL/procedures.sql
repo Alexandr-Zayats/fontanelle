@@ -136,8 +136,12 @@ IF (id = 0) THEN
     surName, name, middlName,
     userName, password, email,
     phone1, phone2, isMember, 
-    concat(surName, " ", name, " ", middlName ) as resName
+    "feature" as auto,
+    concat(surName, " ", name, " ", middlName ) as resName,
+    (SELECT GROUP_CONCAT(u.id separator ';') FROM users u WHERE residentId=r.id GROUP BY u.residentId) as plants,
+    (u.BalanceEl+u.BalanceFee+u.BalanceWat) as balance
   FROM residents r
+  LEFT JOIN users u ON u.residentId=r.id
   ORDER BY r.surName;
 ELSE
   SELECT r.id as id,
@@ -264,9 +268,10 @@ SELECT
   (u.BalanceEl+u.BalanceWat+u.BalanceFee) as balance, 
   r.phone1 as phone, 
   r.email as email,
-(SELECT DATE_FORMAT(verDate, '%Y-%m-%d') as verDate FROM counters
-  WHERE userId=u.id AND type="el"
-  ORDER BY verDate LIMIT 0,1) as elVerDate,
+  (SELECT DATE_FORMAT(verDate, '%Y-%m-%d') as verDate 
+    FROM counters
+    WHERE userId=u.id AND type="el"
+    ORDER BY verDate LIMIT 0,1) as elVerDate,
 (SELECT DATE_FORMAT(verDate,  '%Y-%m-%d') as verDate FROM counters
   WHERE userId=u.id AND type="wat"
   ORDER BY verDate LIMIT 0,1) as watVerDate,
@@ -381,7 +386,10 @@ END$$
 
 DROP PROCEDURE IF EXISTS sp_getLastCounterValues;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_getLastCounterValues` (`uid` INT(5))  BEGIN
-select dCurrent as dayLast, nCurrent as nightLast from countValues where cId=uid ORDER BY date DESC LIMIT 0,1;
+  SELECT dCurrent as dayLast, nCurrent as nightLast 
+  FROM countValues 
+  WHERE cId=uid 
+  ORDER BY date DESC LIMIT 0,1;
 END$$
 
 DROP PROCEDURE IF EXISTS sp_getTariffId;
@@ -404,13 +412,14 @@ END$$
 
 DROP PROCEDURE IF EXISTS sp_totalPayment;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_totalPayment` ()  BEGIN
-select SUM(IF(DATE_FORMAT(date, '%Y%m')=DATE_FORMAT(CURDATE(), '%Y%m') AND dst='el', sum, 0 )) as el,
-SUM(IF(DATE_FORMAT(date, '%Y%m')=DATE_FORMAT(CURDATE(), '%Y%m') AND dst='wat' , sum, 0)) as wat,
-SUM(IF(DATE_FORMAT(date, '%Y%m')=DATE_FORMAT(CURDATE(), '%Y%m') AND dst='fee', sum, 0 )) as fee,
-SUM(IF(DATE_FORMAT(date, '%Y%m')=DATE_FORMAT(CURDATE(), '%Y%m') AND ( dst='inc' OR dst='other' ), sum, 0)) as inc,
-SUM(IF(DATE_FORMAT(date, '%Y%m')=DATE_FORMAT(CURDATE(), '%Y%m') AND type=true, sum, 0 )) as bank,
-SUM(IF(DATE_FORMAT(date, '%Y%m')=DATE_FORMAT(CURDATE(), '%Y%m') AND type=false, sum, 0 )) as cash
-from payments;
+SELECT 
+  SUM(IF(DATE_FORMAT(date, '%Y%m')=DATE_FORMAT(CURDATE(), '%Y%m') AND dst='el', sum, 0 )) as el,
+  SUM(IF(DATE_FORMAT(date, '%Y%m')=DATE_FORMAT(CURDATE(), '%Y%m') AND dst='wat' , sum, 0)) as wat,
+  SUM(IF(DATE_FORMAT(date, '%Y%m')=DATE_FORMAT(CURDATE(), '%Y%m') AND dst='fee', sum, 0 )) as fee,
+  SUM(IF(DATE_FORMAT(date, '%Y%m')=DATE_FORMAT(CURDATE(), '%Y%m') AND ( dst='inc' OR dst='other' ), sum, 0)) as inc,
+  SUM(IF(DATE_FORMAT(date, '%Y%m')=DATE_FORMAT(CURDATE(), '%Y%m') AND type=true, sum, 0 )) as bank,
+  SUM(IF(DATE_FORMAT(date, '%Y%m')=DATE_FORMAT(CURDATE(), '%Y%m') AND type=false, sum, 0 )) as cash
+FROM payments;
 END$$
 
 DROP PROCEDURE IF EXISTS sp_cashierchangepwd;
@@ -435,7 +444,7 @@ END$$
 
 DROP PROCEDURE IF EXISTS sp_cashierprofile;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_cashierprofile` (`cashierid` INT(5))  BEGIN
-select * from cashier where id=cashierid;
+SELECT * from cashier where id=cashierid;
 END$$
 
 DROP PROCEDURE IF EXISTS sp_cashierpwdrecoveryvalidation;
@@ -447,22 +456,22 @@ END$$
 
 DROP PROCEDURE IF EXISTS sp_adminchangepwd;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_adminchangepwd` (`newpwd` VARCHAR(120), `ldtime` VARCHAR(120), `uid` INT(5))  BEGIN
-update admin set Password=newpwd,updationDate=ldtime where id=uid;
+UPDATE admin set Password=newpwd,updationDate=ldtime where id=uid;
 END$$
 
 DROP PROCEDURE IF EXISTS sp_admincurrentpwdvalidate;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_admincurrentpwdvalidate` (`currentpwd` VARCHAR(120), `uid` INT(5))  BEGIN
-select id from admin where id=uid and Password=currentpwd;
+SELECT id from admin where id=uid and Password=currentpwd;
 END$$
 
 DROP PROCEDURE IF EXISTS sp_admindashboard;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_admindashboard` ()  BEGIN
-select count(id) as totalusers,
-COUNT(IF((date(RegDate)=CURDATE()),0,NULL)) as todayreguser,
-COUNT(IF((date(RegDate)=CURDATE()-1),0,NULL)) as yesterdayreguser,
-COUNT(IF((date(RegDate) BETWEEN CURDATE() - INTERVAL 7 DAY AND CURDATE()),0,NULL)) as lastsevendaysreguser,
-COUNT(IF((date(RegDate) BETWEEN CURDATE() - INTERVAL 30 DAY AND CURDATE()),0,NULL)) as lastthirtydaysreguser
-from users;
+SELECT count(id) as totalusers,
+  COUNT(IF((date(RegDate)=CURDATE()),0,NULL)) as todayreguser,
+  COUNT(IF((date(RegDate)=CURDATE()-1),0,NULL)) as yesterdayreguser,
+  COUNT(IF((date(RegDate) BETWEEN CURDATE() - INTERVAL 7 DAY AND CURDATE()),0,NULL)) as lastsevendaysreguser,
+  COUNT(IF((date(RegDate) BETWEEN CURDATE() - INTERVAL 30 DAY AND CURDATE()),0,NULL)) as lastthirtydaysreguser
+FROM users;
 END$$
 
 DROP PROCEDURE IF EXISTS sp_adminlogin;
@@ -489,18 +498,23 @@ DROP PROCEDURE IF EXISTS sp_allregisteredusers;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_allregisteredusers` ()  BEGIN
 SELECT u.id as id,
   concat(r.surName, " ", r.name, " ", r.middlName ) as Name,
+  s.name as street,
+  u.info as info,
+  u.BalanceEl as el,
+  u.BalanceFee as fee,
+  u.BalanceWat as wat,
   r.phone1 as phone1,
   r.phone2 as phone2,
-  u.info as info,
-  (u.BalanceEl+u.BalanceFee+u.BalanceWat) as balance
+  (SELECT DATE_FORMAT(max(date), '%Y-%m-%d') FROM payments WHERE userId=u.id) as lastPay
 FROM users u
-LEFT JOIN residents r ON u.residentId=r.id 
+LEFT JOIN residents r ON u.residentId=r.id
+LEFT JOIN streets s ON u.StreetId=s.id
 WHERE u.id > 0;
 END$$
 
 DROP PROCEDURE IF EXISTS sp_checkemailavailabilty;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_checkemailavailabilty` (`emalid` VARCHAR(150))  BEGIN
-select EmailId from users where EmailId=emalid;
+SELECT EmailId from users where EmailId=emalid;
 END$$
 
 DROP PROCEDURE IF EXISTS sp_checkidavailabilty;
@@ -524,8 +538,8 @@ END$$
 
 DROP PROCEDURE IF EXISTS sp_addCounter;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_addCounter` (`uid` int(3), serial decimal(15), `name` VARCHAR(120), `info` VARCHAR(250), `type` VARCHAR(6), `dCurrent` DECIMAL(8,2), `nCurrent` DECIMAL(8,2)) BEGIN
-insert into counters (userId, number, name, info, type) values (uid,serial,name,info,type);
-insert into countValues (cId, tariffId, dPrevius, dCurrent, nPrevius, nCurrent, type)
+INSERT into counters (userId, number, name, info, type) values (uid,serial,name,info,type);
+INSERT into countValues (cId, tariffId, dPrevius, dCurrent, nPrevius, nCurrent, type)
   values (
     (SELECT id FROM counters WHERE userId=uid ORDER BY id DESC LIMIT 0,1),
     (SELECT TariffId FROM users WHERE id=uid LIMIT 0,1),
@@ -612,17 +626,35 @@ END$$
 
 DROP PROCEDURE IF EXISTS sp_userpwdrecoveryvalidation;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_userpwdrecoveryvalidation` (`name` VARCHAR(120), `useremail` VARCHAR(150))  BEGIN
-select id from users where Name=name and EmailId=useremail;
+SELECT id from users where Name=name and EmailId=useremail;
 END$$
 
 DROP PROCEDURE IF EXISTS sp_userupdateprofile;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_userupdateprofile` (`uid` INT(5), `street` INT(3), `resident` INT(5), size DECIMAL(15,2), `info` VARCHAR(250))  BEGIN
-update users set StreetId=street, LastUpdationDate=current_timestamp(), residentId=resident, Size=size, Info=info WHERE id=uid;
+CREATE DEFINER=`root`@`localhost` 
+PROCEDURE `sp_userupdateprofile` (`uid` INT(5), `street` INT(3), `resident` INT(5), size DECIMAL(15,2), `info` VARCHAR(250))  
+BEGIN
+  UPDATE users SET StreetId=street, LastUpdationDate=current_timestamp(), residentId=resident, Size=size, Info=info 
+  WHERE id=uid;
 END$$
 
-DROP PROCEDURE IF EXISTS residentprofile;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `residentprofile` (`uid` INT(5), `name` VARCHAR(120), `email` VARCHAR(120), `phone` VARCHAR(30), size DECIMAL(15,2), `info` VARCHAR(250))  BEGIN
-update users set Name=name, LastUpdationDate=current_timestamp(), EmailId=email, PhoneNumber=phone, Size=size, Info=info WHERE id=uid;
+DROP PROCEDURE IF EXISTS updateResidentProfile;
+CREATE DEFINER=`root`@`localhost` 
+PROCEDURE `updateResidentProfile` (
+  `uid` INT(5), 
+  `name` VARCHAR(120), 
+  `email` VARCHAR(120), 
+  `phone` VARCHAR(30), 
+  size DECIMAL(15,2), 
+  `info` VARCHAR(250))  
+BEGIN
+  UPDATE users SET 
+    Name=name, 
+    LastUpdationDate=current_timestamp(), 
+    EmailId=email, 
+    PhoneNumber=phone, 
+    Size=size, 
+    Info=info 
+  WHERE id=uid;
 END$$
 
 DELIMITER ;

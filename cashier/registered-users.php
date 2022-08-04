@@ -62,29 +62,37 @@ if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
                     <!-- DataTales Example -->
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary">Список участков</h6>
+                            <h6 class="m-0 font-weight-bold text-primary">Дачные участки</h6>
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
                                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                   <thead>
                                     <tr>
-                                      <th style="width: 3%; text-align:center">#</th>
-                                      <th style="width: 3%; text-align:center">№</th>
-                                      <th style="width: 30%; text-align:center">ФИО</th>
-				                              <th style="width: 15%; text-align:center">Телефон</th>
-				                              <th style="width: 39%; text-align:center">Примечание</th>
-                                      <th style="width: 8%; text-align:center">Баланс</th>
+                                      <th style="width: 3%; text-align:center" rowspan="2">#</th>
+                                      <th style="width: 3%; text-align:center" rowspan="2">№</th>
+                                      <th style="width: 10%; text-align:center" rowspan="2">Улица</th>
+                                      <th style="width: 22%; text-align:center" rowspan="2">Владелец</th>
+				                              <th style="width: 22%; text-align:center" rowspan="2">Примечание</th>
+                                      <th style="width: 24%; text-align:center" colspan="3">Баланс</th>
+                                      <th style="width: 11%; text-align:center" rowspan="2">Дата</th>
+                                    </tr>
+                                      <th style="text-align:center">Електр</th>
+                                      <th style="text-align:center">Вода</th>
+                                      <th style="text-align:center">Членские</th>
                                     </tr>
                                   </thead>
                                   <tfoot>
                                     <tr>
                                       <th style="text-align:center">#</th>
                                       <th style="text-align:center">№</th>
-                                      <th style="text-align:center">ФИО</th>
-				                              <th style="text-align:center">Телефон</th>
-				                              <th style="width: 32%; text-align:center">Примечание</th>
-                                      <th style="text-align:center">Баланс</th>
+                                      <th style="text-align:center">Улица</th>
+                                      <th style="text-align:center">Владелец</th>
+				                              <th style="text-align:center">Примечание</th>
+                                      <th style="text-align:center">Електр</th>
+                                      <th style="text-align:center">Вода</th>
+                                      <th style="text-align:center">Членские</th>
+                                      <th style="text-align:center">Дата</th>
                                     </tr>
                                   </tfoot>
                                   <tbody>
@@ -93,47 +101,54 @@ if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
   $cnt=1;
   while ($result=mysqli_fetch_array($query)) {
 ?>
+                                    <?php
+                                      $phone="";
+                                      if (preg_match('/.*(\d{2})(\d{3})(\d{2})(\d{2})$/', $result['phone1'],  $matches )) {
+                                          $phone="+380 ($matches[1]) $matches[2]-$matches[3]-$matches[4]";
+                                      } else {
+                                        $phone=$result['phone1'];
+                                      }
+                                      if ($result['phone2'] != "") {
+                                        if (preg_match( '/.*(\d{2})(\d{3})(\d{2})(\d{2})$/', $result['phone2'],  $matches)) {
+                                          $phone=$phone."; "."+380 ($matches[1]) $matches[2]-$matches[3]-$matches[4]";
+                                        } else {
+                                          $phone=$phone."; ".$result['phone2'];
+                                        }
+                                      }
+                                    ?>
                                     <tr>
                                       <td style="text-align:right"><?php echo $cnt;?></td>
+
                                       <td style="text-align:center">
                                         <a href="../user/info.php?uid=<?php echo $result['id'];?>"</a>
-                                        <?php echo $result['id'];?></td>
+                                        <?php echo $result['id'];?>
+                                      </td>
+
                                       <td style="text-align:left">
                                         <a href="../user/info.php?uid=<?php echo $result['id'];?>"</a>
-                                        <?php echo $result['Name'];?></td>
-				      <td style="text-align:right">
-					<table>
-					<tr><td>
+                                        <?php echo $result['street'];?>
+                                      </td>
+
+				                              <td style="text-align:left">
                                         <a href="../user/info.php?uid=<?php echo $result['id'];?>"</a>
-					<?php
-					  if( preg_match( '/.*(\d{2})(\d{3})(\d{2})(\d{2})$/', $result['phone1'],  $matches ) )
-					  {
-    					    echo "+380 ($matches[1]) $matches[2]-$matches[3]-$matches[4]";
-					  } else {
-					    echo $result['phone1'];
-					  }
-					?></td></tr>
-					<?php if($result['phone2'] != "") { ?>
-					<tr><td>
-                                        <a href="../user/info.php?uid=<?php echo $result['id'];?>"</a>
-                                        <?php
-                                          if( preg_match( '/.*(\d{2})(\d{3})(\d{2})(\d{2})$/', $result['phone2'],  $matches ) )
-                                          {
-                                            echo "+380 ($matches[1]) $matches[2]-$matches[3]-$matches[4]";
-                                          } else {
-                                            echo $result['phone2'];
-                                          }
-					?></td></tr>
-					<?php } ?>
-					</table>
-				      </td>
-				      <td style="text-align:right">
-                                        <a href="../user/info.php?uid=<?php echo $result['id'];?>"</a>
-                                        <?php echo $result['info'];?></td>
+                                        <p title="<?php echo $phone?>"><?php echo $result['Name'];?></p>
+				                              </td>
+
+				                              <td style="text-align:right">
+                                        <?php echo $result['info'];?>
+                                      </td>
                                       <td style="text-align:right">
-                                        <a href="../user/info.php?uid=<?php echo $result['id'];?>"</a>
-                                        <?php printf("%.2f", $result['balance']);?></td>
-                                    </td>
+                                        <?php printf("%.2f", $result['el']);?>
+                                      </td>
+                                      <td style="text-align:right">
+                                        <?php printf("%.2f", $result['wat']);?>
+                                      </td>
+                                      <td style="text-align:right">
+                                        <?php printf("%.2f", $result['fee']);?>
+                                      </td>
+                                      <td style="text-align:right">
+                                        <?php echo $result['lastPay'];?>
+                                      </td>
                                     </tr>
 <?php $cnt++; } ?>
                                     </tbody>

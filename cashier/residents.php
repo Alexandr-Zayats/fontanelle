@@ -5,12 +5,6 @@ include('../includes/config.php');
 if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
   header('location:logout.php');
 } else {
-  if(isset($_GET['delete'])) {
-    $uid=$_GET['delete'];
-    $query=mysqli_query($con,"call sp_userdeletion('$uid')"); 
-    echo "<script>alert('Участок удален');</script>";  
-    echo "<script>window.location.href='registered-users.php'</script>";
-  }
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -68,64 +62,84 @@ if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
                     <!-- DataTales Example -->
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary">Список участков</h6>
+                            <h6 class="m-0 font-weight-bold text-primary">Дачники</h6>
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
                                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                   <thead>
                                     <tr>
-                                      <th style="width: 5%; text-align:center">Счетчик</th>
-                                      <th style="width: 5%; text-align:center">Оплата</th>
-                                      <th style="width: 5%; text-align:center">Участок</th>
-                                      <th style="width: 30%; text-align:center">ФИО</th>
-                                      <th style="width: 15%; text-align:center">Телефон</th>
-                                      <th style="width: 25%; text-align:center">Email</th>
-                                      <th style="width: 10%; text-align:center">Баланс</th>
-                                      <th style="width: 5%; text-align:center">Изменить</th>
+                                      <th style="width: 3%; text-align:center">#</th>
+                                      <th style="width: 3%; text-align:center">ID</th>
+                                      <th style="width: 25%; text-align:center">ФИО</th>
+                                      <th style="width: 10%; text-align:center">Логин</th>
+                                      <th style="width: 10%; text-align:center">Телефон</th>
+				                              <th style="width: 15%; text-align:center">Автомобиль</th>
+                                      <th style="width: 20%; text-align:center">Участки</th>
+                                      <th style="width: 9%; text-align:center">Баланс</th>
                                     </tr>
                                   </thead>
                                   <tfoot>
                                     <tr>
-                                      <th style="text-align:center">Счетчик</th>
-                                      <th style="text-align:center">Оплата</th>
-                                      <th style="text-align:center">Участок</th>
+                                      <th style="text-align:center">#</th>
+                                      <th style="text-align:center">ID</th>
                                       <th style="text-align:center">ФИО</th>
+                                      <th style="text-align:center">Логин</th>
                                       <th style="text-align:center">Телефон</th>
-                                      <th style="text-align:center">Email</th>
+                                      <th style="text-align:center">Автомобиль</th>
+                                      <th style="text-align:center">Участки</th>
                                       <th style="text-align:center">Баланс</th>
-                                      <th style="text-align:center">Изменить</th>
                                     </tr>
                                   </tfoot>
                                   <tbody>
 <?php
-  $query=mysqli_query($con,"call sp_allregisteredusers()");
+  $query=mysqli_query($con,"call residents(0)");
+  $cnt=1;
   while ($result=mysqli_fetch_array($query)) {
 ?>
-                                          <tr>
-                                            <td style="text-align:center">
-                                              <a href="user-counter.php?uid=<?php echo $result['id'];?>"
-                                              class="btn btn-info  btn-circle btn-sm" title="Показания">
-                                              <i class="fas fa-edit"></i></a>
-                                            </td>
-                                            <td  style="text-align:center">
-                                              <a href="user-payment.php?uid=<?php echo $result['id'];?>"
-                                              class="btn btn-info  btn-circle btn-sm" title="Оплата">
-                                              <i class="fas fa-edit"></i></a>
-                                            </td>
-                                            <td style="text-align:center"><?php echo $result['id'];?></td>
-                                            <td style="text-align:left"><?php echo $result['Name'];?></td>
-                                            <td style="text-align:right"><?php echo $result['PhoneNumber'];?></td>
-                                            <td style="text-align:right"><?php echo $result['EmailId'];?></td>
-                                            <td style="text-align:right"><?php echo $result['Balans'];?></td>
-                                            <td style="text-align:center">
-                                              <a href="edit-user-profile.php?uid=<?php echo $result['id'];?>"
-                                              class="btn btn-info  btn-circle btn-sm" title="Редактировать">
-                                              <i class="fas fa-edit"></i></a>
-                                            </td>
-                                        </tr>
-<?php } ?>
-                                    </tbody>
+                                    <tr>
+                                      <td style="text-align:right"><?php echo $cnt;?></td>
+                                      <td style="text-align:center">
+                                        <a href="../user/resident.php?uid=<?php echo $result['id'];?>"</a>
+                                        <?php echo $result['id'];?>
+                                      </td>
+
+                                      <td style="text-align:left">
+                                        <a href="../user/resident.php?uid=<?php echo $result['id'];?>"</a>
+                                        <?php echo $result['resName'];?>
+                                      </td>
+
+                                      <td style="text-align:left">
+                                        <a href="../user/resident.php?uid=<?php echo $result['id'];?>"</a>
+                                        <?php echo $result['userName'];?>
+                                      </td>
+
+				                              <td style="text-align:right">
+                                        <a href="../user/resident.php?uid=<?php echo $result['id'];?>"</a>
+					                              <?php
+					                              if (preg_match( '/.*(\d{2})(\d{3})(\d{2})(\d{2})$/', $result['phone1'],  $matches)) {
+    					                            echo "+380 ($matches[1]) $matches[2]-$matches[3]-$matches[4]";
+					                              } else {
+					                                echo $result['phone1'];
+					                              }
+					                              ?>
+                                      </td>
+
+				                              <td style="text-align:right">
+                                        <?php echo $result['auto'];?>
+                                      </td>
+
+                                      <td style="text-align:right">
+                                        <?php echo $result['plants'];?>
+                                      </td>
+
+                                      <td style="text-align:right">
+                                        <a href="../user/resident.php?uid=<?php echo $result['id'];?>"</a>
+                                        <?php printf("%.2f", $result['balance']);?></td>
+                                      </td>
+                                    </tr>
+<?php $cnt++; } ?>
+                                  </tbody>
                                 </table>
                             </div>
                         </div>
