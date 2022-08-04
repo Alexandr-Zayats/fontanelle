@@ -125,19 +125,19 @@ BEGIN
 END$$
 
 DROP PROCEDURE IF EXISTS counterInfo;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `counterInfo` (`cId` INT(5))  BEGIN
+CREATE DEFINER=`root`@`localhost` PROCEDURE `counterInfo` (`cId` TINYINT(5))  BEGIN
 SELECT * FROM counters c WHERE c.id=cId;
 END$$
 
 DROP PROCEDURE IF EXISTS residents;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `residents` (`id` INT(5))  BEGIN
-IF (id = 0) THEN
+CREATE DEFINER=`root`@`localhost` PROCEDURE `residents` (`uid` TINYINT(5))  BEGIN
+IF (uid = 0) THEN
   SELECT r.id as id,
     surName, name, middlName,
     userName, password, email,
     phone1, phone2, isMember, 
-    "feature" as auto,
-    concat(surName, " ", name, " ", middlName ) as resName,
+    CONCAT(autoInfo, " Рег.№:", autoNum)  as auto,
+    CONCAT(surName, " ", name, " ", middlName ) as resName,
     (SELECT GROUP_CONCAT(u.id separator '; ') FROM users u WHERE residentId=r.id GROUP BY u.residentId) as plants,
     (u.BalanceEl+u.BalanceFee+u.BalanceWat) as balance
   FROM residents r
@@ -145,14 +145,13 @@ IF (id = 0) THEN
   GROUP BY r.id
   ORDER BY r.surName, r.name, r.middlName;
 ELSE
-  SELECT r.id as id,
-    surName, name, middlName,
-    userName, password, email,
-    phone1, phone2, isMember,
-    concat(surName, " ", name, " ", middlName ) as resName
-  FROM residents r
-  WHERE r.id=id
-  ORDER BY r.surName;
+  IF (uid > 0) THEN
+    SELECT *
+    FROM residents
+    WHERE id=uid;
+  ELSE
+    SELECT id, isMember FROM residents WHERE id=1;
+  END IF;
 END IF;
 END$$
 
@@ -641,21 +640,50 @@ END$$
 DROP PROCEDURE IF EXISTS updateResidentProfile;
 CREATE DEFINER=`root`@`localhost` 
 PROCEDURE `updateResidentProfile` (
-  `uid` INT(5), 
-  `name` VARCHAR(120), 
-  `email` VARCHAR(120), 
-  `phone` VARCHAR(30), 
-  size DECIMAL(15,2), 
-  `info` VARCHAR(250))  
+  `uid` TINYINT(5),
+  `_surName` VARCHAR(40),
+  `_name` VARCHAR(30),
+  `_middlName` VARCHAR(50),
+  `_userName` VARCHAR(15),
+  `_password` BINARY(16),
+  `_email` VARCHAR(120),
+  `_phone1` VARCHAR(20),
+  `_phone2` VARCHAR(20), 
+  `_isMember` TINYINT(1), 
+  `_autoInfo` VARCHAR(100), 
+  `_autoNum` VARCHAR(20))  
 BEGIN
-  UPDATE users SET 
-    Name=name, 
-    LastUpdationDate=current_timestamp(), 
-    EmailId=email, 
-    PhoneNumber=phone, 
-    Size=size, 
-    Info=info 
+IF ( uid > 0 ) THEN
+  UPDATE residents SET
+    id=uid,
+    surName=_surName,
+    name=_name,
+    middlName=_middlName,
+    userName=_userName,
+    password=_password,
+    email=_email,
+    phone1=_phone1,
+    phone2=_phone2,
+    isMember=_isMember,
+    autoInfo=_autoInfo,
+    autoNum=_autoNum
   WHERE id=uid;
+ELSE
+  INSERT into residents ( surName, name, middlName, userName, password, email, phone1, phone2, isMember, autoInfo, autoNum )
+  VALUES (
+    _surName,
+    _name,
+    _middlName,
+    _userName,
+    _password,
+    _email,
+    _phone1,
+    _phone2,
+    _isMember,
+    _autoInfo,
+    _autoNum
+  );
+END IF;
 END$$
 
 DELIMITER ;
