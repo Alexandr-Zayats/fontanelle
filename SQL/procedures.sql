@@ -143,7 +143,7 @@ IF (id = 0) THEN
   FROM residents r
   LEFT JOIN users u ON u.residentId=r.id
   GROUP BY r.id
-  ORDER BY r.surName;
+  ORDER BY r.surName, r.name, r.middlName;
 ELSE
   SELECT r.id as id,
     surName, name, middlName,
