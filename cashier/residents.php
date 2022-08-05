@@ -90,6 +90,7 @@ if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
                                       <th style="text-align:center">ФИО</th>
                                       <th style="text-align:center">Логин</th>
                                       <th style="text-align:center">Телефон</th>
+                                      <th style="text-align:center">Email</th>
                                       <th style="text-align:center">Автомобиль</th>
                                       <th style="text-align:center">Участки</th>
                                       <th style="text-align:center">Баланс</th>

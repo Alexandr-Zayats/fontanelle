@@ -142,6 +142,7 @@ IF (uid = 0) THEN
     (u.BalanceEl+u.BalanceFee+u.BalanceWat) as balance
   FROM residents r
   LEFT JOIN users u ON u.residentId=r.id
+  GROUP BY r.id
   ORDER BY r.surName, r.name, r.middlName;
 ELSE
   IF (uid > 0) THEN
