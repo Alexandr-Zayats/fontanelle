@@ -119,14 +119,21 @@ if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
                                       </td>
 
 				                              <td style="text-align:right">
+                                        <?php
+                                          if (preg_match( '/.*(\d{2})(\d{3})(\d{2})(\d{2})$/', $result['phone2'],  $matches)) {
+                                              $phone="+380 ($matches[1]) $matches[2]-$matches[3]-$matches[4]";
+                                          } else {
+                                            $phone="";
+                                          }
+                                        ?>
                                         <a href="../cashier/residentEdit.php?uid=<?php echo $result['id'];?>"</a>
-					                              <?php
-					                              if (preg_match( '/.*(\d{2})(\d{3})(\d{2})(\d{2})$/', $result['phone1'],  $matches)) {
-    					                            echo "+380 ($matches[1]) $matches[2]-$matches[3]-$matches[4]";
-					                              } else {
-					                                echo $result['phone1'];
-					                              }
-					                              ?>
+                                        <p title="<?php echo $phone?>"><?php
+					                                if (preg_match( '/.*(\d{2})(\d{3})(\d{2})(\d{2})$/', $result['phone1'],  $matches)) {
+    					                              echo "+380 ($matches[1]) $matches[2]-$matches[3]-$matches[4]";
+					                                } else {
+					                                  echo "Телефон не указан";
+					                                }
+                                        ?></p>
                                       </td>
                                       <td style="text-align:right">
                                         <?php echo $result['email'];?>

@@ -125,12 +125,12 @@ BEGIN
 END$$
 
 DROP PROCEDURE IF EXISTS counterInfo;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `counterInfo` (`cId` TINYINT(5))  BEGIN
+CREATE DEFINER=`root`@`localhost` PROCEDURE `counterInfo` (`cId` SMALLINT(5))  BEGIN
 SELECT * FROM counters c WHERE c.id=cId;
 END$$
 
 DROP PROCEDURE IF EXISTS residents;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `residents` (`uid` TINYINT(5))  BEGIN
+CREATE DEFINER=`root`@`localhost` PROCEDURE `residents` (`uid` SMALLINT(5))  BEGIN
 IF (uid = 0) THEN
   SELECT r.id as id,
     surName, name, middlName,
@@ -142,7 +142,6 @@ IF (uid = 0) THEN
     (u.BalanceEl+u.BalanceFee+u.BalanceWat) as balance
   FROM residents r
   LEFT JOIN users u ON u.residentId=r.id
-  GROUP BY r.id
   ORDER BY r.surName, r.name, r.middlName;
 ELSE
   IF (uid > 0) THEN
@@ -326,11 +325,11 @@ GROUP BY u.id ORDER BY u.id;
 END$$
 
 DROP PROCEDURE IF EXISTS sp_addMoney;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_addMoney` (`cashier` INT(3),  `uid` INT(3), `sum` decimal(8,2), `dst` VARCHAR(15), `dat` DATE, `bank` BOOLEAN )
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_addMoney` (`cashier` INT(3),  `uid` SMALLINT(3), `sum` decimal(8,2), `dst` VARCHAR(15), `dat` DATE, `bank` BOOLEAN )
 BEGIN
   DECLARE payDate DATE;
   DECLARE firstPAY DATE;
-  DECLARE YEAR_INT INT(100);
+  DECLARE YEAR_INT SMALLINT(100);
   IF ( dat = '2000-01-01' ) THEN
     SET payDate = DATE(NOW());
   ELSE
@@ -365,7 +364,7 @@ BEGIN
 END$$
 
 DROP PROCEDURE IF EXISTS sp_addCounterValues;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_addCounterValues` (`uid` INT(3), `cuid` INT(5), dayP decimal(8,2), dayC decimal(8,2), nightP decimal(8,2), nightC decimal(8,2)) BEGIN
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_addCounterValues` (`uid` SMALLINT(3), `cuid` SMALLINT(5), dayP decimal(8,2), dayC decimal(8,2), nightP decimal(8,2), nightC decimal(8,2)) BEGIN
 IF ( (SELECT type FROM counters WHERE id=cuid) = "el" ) THEN
   IF ( (select count(dPrevius) FROM countValues WHERE cId=cuid AND dPrevius is NOT NULL) > 0 ) THEN
     update users set BalanceEl=(BalanceEl - (SELECT day FROM tariffs WHERE id=users.tariffId) * ( dayC - dayP )) WHERE id=uid;
@@ -385,7 +384,7 @@ END IF;
 END$$
 
 DROP PROCEDURE IF EXISTS sp_getLastCounterValues;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_getLastCounterValues` (`uid` INT(5))  BEGIN
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_getLastCounterValues` (`uid` SMALLINT(5))  BEGIN
   SELECT dCurrent as dayLast, nCurrent as nightLast 
   FROM countValues 
   WHERE cId=uid 
@@ -393,12 +392,12 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_getLastCounterValues` (`uid` INT
 END$$
 
 DROP PROCEDURE IF EXISTS sp_getTariffId;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_getTariffId` (`uid` INT(5))  BEGIN
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_getTariffId` (`uid` SMALLINT(5))  BEGIN
 select TariffId from users where id=uid limit 1;
 END$$
 
 DROP PROCEDURE IF EXISTS sp_counterList;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_counterList` (`uid` INT(5))  BEGIN
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_counterList` (`uid` SMALLINT(5))  BEGIN
 select * from counters where userId=uid AND id>0;
 END$$
 
@@ -423,12 +422,12 @@ FROM payments;
 END$$
 
 DROP PROCEDURE IF EXISTS sp_cashierchangepwd;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_cashierchangepwd` (`newpwd` VARCHAR(120), `uid` INT(5), `name` VARCHAR(200), email VARCHAR(200), phone VARCHAR(120))  BEGIN
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_cashierchangepwd` (`newpwd` VARCHAR(120), `uid` SMALLINT(5), `name` VARCHAR(200), email VARCHAR(200), phone VARCHAR(120))  BEGIN
 update cashier set UserPassword=newpwd,LastUpdationDate=current_timestamp(),Name=name,PhoneNumber=phone,EmailId=email WHERE id=uid;
 END$$
 
 DROP PROCEDURE IF EXISTS sp_cashiercurrentpwdvalidate;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_cashiercurrentpwdvalidate` (`currentpwd` VARCHAR(120), `uid` INT(5))  BEGIN
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_cashiercurrentpwdvalidate` (`currentpwd` VARCHAR(120), `uid` SMALLINT(5))  BEGIN
 select id from cashier where id=uid and UserPassword=currentpwd;
 END$$
 
@@ -443,7 +442,7 @@ update cashier set Password=newpwd,updationDate=ldtime  where  UserName=uname an
 END$$
 
 DROP PROCEDURE IF EXISTS sp_cashierprofile;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_cashierprofile` (`cashierid` INT(5))  BEGIN
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_cashierprofile` (`cashierid` SMALLINT(5))  BEGIN
 SELECT * from cashier where id=cashierid;
 END$$
 
@@ -640,15 +639,15 @@ END$$
 DROP PROCEDURE IF EXISTS updateResidentProfile;
 CREATE DEFINER=`root`@`localhost` 
 PROCEDURE `updateResidentProfile` (
-  `uid` TINYINT(5),
+  `uid` SMALLINT(5),
   `_surName` VARCHAR(40),
   `_name` VARCHAR(30),
   `_middlName` VARCHAR(50),
   `_userName` VARCHAR(15),
   `_password` BINARY(16),
   `_email` VARCHAR(120),
-  `_phone1` VARCHAR(20),
-  `_phone2` VARCHAR(20), 
+  `_phone1` INT(10),
+  `_phone2` INT(10), 
   `_isMember` TINYINT(1), 
   `_autoInfo` VARCHAR(100), 
   `_autoNum` VARCHAR(20))  

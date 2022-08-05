@@ -102,18 +102,12 @@ if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
   while ($result=mysqli_fetch_array($query)) {
 ?>
                                     <?php
-                                      $phone="";
+                                      $phone="Номер телефона не указан";
                                       if (preg_match('/.*(\d{2})(\d{3})(\d{2})(\d{2})$/', $result['phone1'],  $matches )) {
-                                          $phone="+380 ($matches[1]) $matches[2]-$matches[3]-$matches[4]";
-                                      } else {
-                                        $phone=$result['phone1'];
+                                        $phone="+380 ($matches[1]) $matches[2]-$matches[3]-$matches[4]";
                                       }
-                                      if ($result['phone2'] != "") {
-                                        if (preg_match( '/.*(\d{2})(\d{3})(\d{2})(\d{2})$/', $result['phone2'],  $matches)) {
-                                          $phone=$phone."; "."+380 ($matches[1]) $matches[2]-$matches[3]-$matches[4]";
-                                        } else {
-                                          $phone=$phone."; ".$result['phone2'];
-                                        }
+                                      if (preg_match( '/.*(\d{2})(\d{3})(\d{2})(\d{2})$/', $result['phone2'],  $matches)) {
+                                        $phone=$phone."; "."+380 ($matches[1]) $matches[2]-$matches[3]-$matches[4]";
                                       }
                                     ?>
                                     <tr>

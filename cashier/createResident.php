@@ -4,22 +4,23 @@ session_start();
 //db Connection file
 include('../includes/config.php');
 //code for createuser
+$phone_regex = array("-", "(", ")", "+38", "+", "_", " ");
 if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
   header('location:logout.php');
 } else {
   if(isset($_POST['createuser'])) {
     $id=intval($_POST['id']);
-    $surName=$_POST['surName'];
-    $name=$_POST['name'];
-    $middlName=$_POST['middlName'] ?? '';
-    $email=$_POST['email'] ?? '';
-    $userName=$_POST['userName'] ?? '';
-    $password=$_POST['password'] ?? '';
-    $phone1=$_POST['phone1'];
-    $phone2=$_POST['phone2'] ?? '';
-    $isMember=1;
-    $autoInfo=$_POST['autoInfo'] ?? '';
-    $autoNum=$_POST['autoNum'] ?? '';
+    $surName = $_POST['surName'];
+    $name = $_POST['name'];
+    $middlName = $_POST['middlName'] ?? '';
+    $email = $_POST['email'] ?? '';
+    $userName = $_POST['userName'] ?? '';
+    $password = $_POST['password'] ?? '';
+    $phone1 = str_replace($phone_regex, "", $_POST['phone1']);
+    $phone2 = str_replace($phone_regex, "", $_POST['phone2']);
+    $isMember = 1;
+    $autoInfo = $_POST['autoInfo'] ?? '';
+    $autoNum = $_POST['autoNum'] ?? '';
     mysqli_close($con);
     $con = mysqli_connect(DB_SERVER,DB_USER,DB_PASS,DB_NAME);
     //echo "<script>alert('$id, $surName, $name, $middlName, $userName, $password, $email, $phone1, $phone2, $isMember, $autoInfo, $autoNum');</script>";
@@ -184,7 +185,7 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
                                       name="phone2"
                                       pattern="+38 ([0-9]{3}) [0-9]{3}-[0-9]{2}-[0-9]{2}"
                                       <?php
-                                        if(isset($result['phone2']) AND $result['phone2'] != "") {
+                                        if(isset($result['phone2']) AND $result['phone2'] != "98") {
                                           if (preg_match('/.*(\d{3})(\d{3})(\d{2})(\d{2})$/', $result['phone2'],  $matches)) {
                                             $phone="+38 ($matches[1]) $matches[2]-$matches[3]-$matches[4]";
                                           } else {
