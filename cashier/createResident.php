@@ -16,15 +16,16 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
     $email = $_POST['email'] ?? '';
     $userName = $_POST['userName'] ?? '';
     $password = $_POST['password'] ?? '';
-    $phone1 = str_replace($phone_regex, "", $_POST['phone1']);
-    $phone2 = str_replace($phone_regex, "", $_POST['phone2']);
+    $phone1 = str_replace($phone_regex, '', $_POST['phone1']);
+    $phone2 = str_replace($phone_regex, '', $_POST['phone2']);
+    if($phone2 == "") $phone2=0;
     $isMember = 1;
     $autoInfo = $_POST['autoInfo'] ?? '';
     $autoNum = $_POST['autoNum'] ?? '';
     mysqli_close($con);
     $con = mysqli_connect(DB_SERVER,DB_USER,DB_PASS,DB_NAME);
     //echo "<script>alert('$id, $surName, $name, $middlName, $userName, $password, $email, $phone1, $phone2, $isMember, $autoInfo, $autoNum');</script>";
-    $query=mysqli_query($con, "call updateResidentProfile($id, '$surName', '$name', '$middlName', '$userName', '$password', '$email', '$phone1', '$phone2', $isMember, '$autoInfo', '$autoNum')");
+    $query=mysqli_query($con, "call updateResidentProfile($id, '$surName', '$name', '$middlName', '$userName', '$password', '$email', $phone1, $phone2, $isMember, '$autoInfo', '$autoNum')");
     if ($query) {
       echo "<script>alert('Новый дачник успешно зарегистрирован');</script>";
       echo "<script>window.location.href='residents.php'</script>";
@@ -165,15 +166,10 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
                                       name="phone1" required="true"
                                       pattern="+38 ([0-9]{3}) [0-9]{3}-[0-9]{2}-[0-9]{2}"
                                       <?php
-                                        if(isset($result['phone1'])) {
-                                          if (preg_match('/.*(\d{3})(\d{3})(\d{2})(\d{2})$/', $result['phone1'],  $matches)) {
-                                            $phone="+38 ($matches[1]) $matches[2]-$matches[3]-$matches[4]";
-                                          } else {
-                                            $phone=$result['phone1'];
-                                          }
-                                          echo "value=\"".$phone."\" ";
+                                        if(isset($result['phone1']) AND preg_match('/.*(\d{2})(\d{3})(\d{2})(\d{2})$/', $result['phone1'],  $matches)) {
+                                          echo "value=\"+380 ($matches[1]) $matches[2]-$matches[3]-$matches[4]\"";
                                         } else {
-                                          echo "placeholder=\"+38 (067) 123-45-67\"";
+                                          echo "placeholder=\"+380 (67) 123-45-67\"";
                                         }
                                       ?>
                                     >
@@ -185,15 +181,10 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
                                       name="phone2"
                                       pattern="+38 ([0-9]{3}) [0-9]{3}-[0-9]{2}-[0-9]{2}"
                                       <?php
-                                        if(isset($result['phone2']) AND $result['phone2'] != "98") {
-                                          if (preg_match('/.*(\d{3})(\d{3})(\d{2})(\d{2})$/', $result['phone2'],  $matches)) {
-                                            $phone="+38 ($matches[1]) $matches[2]-$matches[3]-$matches[4]";
-                                          } else {
-                                            $phone=$result['phone2'];
-                                          }
-                                          echo "value=\"".$phone."\" ";
+                                        if(isset($result['phone2']) AND preg_match('/.*(\d{2})(\d{3})(\d{2})(\d{2})$/', $result['phone2'],  $matches)) {
+                                          echo "value=\"+380 ($matches[1]) $matches[2]-$matches[3]-$matches[4]\"";
                                         } else {
-                                          echo "placeholder=\"+38 (067) 123-45-67\"";
+                                          echo "placeholder=\"+380 (67) 123-45-67\"";
                                         }
                                       ?>
                                     >
