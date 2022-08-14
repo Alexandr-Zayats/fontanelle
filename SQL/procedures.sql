@@ -553,7 +553,7 @@ CREATE DEFINER=`root`@`localhost`
 PROCEDURE `sp_registration` (
   `uid` int(3),
   `street` int(3), 
-  `size` VARCHAR(20), 
+  `size` DECIMAL(5,2), 
   `resident` int(5), 
   `counterNum` DECIMAL(20), 
   `counterName` VARCHAR(120), 

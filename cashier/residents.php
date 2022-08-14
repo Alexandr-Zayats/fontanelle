@@ -105,7 +105,7 @@ if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
                                     <tr>
                                       <td style="text-align:right"><?php echo $cnt;?></td>
                                       <td style="text-align:center">
-                                        <a href="../cashier/residentEdit.php?uid=<?php echo $result['id'];?>"</a>
+                                        <a href="createResident.php?uid=<?php echo $result['id'];?>"</a>
                                         <?php echo $result['id'];?>
                                       </td>
 
@@ -115,7 +115,7 @@ if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
                                       </td>
 
                                       <td style="text-align:left">
-                                        <a href="../cashier/residentEdit.php?uid=<?php echo $result['id'];?>"</a>
+                                        <a href="createResident.php?uid=<?php echo $result['id'];?>"</a>
                                         <?php echo $result['userName'];?>
                                       </td>
 
@@ -127,7 +127,7 @@ if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
                                             $phone="";
                                           }
                                         ?>
-                                        <a href="../cashier/residentEdit.php?uid=<?php echo $result['id'];?>"</a>
+                                        <a href="createResident.php?uid=<?php echo $result['id'];?>"</a>
                                         <p title="<?php echo $phone?>"><?php
 					                                if (preg_match( '/.*(\d{2})(\d{3})(\d{2})(\d{2})$/', $result['phone1'],  $matches)) {
     					                              echo "+380 ($matches[1]) $matches[2]-$matches[3]-$matches[4]";
@@ -149,7 +149,6 @@ if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
                                       </td>
 
                                       <td style="text-align:right">
-                                        <a href="../cashier/residentEdit.php?uid=<?php echo $result['id'];?>"</a>
                                         <?php printf("%.2f", $result['balance']);?></td>
                                       </td>
                                     </tr>

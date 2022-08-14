@@ -7,19 +7,19 @@ if(isset($_POST['createuser'])) {
   $street=$_POST['street'];
   $resident=$_POST['resident'];
   $size=$_POST['size'];
-  $counterNum=$_POST['counterNum'] ?? '123456';
-  $counterName=$_POST['counterName'] ?? 'основной';
-  $counterInfo=$_POST['counterInfo'] ?? '';
-  $dCurrent=$_POST['dCurrent'] ?? '0';
-  $nCurrent=$_POST['nCurrent'] ?? '';
+  $counterNum=$_POST['counterNum'] ?: '123456';
+  $counterName=$_POST['counterName'] ?: 'основной';
+  $counterInfo=$_POST['counterInfo'] ?: '';
+  $dCurrent=$_POST['dCurrent'] ?: 0;
+  $nCurrent=$_POST['nCurrent'] ?: 0;
   $result=count(mysqli_fetch_array(mysqli_query($con,"call sp_checkidavailabilty($id)")));
   if($result>0){
     echo "<script>alert('Участок уже заерегистрирован!');</script>";
   } else {
     mysqli_close($con);
     $con = mysqli_connect(DB_SERVER,DB_USER,DB_PASS,DB_NAME);
-    //echo "<script>alert('$id $street $size $resident $counterNum $counterName $counterInfo $dCurrent $nCurrent $email');</script>";
-    $query=mysqli_query($con, "call sp_registration($id, $street, '$size', $resident, $counterNum, '$counterName', '$counterInfo', '$dCurrent', '$nCurrent')");
+    // echo "<script>alert('$id, $street, $size, $resident, $counterNum, $counterName, $counterInfo, $dCurrent, $nCurrent');</script>";
+    $query=mysqli_query($con, "call sp_registration($id, $street, $size, $resident, $counterNum, '$counterName', '$counterInfo', $dCurrent, $nCurrent)");
     if ($query) {
       echo "<script>alert('Новый садовый участок успешно добавлен');</script>";
       echo "<script>window.location.href='registered-users.php'</script>";
