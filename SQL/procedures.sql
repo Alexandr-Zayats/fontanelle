@@ -505,11 +505,32 @@ SELECT u.id as id,
   u.BalanceWat as wat,
   r.phone1 as phone1,
   r.phone2 as phone2,
+  GREATEST(DATE_FORMAT(max(cv.date), '%Y-%m-%d'), DATE_FORMAT(max(p.date), '%Y-%m-%d')) as lastPay
+FROM users u
+LEFT JOIN residents r ON u.residentId=r.id
+LEFT JOIN streets s ON u.StreetId=s.id
+LEFT JOIN counters c ON c.userId=u.id
+LEFT JOIN countValues cv ON cv.cId=c.id
+LEFT JOIN payments p ON p.userId=u.id
+WHERE u.id > 0
+GROUP BY u.id;
+END$$
+
+DROP PROCEDURE IF EXISTS debtors;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `debtors` ()  BEGIN
+SELECT u.id as id,
+  concat(r.surName, " ", r.name, " ", r.middlName ) as Name,
+  s.name as street,
+  u.BalanceEl as el,
+  u.BalanceFee as fee,
+  u.BalanceWat as wat,
+  r.phone1 as phone1,
+  r.phone2 as phone2,
   (SELECT DATE_FORMAT(max(date), '%Y-%m-%d') FROM payments WHERE userId=u.id) as lastPay
 FROM users u
 LEFT JOIN residents r ON u.residentId=r.id
 LEFT JOIN streets s ON u.StreetId=s.id
-WHERE u.id > 0;
+WHERE u.id > 0 AND lastPay ;
 END$$
 
 DROP PROCEDURE IF EXISTS sp_checkemailavailabilty;
