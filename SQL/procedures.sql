@@ -505,12 +505,12 @@ SELECT u.id as id,
   u.BalanceWat as wat,
   r.phone1 as phone1,
   r.phone2 as phone2,
-  GREATEST(DATE_FORMAT(max(cv.date), '%Y-%m-%d'), DATE_FORMAT(max(p.date), '%Y-%m-%d')) as lastPay
+  GREATEST(COALESCE(DATE_FORMAT(max(cv.date), '%Y-%m-%d'), '2020-01-01'), COALESCE(DATE_FORMAT(max(p.date), '%Y-%m-%d'), '2020-01-01')) as lastPay
 FROM users u
 LEFT JOIN residents r ON u.residentId=r.id
 LEFT JOIN streets s ON u.StreetId=s.id
 LEFT JOIN counters c ON c.userId=u.id
-LEFT JOIN countValues cv ON cv.cId=c.id
+LEFT JOIN countValues cv ON cv.cId=c.id AND cv.dCurrent>0
 LEFT JOIN payments p ON p.userId=u.id
 WHERE u.id > 0
 GROUP BY u.id;
