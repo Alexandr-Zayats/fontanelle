@@ -48,18 +48,18 @@ BEGIN
   DECLARE dNow DATE;
   DECLARE dEnd DATE;
   SET dNow = DATE(NOW());
-  SET dEnd = DATE_SUB(NOW(), INTERVAL 36 MONTH);
+  SET dEnd = DATE_SUB(NOW(), INTERVAL 60 MONTH);
   WHILE DATE(dNow) >= DATE(dEnd) DO
     SELECT
-      SUM(p.sum) as paid,
+      payment.sum as paid,
       SUM(c.dPrev) as dPrev,
-      SUM(c.dCur) as dCur,
-      SUM(c.dDelta) as dDelta,
-      SUM(c.nPrev) as nPrev,
-      SUM(c.nCur) as nCur,
-      SUM(c.nDelta) as nDelta,
-      SUM(c.sum) as toPay,
-      c.date
+      c.dCur as dCur,
+      c.dDelta as dDelta,
+      c.nPrev as nPrev,
+      c.nCur as nCur,
+      c.nDelta as nDelta,
+      c.sum as toPay,
+      COALESCE(payment.date, c.date, DATE_FORMAT(dNow, '%Y-%m-%d')) as date
     FROM
       ( SELECT
         min(v.dPrevius) as dPrev,
@@ -68,7 +68,7 @@ BEGIN
         min(v.nPrevius) as nPrev,
         max(v.nCurrent) as nCur,
         max(v.nCurrent)-min(v.nPrevius) as nDelta,
-        DATE_FORMAT(v.date, '%Y-%m') as date,
+        DATE_FORMAT(v.date, '%Y-%m-%d') as date,
         (max(v.dCurrent)-min(v.dPrevius))*t.day+(max(v.nCurrent)-min(v.nPrevius))*t.night as sum
       FROM countValues v INNER JOIN tariffs t ON (v.tariffId=t.id)
       WHERE v.cId=cid
@@ -76,12 +76,13 @@ BEGIN
         AND  DATE_FORMAT(v.date, '%Y-%m')=DATE_FORMAT(dNow, '%Y-%m')
       GROUP BY t.id ) as c, 
       ( SELECT
-        SUM(SUM) as sum
-      FROM payments p
+        SUM(sum) as sum,
+        DATE_FORMAT(date, '%Y-%m-%d') as date
+      FROM payments
       WHERE userId=uid
         AND dst="el"
-        AND DATE_FORMAT(p.date, '%Y-%m')=DATE_FORMAT(dNow, '%Y-%m')
-      ) as p;
+        AND DATE_FORMAT(date, '%Y-%m')=DATE_FORMAT(dNow, '%Y-%m')
+      ) as payment;
     SET dNow = DATE_SUB(dNow, INTERVAL 1 MONTH);
   END WHILE;
 END$$
@@ -92,15 +93,15 @@ BEGIN
   DECLARE dNow DATE;
   DECLARE dEnd DATE;
   SET dNow = DATE(NOW());
-  SET dEnd = DATE_SUB(NOW(), INTERVAL 36 MONTH);
+  SET dEnd = DATE_SUB(NOW(), INTERVAL 60 MONTH);
   WHILE DATE(dNow) >= DATE(dEnd) DO
     SELECT
-      SUM(p.sum) as paid,
+      p.sum as paid,
       SUM(c.dPrev) as dPrev,
       SUM(c.dCur) as dCur,
       SUM(c.dDelta) as dDelta,
       SUM(c.sum) as toPay,
-      c.date
+      COALESCE(p.date, c.date, DATE_FORMAT(dNow, '%Y-%m-%d')) as date
     FROM
       ( SELECT
         min(v.dPrevius) as dPrev,

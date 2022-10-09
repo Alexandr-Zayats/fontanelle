@@ -201,16 +201,16 @@ if (strlen($_SESSION['adid'] == 0 || ($_SESSION['type'] != "cashier" && $_SESSIO
     do {
       if ($result = mysqli_store_result($con)) {
         while ($countValues = mysqli_fetch_array($result)) {
-          if ( ! is_null($countValues['date']) ) { ?>
+          if ( ! is_null($countValues['dCur']) || ! is_null($countValues['paid']) ) { ?>
                         <tr>
                           <td style="text-align:right"><?php echo $countValues['date'] ?></td>
-                          <td style="text-align:right"><?php echo $countValues['dPrev'];?></td>
-                          <td style="text-align:right"><?php echo $countValues['dCur'];?></td>
-                          <td style="text-align:right"><?php echo $countValues['dDelta'];?></td>
-                          <td style="text-align:right"><?php echo $countValues['nPrev'];?></td>
-                          <td style="text-align:right"><?php echo $countValues['nCur'];?></td>
-                          <td style="text-align:right"><?php echo $countValues['nDelta'];?></td>
-                          <td style="text-align:right"><?php printf("%.2f", $countValues['toPay']);?></td>
+                          <td style="text-align:right"><?php echo $countValues['dPrev'] ?: '--';?></td>
+                          <td style="text-align:right"><?php echo $countValues['dCur'] ?: '--';?></td>
+                          <td style="text-align:right"><?php echo $countValues['dDelta'] ?: '0.00';?></td>
+                          <td style="text-align:right"><?php echo $countValues['nPrev'] ?: '--';?></td>
+                          <td style="text-align:right"><?php echo $countValues['nCur'] ?: '--';?></td>
+                          <td style="text-align:right"><?php echo $countValues['nDelta'] ?: '0.00';?></td>
+                          <td style="text-align:right"><?php printf("%.2f", $countValues['toPay']) ?: '0.00';?></td>
                           <td style="text-align:right"><?php echo $countValues['paid'];?></td>
                         </tr>
  <?php    }
