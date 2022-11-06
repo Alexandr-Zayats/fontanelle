@@ -201,7 +201,7 @@ if (strlen($_SESSION['adid'] == 0 || ($_SESSION['type'] != "cashier" && $_SESSIO
     do {
       if ($result = mysqli_store_result($con)) {
         while ($countValues = mysqli_fetch_array($result)) {
-          if ( ! is_null($countValues['dCur']) || ! is_null($countValues['paid']) ) { ?>
+          if ( ! is_null($countValues['dCur']) || ! is_null($countValues['nCur']) || ! is_null($countValues['paid']) ) { ?>
                         <tr>
                           <td style="text-align:right"><?php echo $countValues['date'] ?></td>
                           <td style="text-align:right"><?php echo $countValues['dPrev'] ?: '--';?></td>

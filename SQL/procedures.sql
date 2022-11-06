@@ -72,7 +72,7 @@ BEGIN
         (max(v.dCurrent)-min(v.dPrevius))*t.day+(max(v.nCurrent)-min(v.nPrevius))*t.night as sum
       FROM countValues v INNER JOIN tariffs t ON (v.tariffId=t.id)
       WHERE v.cId=cid
-        AND v.dCurrent!=v.dPrevius
+        AND ( v.dCurrent!=v.dPrevius OR v.nCurrent!=v.nPrevius )
         AND  DATE_FORMAT(v.date, '%Y-%m')=DATE_FORMAT(dNow, '%Y-%m')
       GROUP BY t.id ) as c, 
       ( SELECT
