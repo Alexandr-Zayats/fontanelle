@@ -112,10 +112,14 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
                                       <select id="year" name="year" class="btn btn-primary btn-user btn-block">
                                         <?php
                                         $curYear = date("Y");
+                                        $startYear = $curYear + 1;
                                         $lastYear = $curYear - 15;
-                                        echo "<option value=".$curYear." selected>".$curYear."</option>";
-                                        for ( $year = $curYear-1; $year >= $lastYear; $year-- ) {
-                                          echo "<option value=".$year.">".$year."</option>";
+                                        for ( $year = $startYear; $year >= $lastYear; $year-- ) {
+                                          if ( $year == $curYear ) {
+                                            echo "<option value=".$year." selected>".$year."</option>";
+                                          } else {
+                                            echo "<option value=".$year.">".$year."</option>";
+                                          }
                                         }
                                         ?>
                                       </select>
