@@ -84,7 +84,7 @@ BEGIN
         AND DATE_FORMAT(date, '%Y-%m')=DATE_FORMAT(dNow, '%Y-%m')
       ) as payment;
     SET dNow = DATE_SUB(dNow, INTERVAL 1 MONTH);
-  END WHILE;
+  ENDWHILE;
 END$$
 
 DROP PROCEDURE IF EXISTS wat_history;
@@ -273,53 +273,53 @@ SELECT
     FROM counters
     WHERE userId=u.id AND type="el"
     ORDER BY verDate LIMIT 0,1) as elVerDate,
-(SELECT DATE_FORMAT(verDate,  '%Y-%m-%d') as verDate FROM counters
-  WHERE userId=u.id AND type="wat"
-  ORDER BY verDate LIMIT 0,1) as watVerDate,
-(SELECT SUM(v.dCurrent - v.dPrevius) FROM countValues v
-  LEFT JOIN counters c ON (c.id=v.cId)
-  WHERE
-    DATE_FORMAT(v.date, '%Y%m%d') >= DATE_FORMAT(start, '%Y%m%d') AND
-    DATE_FORMAT(v.date, '%Y%m%d') <= DATE_FORMAT(stop, '%Y%m%d') AND
-    c.userId=u.id AND
-    c.type='el'
-  GROUP BY u.id) as kDay,
-(SELECT SUM(v.nCurrent - v.nPrevius) FROM countValues v
-  LEFT JOIN counters c ON (c.id=v.cId)
-  WHERE
-    DATE_FORMAT(v.date, '%Y%m%d') >= DATE_FORMAT(start, '%Y%m%d') AND
-    DATE_FORMAT(v.date, '%Y%m%d') <= DATE_FORMAT(stop, '%Y%m%d') AND
-    c.userId=u.id AND
-    c.type='el'
-  GROUP BY u.id) as kNight,
-(SELECT SUM(v.dCurrent - v.dPrevius) FROM countValues v
-  LEFT JOIN counters c ON (c.id=v.cId)
-  WHERE
-    DATE_FORMAT(v.date, '%Y%m%d') >= DATE_FORMAT(start, '%Y%m%d') AND
-    DATE_FORMAT(v.date, '%Y%m%d') <= DATE_FORMAT(stop, '%Y%m%d') AND
-    c.userId=u.id AND
-    c.type='wat'
-  GROUP BY u.id) as kWater,
-SUM(
-  IF(dst='el'
-    AND DATE_FORMAT(p.date, '%Y%m%d') >= DATE_FORMAT(start, '%Y%m%d')
-    AND DATE_FORMAT(p.date, '%Y%m%d') <= DATE_FORMAT(stop, '%Y%m%d'),
-    p.sum, 0)) as sumEl,
-SUM(
-  IF(dst='wat'
-    AND DATE_FORMAT(p.date, '%Y%m%d') >= DATE_FORMAT(start, '%Y%m%d')
-    AND DATE_FORMAT(p.date, '%Y%m%d') <= DATE_FORMAT(stop, '%Y%m%d'),
-    p.sum, 0)) as sumWat,
-SUM(
-  IF(dst='fee'
-    AND DATE_FORMAT(p.date, '%Y%m%d') >= DATE_FORMAT(start, '%Y%m%d')
-    AND DATE_FORMAT(p.date, '%Y%m%d') <= DATE_FORMAT(stop, '%Y%m%d'),
-    p.sum, 0)) as sumFee,
-SUM(
-  IF(dst='inc'
-    AND DATE_FORMAT(p.date, '%Y%m%d') >= DATE_FORMAT(start, '%Y%m%d')
-    AND DATE_FORMAT(p.date, '%Y%m%d') <= DATE_FORMAT(stop, '%Y%m%d'),
-    p.sum, 0)) as sumInc
+  (SELECT DATE_FORMAT(verDate,  '%Y-%m-%d') as verDate FROM counters
+    WHERE userId=u.id AND type="wat"
+    ORDER BY verDate LIMIT 0,1) as watVerDate,
+  (SELECT SUM(v.dCurrent - v.dPrevius) FROM countValues v
+    LEFT JOIN counters c ON (c.id=v.cId)
+    WHERE
+      DATE_FORMAT(v.date, '%Y%m%d') >= DATE_FORMAT(start, '%Y%m%d') AND
+      DATE_FORMAT(v.date, '%Y%m%d') <= DATE_FORMAT(stop, '%Y%m%d') AND
+      c.userId=u.id AND
+      c.type='el'
+    GROUP BY u.id) as kDay,
+  (SELECT SUM(v.nCurrent - v.nPrevius) FROM countValues v
+    LEFT JOIN counters c ON (c.id=v.cId)
+    WHERE
+      DATE_FORMAT(v.date, '%Y%m%d') >= DATE_FORMAT(start, '%Y%m%d') AND
+      DATE_FORMAT(v.date, '%Y%m%d') <= DATE_FORMAT(stop, '%Y%m%d') AND
+      c.userId=u.id AND
+      c.type='el'
+    GROUP BY u.id) as kNight,
+  (SELECT SUM(v.dCurrent - v.dPrevius) FROM countValues v
+    LEFT JOIN counters c ON (c.id=v.cId)
+    WHERE
+      DATE_FORMAT(v.date, '%Y%m%d') >= DATE_FORMAT(start, '%Y%m%d') AND
+      DATE_FORMAT(v.date, '%Y%m%d') <= DATE_FORMAT(stop, '%Y%m%d') AND
+      c.userId=u.id AND
+      c.type='wat'
+    GROUP BY u.id) as kWater,
+  SUM(
+    IF(dst='el'
+      AND DATE_FORMAT(p.date, '%Y%m%d') >= DATE_FORMAT(start, '%Y%m%d')
+      AND DATE_FORMAT(p.date, '%Y%m%d') <= DATE_FORMAT(stop, '%Y%m%d'),
+      p.sum, 0)) as sumEl,
+  SUM(
+    IF(dst='wat'
+      AND DATE_FORMAT(p.date, '%Y%m%d') >= DATE_FORMAT(start, '%Y%m%d')
+      AND DATE_FORMAT(p.date, '%Y%m%d') <= DATE_FORMAT(stop, '%Y%m%d'),
+      p.sum, 0)) as sumWat,
+  SUM(
+    IF(dst='fee'
+      AND DATE_FORMAT(p.date, '%Y%m%d') >= DATE_FORMAT(start, '%Y%m%d')
+      AND DATE_FORMAT(p.date, '%Y%m%d') <= DATE_FORMAT(stop, '%Y%m%d'),
+      p.sum, 0)) as sumFee,
+  SUM(
+    IF(dst='inc'
+      AND DATE_FORMAT(p.date, '%Y%m%d') >= DATE_FORMAT(start, '%Y%m%d')
+      AND DATE_FORMAT(p.date, '%Y%m%d') <= DATE_FORMAT(stop, '%Y%m%d'),
+      p.sum, 0)) as sumInc
 FROM users u
 LEFT JOIN payments p ON (p.userId=u.id)
 LEFT JOIN residents r ON u.residentId=r.id
@@ -527,11 +527,17 @@ SELECT u.id as id,
   u.BalanceWat as wat,
   r.phone1 as phone1,
   r.phone2 as phone2,
-  (SELECT DATE_FORMAT(max(date), '%Y-%m-%d') FROM payments WHERE userId=u.id) as lastPay
+  GREATEST(COALESCE(DATE_FORMAT(max(cv.date), '%Y-%m-%d'), '2020-01-01'), COALESCE(DATE_FORMAT(max(p.date), '%Y-%m-%d'), '2020-01-01')) as lastPay
 FROM users u
 LEFT JOIN residents r ON u.residentId=r.id
 LEFT JOIN streets s ON u.StreetId=s.id
-WHERE u.id > 0 AND lastPay ;
+LEFT JOIN counters c ON c.userId=u.id
+LEFT JOIN countValues cv ON cv.cId=c.id AND cv.dCurrent>0
+LEFT JOIN payments p ON p.userId=u.id
+WHERE ( u.id > 0 ) AND ( 
+  BalanceFee < -2000 OR
+  DATEDIFF(NOW(), c.verDate) > 100 )
+GROUP BY u.id;
 END$$
 
 DROP PROCEDURE IF EXISTS sp_checkemailavailabilty;
@@ -568,6 +574,14 @@ INSERT into countValues (cId, tariffId, dPrevius, dCurrent, nPrevius, nCurrent, 
     dCurrent, dCurrent, nCurrent, nCurrent,
     (SELECT type FROM counters WHERE userId=uid ORDER BY id DESC LIMIT 0,1)
   );
+END$$
+
+DROP PROCEDURE IF EXISTS sp_updateCounter;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_updateCounter` (`cuid` SMALLINT(5), serial decimal(15), `name` VARCHAR(120), `info` VARCHAR(250))
+BEGIN
+UPDATE counters
+SET number = serial, name = name, info = info, verDate = NOW()
+WHERE id = cuid;
 END$$
 
 DROP PROCEDURE IF EXISTS sp_registration;

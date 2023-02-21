@@ -169,6 +169,14 @@ if (strlen($_SESSION['adid'] == 0 || ($_SESSION['type'] != "cashier" && $_SESSIO
                             <input type="submit" value="Оплата" class="btn btn-primary btn-user btn-block"/>
                           </form>
                         </td>
+                        <td style="text-align:right">
+                          <form action="counter-check.php">
+                            <input type="hidden" id="uid" name="uid" value="<?php echo $uid ?>">
+                            <input type="hidden" id="cid" name="cid" value="<?php echo $cid ?>">
+                            <input type="hidden" id="type" name="type" value="el">
+                            <input type="submit" value="Поверка" class="btn btn-primary btn-user btn-block"/>
+                          </form>
+                        </td>
                       </tr>
                     </table>
                   </div>
