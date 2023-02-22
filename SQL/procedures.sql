@@ -84,7 +84,7 @@ BEGIN
         AND DATE_FORMAT(date, '%Y-%m')=DATE_FORMAT(dNow, '%Y-%m')
       ) as payment;
     SET dNow = DATE_SUB(dNow, INTERVAL 1 MONTH);
-  ENDWHILE;
+  END WHILE;
 END$$
 
 DROP PROCEDURE IF EXISTS wat_history;
@@ -522,12 +522,16 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `debtors` ()  BEGIN
 SELECT u.id as id,
   concat(r.surName, " ", r.name, " ", r.middlName ) as Name,
   s.name as street,
-  u.BalanceEl as el,
   u.BalanceFee as fee,
-  u.BalanceWat as wat,
   r.phone1 as phone1,
   r.phone2 as phone2,
-  GREATEST(COALESCE(DATE_FORMAT(max(cv.date), '%Y-%m-%d'), '2020-01-01'), COALESCE(DATE_FORMAT(max(p.date), '%Y-%m-%d'), '2020-01-01')) as lastPay
+  DATE_FORMAT((SELECT max(verDate) FROM counters WHERE userId=u.id AND type='el' GROUP BY userId), '%Y-%m-%d') as verification,
+  COALESCE(DATE_FORMAT(max(p.date), '%Y-%m-%d'), '2020-01-01') as lastPay,
+  COALESCE(DATE_FORMAT((select max(date) FROM payments where dst='el' AND
+    userId=u.id), '%Y-%m-%d'), '2020-01-01') as lastEl,
+  COALESCE(DATE_FORMAT((select max(date) FROM payments where dst='wat' AND
+    userId=u.id), '%Y-%m-%d'), '2020-01-01') as lastWat,
+  (SELECT id FROM counters WHERE userId=u.id AND type='wat' GROUP BY userId) as isWat
 FROM users u
 LEFT JOIN residents r ON u.residentId=r.id
 LEFT JOIN streets s ON u.StreetId=s.id
@@ -536,7 +540,8 @@ LEFT JOIN countValues cv ON cv.cId=c.id AND cv.dCurrent>0
 LEFT JOIN payments p ON p.userId=u.id
 WHERE ( u.id > 0 ) AND ( 
   BalanceFee < -2000 OR
-  DATEDIFF(NOW(), c.verDate) > 100 )
+  DATEDIFF(NOW(), c.verDate) > 180
+)
 GROUP BY u.id;
 END$$
 

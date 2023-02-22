@@ -62,8 +62,13 @@ if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
                     <!-- DataTales Example -->
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary">Дачные участки</h6>
+                            <h6 class="m-0 font-weight-bold text-primary">Должники</h6>
                         </div>
+
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Печать предупреждений</h6>
+                        </div>
+
                         <div class="card-body">
                             <div class="table-responsive">
                                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
@@ -73,13 +78,13 @@ if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
                                       <th style="width: 3%; text-align:center" rowspan="2">№</th>
                                       <th style="width: 10%; text-align:center" rowspan="2">Улица</th>
                                       <th style="width: 22%; text-align:center" rowspan="2">Владелец</th>
-				                              <th style="width: 22%; text-align:center" rowspan="2">Примечание</th>
-                                      <th style="width: 24%; text-align:center" colspan="3">Баланс</th>
-                                      <th style="width: 11%; text-align:center" rowspan="2">Дата</th>
+				                              <!--<th style="width: 22%; text-align:center" rowspan="2">Примечание</th> -->
+                                      <th style="width: 7%; text-align:center" rowspan="2">Членские</th>
+                                      <th style="width: 32%; text-align:center" colspan="3">Последняя дата</th>
                                     </tr>
-                                      <th style="text-align:center">Електр</th>
+                                      <th style="text-align:center">Електричество</th>
                                       <th style="text-align:center">Вода</th>
-                                      <th style="text-align:center">Членские</th>
+                                      <th style="text-align:center">Поверка</th>
                                     </tr>
                                   </thead>
                                   <tfoot>
@@ -88,18 +93,26 @@ if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
                                       <th style="text-align:center">№</th>
                                       <th style="text-align:center">Улица</th>
                                       <th style="text-align:center">Владелец</th>
-				                              <th style="text-align:center">Примечание</th>
-                                      <th style="text-align:center">Електр</th>
-                                      <th style="text-align:center">Вода</th>
+				                              <!--<th style="text-align:center">Примечание</th>-->
                                       <th style="text-align:center">Членские</th>
-                                      <th style="text-align:center">Дата</th>
+                                      <th style="text-align:center">Електричество</th>
+                                      <th style="text-align:center">Вода</th>
+                                      <th style="text-align:center">Поверка</th>
                                     </tr>
                                   </tfoot>
                                   <tbody>
 <?php
   $query=mysqli_query($con,"call debtors()");
   $cnt=1;
+  require('../fpdf/fpdf.php');
+  $pdf=new FPDF();
   while ($result=mysqli_fetch_array($query)) {
+    /*
+    $pdf->AddPage();
+    $pdf->SetFont('Arial', 'B', 14);
+    $pdf->Cell(60,20,'Hello GeeksforGeeks!');
+    $pdf->Output();
+    */
 ?>
                                     <?php
                                       $phone="Номер телефона не указан";
@@ -127,21 +140,22 @@ if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
                                         <a href="../user/info.php?uid=<?php echo $result['id'];?>"</a>
                                         <p title="<?php echo $phone?>"><?php echo $result['Name'];?></p>
 				                              </td>
-
+                                      <!--
 				                              <td style="text-align:right">
-                                        <?php echo $result['info'];?>
+                                        <?php //echo $result['info'];?>
+                                      </td>
+                                      -->
+                                      <td style="text-align:right">
+                                        <?php printf("%s", $result['fee']);?>
                                       </td>
                                       <td style="text-align:right">
-                                        <?php printf("%.2f", $result['el']);?>
+                                        <?php printf("%s", $result['lastEl']);?>
                                       </td>
                                       <td style="text-align:right">
-                                        <?php printf("%.2f", $result['wat']);?>
+                                        <?php if($result['isWat'] != "") { printf("%s", $result['lastWat']); } else { echo ""; };?>
                                       </td>
                                       <td style="text-align:right">
-                                        <?php printf("%.2f", $result['fee']);?>
-                                      </td>
-                                      <td style="text-align:right">
-                                        <?php echo $result['lastPay'];?>
+                                        <?php printf("%s", $result['verification']);?>
                                       </td>
                                     </tr>
 <?php $cnt++; } ?>

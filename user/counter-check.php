@@ -1,6 +1,6 @@
 <?php
 session_start();
-//error_reporting(0);
+error_reporting(0);
 include('../includes/config.php');
 $uid=$_GET['uid'];
 $type=$_GET['type'];
@@ -15,10 +15,10 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
 } else {
   if(isset($_POST['addvalues'])) {
     $cid=$_POST['cid'];
-    $name=$_POST['name'];
-    $number=$_POST['number'];
+    $name=$_POST['сname'];
+    $counterNum=$_POST['counterNum'];
     $type=$_POST['type'];
-    $info=$_POST['info'];
+    $info=$_POST['counterInfo'];
     $dCurrent=$_POST['dCurrent'];
     $nCurrent=$_POST['nCurrent'];
   }
@@ -32,17 +32,20 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
     } else {
       mysqli_close($con);
       $con = mysqli_connect(DB_SERVER,DB_USER,DB_PASS,DB_NAME);
-      //echo "<script>alert('uid=$uid cid=$cid latesD=$latest[dayLast] currentD=$dCurrent latestN=$latest[nightLast] currentN=$nCurrent');</script>";
-      $query=mysqli_query($con,"call sp_updateCounter($cid,'$number', '$name', '$info')");
-      mysqli_close($con);
-      $con = mysqli_connect(DB_SERVER,DB_USER,DB_PASS,DB_NAME);
-      $query=mysqli_query($con,"call sp_addCounterValues($uid, $cid,'$dayLast','$dCurrent','$nightLast','$nCurrent')");
-      if ($query) {
-        echo "<script>alert('Показания успешно занесены');</script>";
-        if ( $type == "el" ) {
-          echo "<script>window.location.href='info.php?uid=$uid&cid=$cid'</script>";
+      $query = mysqli_query($con, "call sp_updateCounter($cid, '$counterNum', '$name', '$info')");
+      if ($query) { 
+        mysqli_close($con);
+        $con = mysqli_connect(DB_SERVER,DB_USER,DB_PASS,DB_NAME);
+        $query = mysqli_query($con, "call sp_addCounterValues($uid, $cid,'$dayLast','$dCurrent','$nightLast','$nCurrent')");
+        if ($query) {
+          echo "<script>alert('Поверка счетчика проведена.');</script>";
+          if ( $type == "el" ) {
+            echo "<script>window.location.href='info.php?uid=$uid&cid=$cid'</script>";
+          } else {
+            echo "<script>window.location.href='water.php?uid=$uid&cid=$cid'</script>";
+          }
         } else {
-          echo "<script>window.location.href='water.php?uid=$uid&cid=$cid'</script>";
+          echo "<script>alert('Что-то пошло не так!. Попробуйте еще раз.');</script>";
         }
       } else {
         echo "<script>alert('Что-то пошло не так!. Попробуйте еще раз.');</script>";
@@ -77,7 +80,7 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
   mysqli_close($con);
   $con = mysqli_connect(DB_SERVER,DB_USER,DB_PASS,DB_NAME);
   $uid=$_GET['uid'];
-  $counter=mysqli_fetch_row(mysqli_query($con, "SELECT name, number, info, verDate FROM counters WHERE id=$cid;"));
+  $counter=mysqli_fetch_assoc(mysqli_query($con, "SELECT name, number, info, verDate FROM counters WHERE id=$cid;"));
 ?>
 <body class="bg-gradient-primary">
 
@@ -101,6 +104,7 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
                                       value="<?php echo $uid ?>" readonly>
                                   </div>
                                 </div>
+
                                 <input type="hidden" id="type" name="type" value="<?php echo $type ?>">
                                 <input type="hidden" id="cid" name="cid" value="<?php echo $cid ?>">
 
@@ -108,7 +112,15 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
                                   <div class="col-sm-6 mb-3 mb-sm-0">
                                     <label for="uid">Счетчик:</label>
                                     <input type="text" class="form-control form-control-user" id="сname" name="сname"
-                                      value="<?php echo $counter['name'] ?>" readonly>
+                                      value="<?php echo $counter['name'] ?>">
+                                  </div>
+                                </div>
+
+                                <div class="form-group row">
+                                  <div class="col-sm-6 mb-3 mb-sm-0">
+                                    <label for="date">Последняя поверка:</label>
+                                    <input type="text" class="form-control form-control-user" id="date" name="date"
+                                      value="<?php echo  $counter['verDate'] ?>" readonly>
                                   </div>
                                 </div>
                                 
