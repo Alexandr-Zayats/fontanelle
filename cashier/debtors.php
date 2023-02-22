@@ -104,14 +104,22 @@ if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
 <?php
   $query=mysqli_query($con,"call debtors()");
   $cnt=1;
+
+  /*
   require('../fpdf/fpdf.php');
   $pdf=new FPDF();
+  ob_end_clean();
+  //Add a new page
+  $pdf->AddPage();
+
+  // Set the font for the text
+  $pdf->SetFont('Arial', 'B', 18);
+  */
+  // return the generated output
+  //$pdf->Output();
   while ($result=mysqli_fetch_array($query)) {
     /*
-    $pdf->AddPage();
-    $pdf->SetFont('Arial', 'B', 14);
     $pdf->Cell(60,20,'Hello GeeksforGeeks!');
-    $pdf->Output();
     */
 ?>
                                     <?php
@@ -161,6 +169,7 @@ if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
 <?php $cnt++; } ?>
                                     </tbody>
                                 </table>
+<?//$pdf->Output(); ?>
                             </div>
                         </div>
                     </div>
