@@ -47,15 +47,6 @@ if (strlen($_SESSION['adid'] == 0 || ($_SESSION['type'] != "cashier" && $_SESSIO
   $con->next_result();
   $query=mysqli_query($con,"call userInfo($uid, 'el')");
 
-  //ob_end_clean();
-  require('../fpdf/fpdf.php');  
-  // Instantiate and use the FPDF class 
-  $pdf = new FPDF();
-  //Add a new page
-  $pdf->AddPage();
-  // Set the font for the text
-  $pdf->SetFont('Arial', 'B', 18);
-  
   while ($user=mysqli_fetch_assoc($query)) {
 ?>
 
@@ -232,14 +223,12 @@ if (strlen($_SESSION['adid'] == 0 || ($_SESSION['type'] != "cashier" && $_SESSIO
                           <td style="text-align:right"><?php echo $countValues['paid'];?></td>
                         </tr>
  <?php
-          $pdf->Cell(60,20, $countValues['date']);
           }
         }
         mysqli_free_result($result);
         $cnt++;
       }
     } while (mysqli_next_result($con));
-    $pdf->Output();
   } ?>
                       </tbody>
                     </table>

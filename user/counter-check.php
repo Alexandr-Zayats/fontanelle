@@ -21,6 +21,7 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
     $info=$_POST['counterInfo'];
     $dCurrent=$_POST['dCurrent'];
     $nCurrent=$_POST['nCurrent'];
+    $location=$_POST['location'];
   }
   $latest=mysqli_fetch_assoc(mysqli_query($con,"call sp_getLastCounterValues($cid)"));
   if(isset($_POST['addvalues'])) {
@@ -32,7 +33,7 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
     } else {
       mysqli_close($con);
       $con = mysqli_connect(DB_SERVER,DB_USER,DB_PASS,DB_NAME);
-      $query = mysqli_query($con, "call sp_updateCounter($cid, '$counterNum', '$name', '$info')");
+      $query = mysqli_query($con, "call sp_updateCounter($cid, '$counterNum', '$name', '$info', '$location')");
       if ($query) { 
         mysqli_close($con);
         $con = mysqli_connect(DB_SERVER,DB_USER,DB_PASS,DB_NAME);
@@ -80,7 +81,7 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
   mysqli_close($con);
   $con = mysqli_connect(DB_SERVER,DB_USER,DB_PASS,DB_NAME);
   $uid=$_GET['uid'];
-  $counter=mysqli_fetch_assoc(mysqli_query($con, "SELECT name, number, info, verDate FROM counters WHERE id=$cid;"));
+  $counter=mysqli_fetch_assoc(mysqli_query($con, "SELECT name, number, info, verDate, location FROM counters WHERE id=$cid;"));
 ?>
 <body class="bg-gradient-primary">
 
@@ -118,6 +119,24 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
 
                                 <div class="form-group row">
                                   <div class="col-sm-6 mb-3 mb-sm-0">
+                                    <label for="location">Место установки</label>
+                                    <select id="location" name="location" class="btn btn-primary btn-user btn-block">
+                                    <?php
+                                      $places = ['внутри', 'фасад', 'столб'];
+                                      foreach($places as $place) {
+                                        if ($counter['location'] == $place) {
+                                          echo "<option value='" . $place . "' selected>" . $place . "</option>";
+                                        } else {
+                                          echo "<option value='" . $place . "'>" . $place . "</option>";
+                                        }
+                                      }
+                                    ?>
+                                    </select>
+                                  </div>
+                                </div>
+
+                                <div class="form-group row">
+                                  <div class="col-sm-6 mb-3 mb-sm-0">
                                     <label for="date">Последняя поверка:</label>
                                     <input type="text" class="form-control form-control-user" id="date" name="date"
                                       value="<?php echo  $counter['verDate'] ?>" readonly>
@@ -146,7 +165,7 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
 
                                 <div class="form-group row">
                                   <div class="col-sm-6 mb-3 mb-sm-0">
-                                    <label for="dCurrent"><?php if ( $type == "el" ) { echo "День:"; } else { echo "Текущие показания:"; } ?></label>
+                                    <label for="dCurrent"><?php if ( $type == "el" ) { echo "Показания: день"; } else { echo "Текущие показания:"; } ?></label>
                                     <input type="number" step="0.01" class="form-control form-control-user" id="dCurrent"
                                       value="<?php
                                         if(is_numeric($latest['dayLast']) && isset($latest['dayLast'])) {
@@ -162,7 +181,7 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
                                 <?php if ( $type == "el" AND  $latest['nightLast'] != 0 ) { ?>
                                 <div class="form-group row">
                                   <div class="col-sm-6 mb-3 mb-sm-0">
-                                    <label for="nCurrent">Ночь:</label>
+                                    <label for="nCurrent">Показания: ночь</label>
                                     <input type="number" step="0.01" class="form-control form-control-user" id="nCurrent"
                                       value="<?php
                                         if(is_numeric($latest['nightLast'])) {

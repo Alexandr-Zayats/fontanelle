@@ -62,93 +62,98 @@ if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
                     <!-- DataTales Example -->
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary">Дачные участки</h6>
+                            <h6 class="m-0 font-weight-bold text-primary">Дачники</h6>
+                            <a class="nav-link" href="createResident.php">
+                            <i class="fas fa-fw fa-user"></i>
+                              <span>Добавить</span></a>
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
                                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                   <thead>
                                     <tr>
-                                      <th style="width: 3%; text-align:center" rowspan="2">#</th>
-                                      <th style="width: 3%; text-align:center" rowspan="2">№</th>
-                                      <th style="width: 10%; text-align:center" rowspan="2">Улица</th>
-                                      <th style="width: 22%; text-align:center" rowspan="2">Владелец</th>
-				                              <th style="width: 22%; text-align:center" rowspan="2">Примечание</th>
-                                      <th style="width: 24%; text-align:center" colspan="3">Баланс</th>
-                                      <th style="width: 11%; text-align:center" rowspan="2">Дата</th>
-                                    </tr>
-                                      <th style="text-align:center">Електр</th>
-                                      <th style="text-align:center">Вода</th>
-                                      <th style="text-align:center">Членские</th>
+                                      <th style="width: 3%; text-align:center">#</th>
+                                      <th style="width: 3%; text-align:center">ID</th>
+                                      <th style="width: 22%; text-align:center">ФИО</th>
+                                      <th style="width: 6%; text-align:center">Логин</th>
+                                      <th style="width: 15%; text-align:center">Телефон</th>
+                                      <th style="width: 14%; text-align:center">Email</th>
+				                              <th style="width: 21%; text-align:center">Автомобиль</th>
+                                      <th style="width: 5%; text-align:center">Участки</th>
+                                      <th style="width: 9%; text-align:center">Баланс</th>
                                     </tr>
                                   </thead>
                                   <tfoot>
                                     <tr>
                                       <th style="text-align:center">#</th>
-                                      <th style="text-align:center">№</th>
-                                      <th style="text-align:center">Улица</th>
-                                      <th style="text-align:center">Владелец</th>
-				                              <th style="text-align:center">Примечание</th>
-                                      <th style="text-align:center">Електр</th>
-                                      <th style="text-align:center">Вода</th>
-                                      <th style="text-align:center">Членские</th>
-                                      <th style="text-align:center">Дата</th>
+                                      <th style="text-align:center">ID</th>
+                                      <th style="text-align:center">ФИО</th>
+                                      <th style="text-align:center">Логин</th>
+                                      <th style="text-align:center">Телефон</th>
+                                      <th style="text-align:center">Email</th>
+                                      <th style="text-align:center">Автомобиль</th>
+                                      <th style="text-align:center">Участки</th>
+                                      <th style="text-align:center">Баланс</th>
                                     </tr>
                                   </tfoot>
                                   <tbody>
 <?php
-  $query=mysqli_query($con,"call sp_allregisteredusers()");
+  $query=mysqli_query($con,"call residents(0)");
   $cnt=1;
   while ($result=mysqli_fetch_array($query)) {
 ?>
-                                    <?php
-                                      $phone="Номер телефона не указан";
-                                      if (preg_match('/.*(\d{2})(\d{3})(\d{2})(\d{2})$/', $result['phone1'],  $matches )) {
-                                        $phone="+380 ($matches[1]) $matches[2]-$matches[3]-$matches[4]";
-                                      }
-                                      if (preg_match( '/.*(\d{2})(\d{3})(\d{2})(\d{2})$/', $result['phone2'],  $matches)) {
-                                        $phone=$phone."; "."+380 ($matches[1]) $matches[2]-$matches[3]-$matches[4]";
-                                      }
-                                    ?>
                                     <tr>
-                                      <td style="text-align:right"><?php echo $cnt;?></td>
-
+                                      <td style="text-align:right"><?php printf('%d', $cnt);?></td>
                                       <td style="text-align:center">
-                                        <a href="../user/info.php?uid=<?php echo $result['id'];?>">
-                                          <?php echo $result['id'];?>
-                                        </a>
+                                        <a href="createResident.php?uid=<?php printf('%d', $result['id']);?>"</a>
+                                        <?php printf('%d', $result['id']);?>
                                       </td>
 
                                       <td style="text-align:left">
-                                        <a href="../user/info.php?uid=<?php echo $result['id'];?>">
-                                          <?php echo $result['street'];?>
-                                        </a>
+                                        <a href="createResident.php?uid=<?php printf('%d', $result['id']);?>"</a>
+                                        <?php printf('%s', $result['resName']);?>
                                       </td>
 
-				                              <td style="text-align:left">
-                                        <a href="../user/info.php?uid=<?php echo $result['id'];?>" title="<?php echo $phone?>">
-                                          <?php echo $result['Name'];?>
-                                        </a>
-				                              </td>
+                                      <td style="text-align:left">
+                                        <a href="createResident.php?uid=<?php printf('%d', $result['id']);?>"</a>
+                                        <?php printf('%s', $result['userName']);?>
+                                      </td>
 
 				                              <td style="text-align:right">
-                                        <?php echo $result['info'];?>
+                                        <?php
+                                          if (preg_match( '/.*(\d{2})(\d{3})(\d{2})(\d{2})$/', $result['phone2'],  $matches)) {
+                                              $phone="+380 ($matches[1]) $matches[2]-$matches[3]-$matches[4]";
+                                          } else {
+                                            $phone="";
+                                          }
+                                        ?>
+                                        <!--<a title="<?php //printf('%s', $phone) ?>"</a>-->
+                                        <?php 
+					                                if (preg_match( '/.*(\d{2})(\d{3})(\d{2})(\d{2})$/', $result['phone1'],  $matches)) {
+    					                              printf('%s', "+380 ($matches[1]) $matches[2]-$matches[3]-$matches[4]");
+					                                } else {
+					                                  printf('%s', "Телефон не указан");
+					                                }
+                                        ?></p>
                                       </td>
                                       <td style="text-align:right">
-                                        <?php printf("%.2f", $result['el']);?>
+                                        <?php printf('%s', $result['email']);?>
                                       </td>
-                                      <td style="text-align:right">
-                                        <?php printf("%.2f", $result['wat']);?>
+
+				                              <td style="text-align:right">
+                                        <?php printf('%s', $result['auto']);?>
                                       </td>
+
                                       <td style="text-align:right">
-                                        <?php printf("%.2f", $result['fee']);?>
+                                        <?php printf('%s', $result['plants']);?>
                                       </td>
+
                                       <td style="text-align:right">
-                                        <?php echo $result['lastPay'];?>
+                                        <?php printf("%.2f", $result['balance']);?></td>
                                       </td>
                                     </tr>
 <?php $cnt++; } ?>
-                                    </tbody>
+                                  </tbody>
                                 </table>
                             </div>
                         </div>

@@ -65,10 +65,6 @@ if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
                             <h6 class="m-0 font-weight-bold text-primary">Должники</h6>
                         </div>
 
-                        <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary">Печать предупреждений</h6>
-                        </div>
-
                         <div class="card-body">
                             <div class="table-responsive">
                                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
@@ -76,15 +72,16 @@ if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
                                     <tr>
                                       <th style="width: 3%; text-align:center" rowspan="2">#</th>
                                       <th style="width: 3%; text-align:center" rowspan="2">№</th>
-                                      <th style="width: 10%; text-align:center" rowspan="2">Улица</th>
-                                      <th style="width: 22%; text-align:center" rowspan="2">Владелец</th>
-				                              <!--<th style="width: 22%; text-align:center" rowspan="2">Примечание</th> -->
-                                      <th style="width: 7%; text-align:center" rowspan="2">Членские</th>
-                                      <th style="width: 32%; text-align:center" colspan="3">Последняя дата</th>
+                                      <th style="width: 14%; text-align:center" rowspan="2">Улица</th>
+                                      <th style="width: 30%; text-align:center" rowspan="2">Владелец</th>
+                                      <th style="width: 24%; text-align:center" colspan="3">Задолженность</th>
+                                      <th style="width: 26%; text-align:center" colspan="2">Проверка счетчика</th>
                                     </tr>
-                                      <th style="text-align:center">Електричество</th>
+                                      <th style="text-align:center">Елект</th>
                                       <th style="text-align:center">Вода</th>
-                                      <th style="text-align:center">Поверка</th>
+                                      <th style="text-align:center">Членские</th>
+                                      <th style="text-align:center">Елект</th>
+                                      <th style="text-align:center">Вода</th>
                                     </tr>
                                   </thead>
                                   <tfoot>
@@ -93,34 +90,18 @@ if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
                                       <th style="text-align:center">№</th>
                                       <th style="text-align:center">Улица</th>
                                       <th style="text-align:center">Владелец</th>
-				                              <!--<th style="text-align:center">Примечание</th>-->
-                                      <th style="text-align:center">Членские</th>
-                                      <th style="text-align:center">Електричество</th>
+                                      <th style="text-align:center">Елект</th>
                                       <th style="text-align:center">Вода</th>
-                                      <th style="text-align:center">Поверка</th>
+                                      <th style="text-align:center">Членские</th>
+                                      <th style="text-align:center">Елект</th>
+                                      <th style="text-align:center">Вода</th>
                                     </tr>
                                   </tfoot>
                                   <tbody>
 <?php
   $query=mysqli_query($con,"call debtors()");
   $cnt=1;
-
-  /*
-  require('../fpdf/fpdf.php');
-  $pdf=new FPDF();
-  ob_end_clean();
-  //Add a new page
-  $pdf->AddPage();
-
-  // Set the font for the text
-  $pdf->SetFont('Arial', 'B', 18);
-  */
-  // return the generated output
-  //$pdf->Output();
   while ($result=mysqli_fetch_array($query)) {
-    /*
-    $pdf->Cell(60,20,'Hello GeeksforGeeks!');
-    */
 ?>
                                     <?php
                                       $phone="Номер телефона не указан";
@@ -132,44 +113,53 @@ if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
                                       }
                                     ?>
                                     <tr>
-                                      <td style="text-align:right"><?php echo $cnt;?></td>
+                                      <td style="text-align:right" class="user"><?php printf('%d', $cnt);?></td>
 
-                                      <td style="text-align:center">
-                                        <a href="../user/info.php?uid=<?php echo $result['id'];?>"</a>
-                                        <?php echo $result['id'];?>
+                                      <td style="text-align:center" class="user">
+                                        <a href="../user/info.php?uid=<?php echo $result['id'];?>">
+                                          <?php printf('%d', $result['id']);?>
+                                        </a>
                                       </td>
 
-                                      <td style="text-align:left">
-                                        <a href="../user/info.php?uid=<?php echo $result['id'];?>"</a>
-                                        <?php echo $result['street'];?>
+                                      <td style="text-align:left" class="user">
+                                        <?php printf('%s',$result['street']);?>
                                       </td>
 
 				                              <td style="text-align:left">
-                                        <a href="../user/info.php?uid=<?php echo $result['id'];?>"</a>
-                                        <p title="<?php echo $phone?>"><?php echo $result['Name'];?></p>
+                                        <form method="post" action="../user/notice.php" class="user">
+                                          <?php
+                                          foreach ($result as $key => $value) { ?>
+                                            <input type="hidden" name="userData[<?php echo $key; ?>]" value="<?php echo $value; ?>">
+                                          <?php } ?>
+                                          <button class="btn btn-primary btn-user btn-block">
+                                            <?php printf('%s', $result['Name']);?>
+                                          </button>
+                                        </form>
 				                              </td>
                                       <!--
 				                              <td style="text-align:right">
                                         <?php //echo $result['info'];?>
                                       </td>
                                       -->
-                                      <td style="text-align:right">
+                                      <td style="text-align:right" class="user">
+                                        <?php printf("%s", $result['el']);?>
+                                      </td>
+                                      <td style="text-align:right" class="user">
+                                        <?php printf("%s", $result['wat']);?>
+                                      </td>
+                                      <td style="text-align:right" class="user">
                                         <?php printf("%s", $result['fee']);?>
                                       </td>
-                                      <td style="text-align:right">
-                                        <?php printf("%s", $result['lastEl']);?>
+                                      <td style="text-align:right" class="user">
+                                        <?php if(isset($result['verEl'])) { printf("%s", dateFormat($result['verEl'])); }?>
                                       </td>
-                                      <td style="text-align:right">
-                                        <?php if($result['isWat'] != "") { printf("%s", $result['lastWat']); } else { echo ""; };?>
-                                      </td>
-                                      <td style="text-align:right">
-                                        <?php printf("%s", $result['verification']);?>
+                                      <td style="text-align:right" class="user">
+                                        <?php if(isset($result['verWat'])) { printf("%s", dateFormat($result['verWat'])); }?>
                                       </td>
                                     </tr>
 <?php $cnt++; } ?>
                                     </tbody>
                                 </table>
-<?//$pdf->Output(); ?>
                             </div>
                         </div>
                     </div>

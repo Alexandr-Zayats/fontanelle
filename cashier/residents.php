@@ -75,8 +75,8 @@ if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
                                       <th style="width: 3%; text-align:center">#</th>
                                       <th style="width: 3%; text-align:center">ID</th>
                                       <th style="width: 22%; text-align:center">ФИО</th>
-                                      <th style="width: 10%; text-align:center">Логин</th>
-                                      <th style="width: 11%; text-align:center">Телефон</th>
+                                      <th style="width: 6%; text-align:center">Логин</th>
+                                      <th style="width: 15%; text-align:center">Телефон</th>
                                       <th style="width: 14%; text-align:center">Email</th>
 				                              <th style="width: 21%; text-align:center">Автомобиль</th>
                                       <th style="width: 5%; text-align:center">Участки</th>
@@ -103,20 +103,22 @@ if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
   while ($result=mysqli_fetch_array($query)) {
 ?>
                                     <tr>
-                                      <td style="text-align:right"><?php echo $cnt;?></td>
+                                      <td style="text-align:right"><?php printf('%d', $cnt);?></td>
                                       <td style="text-align:center">
-                                        <a href="createResident.php?uid=<?php echo $result['id'];?>"</a>
-                                        <?php echo $result['id'];?>
+                                        <a href="createResident.php?uid=<?php printf('%d', $result['id']);?>"</a>
+                                        <?php printf('%d', $result['id']);?>
                                       </td>
 
                                       <td style="text-align:left">
-                                        <a href="createResident.php?uid=<?php echo $result['id'];?>"</a>
-                                        <?php echo $result['resName'];?>
+                                        <a href="createResident.php?uid=<?php printf('%d', $result['id']);?>">
+                                          <?php printf('%s', $result['resName']);?>
+                                        </a>
                                       </td>
 
                                       <td style="text-align:left">
-                                        <a href="createResident.php?uid=<?php echo $result['id'];?>"</a>
-                                        <?php echo $result['userName'];?>
+                                        <a href="createResident.php?uid=<?php printf('%d', $result['id']);?>">
+                                          <?php printf('%s', $result['userName']);?>
+                                        </a>
                                       </td>
 
 				                              <td style="text-align:right">
@@ -127,25 +129,26 @@ if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
                                             $phone="";
                                           }
                                         ?>
-                                        <a href="createResident.php?uid=<?php echo $result['id'];?>"</a>
-                                        <p title="<?php echo $phone?>"><?php
+                                        <a title="<?php printf('%s', $phone) ?>">
+                                        <?php 
 					                                if (preg_match( '/.*(\d{2})(\d{3})(\d{2})(\d{2})$/', $result['phone1'],  $matches)) {
-    					                              echo "+380 ($matches[1]) $matches[2]-$matches[3]-$matches[4]";
+    					                              printf('%s', trim("+380 ($matches[1]) $matches[2]-$matches[3]-$matches[4]", "\n"));
 					                                } else {
-					                                  echo "Телефон не указан";
+					                                  printf('%s', "Телефон не указан");
 					                                }
-                                        ?></p>
+                                        ?>
+                                        </a>
                                       </td>
                                       <td style="text-align:right">
-                                        <?php echo $result['email'];?>
+                                        <?php printf('%s', $result['email']);?>
                                       </td>
 
 				                              <td style="text-align:right">
-                                        <?php echo $result['auto'];?>
+                                        <?php printf('%s', $result['auto']);?>
                                       </td>
 
                                       <td style="text-align:right">
-                                        <?php echo $result['plants'];?>
+                                        <?php printf('%s', $result['plants']);?>
                                       </td>
 
                                       <td style="text-align:right">

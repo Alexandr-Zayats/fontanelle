@@ -5,16 +5,26 @@ class CustomPdfGenerator extends TCPDF
     {
         $image_file = '/web/logo.png';
         $this->Image($image_file, 10, 3, 25, '', 'PNG', '', 'T', false, 300, '', false, false, 0, false, false, false);
-        $this->SetFont('helvetica', 'B', 20);
+        $this->SetFont('dejavusans', 'I', 12);
         $this->Cell(0, 15, '', 0, false, 'C', 0, '', 0, false, 'M', 'M');
         $this->Ln();
-        $this->Cell(0, 15, 'Katie A Falk', 0, false, 'R', 0, '', 0, false, 'M', 'M');
+        $this->Cell(0, 2, 'Обслуговуючий  ', 0, false, 'R', 0, '', 0, false, 'M', 'M');
+        $this->Ln();
+        $this->Cell(0, 8, 'Кооператив     ', 0, false, 'R', 0, '', 0, false, 'M', 'M');
+        $this->Ln();
+        $this->SetFont('dejavusans', 'B', 14);
+        $this->Cell(0, 12, 'СТ "Ручейок"', 0, false, 'R', 0, '', 0, true, 'M', 'M');
+        $this->Ln();
+        $this->SetFont('dejavusans', 'L', 10);
+        $this->Cell(0, 6, 'Голова правління:           ', 0, true, 'R', 0, '', 0, false, 'M', 'M');
+        $this->Ln();
+        $this->Cell(0, 12, '_______________/Заяц О.В./', 0, true, 'R', 0, '', 0, false, 'M', 'M');
     }
     public function Footer() 
     {
         $this->SetY(-15);
-        $this->SetFont('helvetica', 'I', 15);
-        $this->Cell(0, 10, 'Thank you for your business!', 0, false, 'C', 0, '', 0, false, 'T', 'M');
+        $this->SetFont('dejavusans', 'I', 15);
+        $this->Cell(0, 10, 'Дякуємо за співпрацю!', 0, false, 'C', 0, '', 0, false, 'T', 'M');
     }
     public function printTable($header, $data)
     {
