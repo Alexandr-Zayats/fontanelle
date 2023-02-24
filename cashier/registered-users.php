@@ -71,11 +71,11 @@ if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
                                     <tr>
                                       <th style="width: 3%; text-align:center" rowspan="2">#</th>
                                       <th style="width: 3%; text-align:center" rowspan="2">№</th>
-                                      <th style="width: 10%; text-align:center" rowspan="2">Улица</th>
+                                      <th style="width: 9%; text-align:center" rowspan="2">Улица</th>
                                       <th style="width: 22%; text-align:center" rowspan="2">Владелец</th>
 				                              <th style="width: 22%; text-align:center" rowspan="2">Примечание</th>
-                                      <th style="width: 24%; text-align:center" colspan="3">Баланс</th>
-                                      <th style="width: 11%; text-align:center" rowspan="2">Дата</th>
+                                      <th style="width: 23%; text-align:center" colspan="3">Баланс</th>
+                                      <th style="width: 13%; text-align:center" rowspan="2">Последний платеж</th>
                                     </tr>
                                       <th style="text-align:center">Електр</th>
                                       <th style="text-align:center">Вода</th>
@@ -92,7 +92,7 @@ if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
                                       <th style="text-align:center">Електр</th>
                                       <th style="text-align:center">Вода</th>
                                       <th style="text-align:center">Членские</th>
-                                      <th style="text-align:center">Дата</th>
+                                      <th style="text-align:center">Последний платеж</th>
                                     </tr>
                                   </tfoot>
                                   <tbody>
@@ -144,7 +144,7 @@ if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
                                         <?php printf("%.2f", $result['fee']);?>
                                       </td>
                                       <td style="text-align:right">
-                                        <?php echo $result['lastPay'];?>
+                                        <?php if(isset($result['lastPay']) && $result['lastPay'] != "") { echo dateFormat($result['lastPay']);}?>
                                       </td>
                                     </tr>
 <?php $cnt++; } ?>
