@@ -121,7 +121,7 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
         $con = mysqli_connect(DB_SERVER,DB_USER,DB_PASS,DB_NAME);
         $query = mysqli_query($con, "call sp_addCounterValues($uid, $cid,'$dayLast','$dCurrent','$nightLast','$nCurrent')");
         if ($query) {
-          echo "<script>alert('Поверка счетчика проведена.');</script>";
+          // echo "<script>alert('Поверка счетчика проведена.');</script>";
           if ( $type == "el" ) {
             echo "<script>window.location.href='info.php?uid=$uid&cid=$cid'</script>";
           } else {

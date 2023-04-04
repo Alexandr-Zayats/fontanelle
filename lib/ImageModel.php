@@ -10,7 +10,7 @@ class ImageModel
     $this->conn = new DataSource();
   }
   function getAllImages($userId) {
-    $query = "SELECT * FROM images WHERE userId=?";
+    $query = "SELECT * FROM images WHERE userId=? ORDER BY id DESC";
     $paramType = 'i';
     $paramValue = array($userId);
     $result = $this->conn->select($query, $paramType, $paramValue);
