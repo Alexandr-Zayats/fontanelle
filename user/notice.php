@@ -4,13 +4,14 @@ include('../includes/config.php');
 
 $userData = $_POST['userData'];
 
+/*
 $monthes = array(
     1 => 'Січня', 2 => 'Лютого', 3 => 'Березня', 4 => 'Квітня',
     5 => 'Травня', 6 => 'Червня', 7 => 'Липня', 8 => 'Серпня',
     9 => 'Вересня', 10 => 'Жовня', 11 => 'Лютого', 12 => 'Грудня'
 );
 echo $monthes[(date('n', strtotime($date)))];
- 
+*/
 
 if(isset($_POST['close'])) {
   echo "<script>window.location.href='../cashier/debtors.php'</script>";
@@ -121,7 +122,10 @@ elseif(isset($_POST['print'])) {
   $pdf->writeHTML("СТ Ручейок, +380 (96) 090 62 26, info@rucheyok.org.ua", true, false, false, false, 'C');
 
   // save pdf file
-  $pdf->Output(__DIR__ . '/files/notice/notice-' . $result['id'] . '.pdf', 'F');
+  if (!file_exists('uploads/' . $userData['id'])) {
+    mkdir('uploads/' . $userData['id'], 0777, true);
+  }
+  $pdf->Output(__DIR__ . '/uploads/' . $userData['id'] . '/notice.pdf', 'F');
 }
 
 ?>
@@ -151,7 +155,7 @@ elseif(isset($_POST['print'])) {
   <table width="80%" height="90%" align="center">
     <tr height="800">
       <td>
-        <iframe src="files/notice/notice-<?php $result['id'];?>.pdf" height="100%" width="100%"></iframe>
+        <iframe src="uploads/<?php $userData['id']?>/notice.pdf" height="100%" width="100%"></iframe>
       </td>
     </tr>
     <tr height="5%">
