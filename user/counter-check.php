@@ -20,20 +20,9 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
 } else {
   $latest=mysqli_fetch_assoc(mysqli_query($con,"call sp_getLastCounterValues($cid)"));
 
-  if(isset($_POST['submit'])) {
-    $cid=$_POST['cid'];
-    $name=$_POST['сname'];
-    $counterNum=$_POST['counterNum'];
-    $type=$_POST['type'];
-    $info=$_POST['counterInfo'];
-    $dCurrent=$_POST['dCurrent'];
-    $nCurrent=$_POST['nCurrent'];
-    $location=$_POST['location'];
 
-    $dayLast=$latest['dayLast'];
-    $nightLast=$latest['nightLast'];
-
-    // FILES upload
+  // FILES upload
+  if(isset($_POST['upload'])) {
     function reArrayFiles( $arr ){
       foreach( $arr as $key => $all ){
         foreach( $all as $i => $val ){
@@ -103,12 +92,27 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
         }
       }
     }
-    // ------- END of FILES upload
+    echo "<script>window.location.href='counter-check.php?uid=$uid&cid=$cid&type=el'</script>";
+  }
+  // ------- END of FILES upload
 
-    if($nightLast > $nCurrent || $dayLast > $dCurrent) {
+  if(isset($_POST['submit'])) {
+    $cid=$_POST['cid'];
+    $name=$_POST['сname'];
+    $counterNum=$_POST['counterNum'];
+    $type=$_POST['type'];
+    $info=$_POST['counterInfo'];
+    $dCurrent=$_POST['dCurrent'];
+    $nCurrent=$_POST['nCurrent'];
+    $location=$_POST['location'];
+
+    $dayLast=$latest['dayLast'];
+    $nightLast=$latest['nightLast'];
+
+    //if($nightLast > $nCurrent || $dayLast > $dCurrent) {
       //echo "<script>alert('$nightLast; $nCurrent; $dayLast; $dCurrent');</script>";
-      echo "<script>alert('Введеные показания ниже предыдущих!');</script>";
-    } else {
+      // echo "<script>alert('Введеные показания ниже предыдущих!');</script>";
+    //} else {
       mysqli_close($con);
       $con = mysqli_connect(DB_SERVER,DB_USER,DB_PASS,DB_NAME);
       $query = mysqli_query($con, "call sp_updateCounter($cid, '$counterNum', '$name', '$info', '$location')");
@@ -129,7 +133,7 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
       } else {
         echo "<script>alert('Что-то пошло не так!. Попробуйте еще раз.');</script>";
       }
-    }
+    //}
   }
 }
 
@@ -150,11 +154,40 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
     <link href="../vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
     <link href="../css/images.css" rel="stylesheet" type="text/css" />
     <link
-        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
-        rel="stylesheet">
+      href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+      rel="stylesheet">
 
     <!-- Custom styles for this template-->
     <link href="../css/sb-admin-2.min.css" rel="stylesheet">
+    <script type="text/javascript">
+      function myWindow(i,t,wid,hei) {
+        var day= new Date();
+        var id = day.getTime();
+        //Full screen
+        /*
+        var w = (window.width); 
+        var h = (window.height);
+        */
+        
+        // You can also use the original image height and width as
+        var w = wid+55;
+        var h = hei+25;
+        var params = 'width='+(w-5)+',height='+(h-5)+',scrollbars,resizable';
+
+        var message='<html><head><title>'+i+'</title></head><body><h3 aligh="center">'+
+        '<div align="center"><img src="'+i+'" border="0" alt="'+t+'" width="'+wid+'"><br>\
+        '+
+        '<hr width="100&#37;" size="1"><form><input type="button" onclick="javascript:window.close();" value="ЗАКРЫТЬ"><br>\
+        '+
+        '<hr width="100%" size="1"></form></div></body></html>\
+        ';
+        
+        var mywin = open('',id,params);
+        mywin.document.write(message);
+        mywin.document.close();
+      }
+    </script>
+
 </head>
 <?php
   mysqli_close($con);
@@ -175,10 +208,7 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
                                 <h5 style="color:blue">СТ "РУЧЕЕК"</h5>
                                 <h1 class="h4 text-gray-900 mb-4">Текущие показаний</h1>
                             </div>
-                            <form class="user" name="submit" method="post" enctype="multipart/form-data"
-                              id="image"
-                              onsubmit="return validateImage()"
-                            >
+                            <form class="user" name="submit" method="post" enctype="multipart/form-data" id="image">
                                 <div class="form-group row">
                                   <div class="col-sm-6 mb-3 mb-sm-0">
                                     <label for="uid">Участок:</label>
@@ -293,37 +323,46 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
                                 <div class="form-group row">
 		                              <table width="100%">
 			                            <tr>
-				                            <th width="80%" align="center">Фото</th>
-				                            <th>Операции</th>
+				                            <th width="80%" align="center">Фото счетчика</th>
+				                            <th></th>
 			                            </tr>
-                                    <?php $result = $imageModel->getAllImages($uid);?>
+                                  <?php
+                                  $result = $imageModel->getAllImages($uid);
+                                  if (! empty($result)) {
+                                    foreach ($result as $row) {
+                                  ?>
                                   <tr>
-                                    <?php
-                                      if (! empty($result)) {
-                                        foreach ($result as $row) {
-                                    ?>
                                     <td>
-                                      <img src="<?php echo $row["image"]?>" width="120"
-					                            class="profile-photo" alt="photo"><?php //echo $row["name"]?>
+                                      <a href="" 
+                                        onClick="myWindow('<?php echo $row["image"]?>', '<?php echo $row["image"]?>', 600, 600); return false;"
+                                      > <img src="<?php echo $row['image']?>" width="100" border="0"/> </a>
                                     </td>
 				                            <td>
                                       <!--<a href="update.php?id=<?php echo $row['id']; ?>" class="btn-action">Edit</a>-->
-                                      <a onclick="confirmDelete(<?php echo $row['id']; ?>)" class="btn-action">Delete</a>
+                                      <a href="image_delete.php?id=<?php echo $row['id']?>&uid=<?php echo $uid?>&cid=<?php echo $cid?>"
+                                        class="btn-action">Удалить</a>
                                     </td>
-			                            </tr>
+                                  </tr>
                                   <?php
-                                        }
+                                    }
+                                  }
                                   ?>
-                                  <td></td>
-                                  <td>
-                                    <input type="file" name="fileToUpload" accept=".jpg, .jpeg, .png, .gif">
-                                  </div>
-                                  </td>
-                                  <?php
-                                      }
-                                  ?>
+                                  <tr>
+                                    <td>
+                                      <div class="col-sm-6 mb-3 mb-sm-0">
+                                        <input type="file"
+                                          name="fileToUpload[]" id="fileUpload"
+                                          multiple="multiple"
+                                          accept=".jpg, .jpeg, .png, .gif"
+                                        >
+                                      </div>
+                                    </td>
+                                  </tr>
                                   </table>
 	                              </div>
+                                <button type="submit" name="upload" class="btn btn-primary btn-user btn-block">
+                                  Добавить файлы
+                                </button>
                                 <button type="submit" name="submit" class="btn btn-primary btn-user btn-block">
                                   Проверен
                                 </button>
@@ -345,22 +384,6 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
 
     <!-- Custom scripts for all pages-->
     <script src="../js/sb-admin-2.min.js"></script>
-    <script src="jquery-3.2.1.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
-		  integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
-		  crossorigin="anonymous"></script>
-	  <script type="text/javascript" src="assets/validate.js"></script>
 
-    <script>
-      function validateImage() {
-        var InputFile = document.forms["form"]["image"].value;
-        if (InputFile == "") {
-          error = "No source found";
-          $("#response").html(error).addClass("error");;
-          return false;
-        }
-        return true;
-      }
-    </script>
   </body>
 </html>

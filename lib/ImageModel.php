@@ -45,5 +45,18 @@ class ImageModel
     $response = imagejpeg($imageLayer, $outputFile, $outputQuality);
     return $response;
   }
+  function deleteImageById($id) {
+    $query = "SELECT image FROM images WHERE id=?";
+    $paramType = 'i';
+    $paramValue = array($id);
+    $result = $this->conn->select($query, $paramType, $paramValue);
+    $image_name = $result[0]['image'];
+    if(file_exists($image_name)){
+	    $delete  = unlink($image_name);
+    }
+    $query = "DELETE FROM images WHERE id=?";
+    $result = $this->conn->delete($query, $paramType, $paramValue);
+    return $result;
+  }
 }
 ?>
