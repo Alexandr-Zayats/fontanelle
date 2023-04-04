@@ -1,7 +1,12 @@
 <?php
+namespace Phppot;
+
 session_start();
 error_reporting(0);
-include('../includes/config.php');
+require_once __DIR__ . '/../includes/config.php';
+require_once __DIR__ . '/../lib/ImageModel.php';
+$imageModel = new ImageModel();
+
 $uid=$_GET['uid'];
 $type=$_GET['type'];
 $dCurrent=0;
@@ -16,7 +21,6 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
   $latest=mysqli_fetch_assoc(mysqli_query($con,"call sp_getLastCounterValues($cid)"));
 
   if(isset($_POST['submit'])) {
-  //if(isset($_POST['addvalues'])) {
     $cid=$_POST['cid'];
     $name=$_POST['сname'];
     $counterNum=$_POST['counterNum'];
@@ -29,7 +33,7 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
     $dayLast=$latest['dayLast'];
     $nightLast=$latest['nightLast'];
 
-    // ------ FILES upload
+    // FILES upload
     function reArrayFiles( $arr ){
       foreach( $arr as $key => $all ){
         foreach( $all as $i => $val ){
@@ -50,29 +54,50 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
         $target_file = $target_dir . date('Ymd') . '-' . basename($file['name']);
         $imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
         $check = getimagesize($file["tmp_name"]);
-
+        $imageModel = new ImageModel();
         if($check !== false) {
           // Check if file already exists
-          if (!file_exists($target_file)) {
+          //if (!file_exists($target_file)) {
             // Check file size
-            if ($file['size'] < 500000) {
+            //if ($file['size'] < 500000) {
                // Allow certain file formats
               if (in_array($imageFileType, array('jpg', 'png', 'jpeg', 'gif'))) {
-                if (move_uploaded_file($file['tmp_name'], $target_file)) {
+                $source = $file['tmp_name'];
+                $response = $imageModel->compressImage($source, $target_file, 50);
+                if (!empty($response)) {
+                  $id = $imageModel->insertImage($file["name"], $target_file, $uid);
+                  //print($id);
+                  //exit;
+                  if (!empty($response)) {
+                    $response["type"] = "success";
+                    $response["message"] = "Upload Successfully";
+                    $result = $imageModel->getImageById($id);
+                  }
+                } else {
+                  $response["type"] = "error";
+                  $response["message"] = "Unable to Upload:$response";
+                /*
+                }                
+                $image = imagecreatefromjpeg($file['tmp_name']);  
+                unlink("image.jpg");
+                imagejpeg($image,"image.jpg",50);
+                if (move_uploaded_file("image.jpg", $target_file)) {
+                //if (move_uploaded_file($file['tmp_name'], $target_file)) {
                   $msg = "Файл ". htmlspecialchars( basename( $file['name'])). " сохранен.";
                   echo "<script>alert('" . $msg . "');</script>";
                 } else {
+                */
                   echo "<script>alert('Произошла ошибка при сохранении файла.');</script>";
                 }
               } else {
                 echo "<script>alert('Допустимы только JPG, JPEG, PNG, GIF файлы.');</script>";
               }
-            } else {
-              echo "<script>alert('Файл " . $file['name'] . " слишком большой.');</script>";
-            }
-          } else {
-            echo "<script>alert('Файл " . $file['name'] . " уже существует.');</script>";
-          }
+            //} else {
+            //  echo "<script>alert('Файл " . $file['name'] . " слишком большой.');</script>";
+            //}
+          //} else {
+          //  echo "<script>alert('Файл " . $file['name'] . " уже существует.');</script>";
+          //}
         } else {
           echo "<script>alert('Файл " . $file['name'] . " не является изображением.');</script>";
         }
@@ -123,6 +148,7 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
 
     <!-- Custom fonts for this template-->
     <link href="../vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="../css/images.css" rel="stylesheet" type="text/css" />
     <link
         href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
         rel="stylesheet">
@@ -149,7 +175,10 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
                                 <h5 style="color:blue">СТ "РУЧЕЕК"</h5>
                                 <h1 class="h4 text-gray-900 mb-4">Текущие показаний</h1>
                             </div>
-                            <form class="user" name="submit" method="post" enctype="multipart/form-data">
+                            <form class="user" name="submit" method="post" enctype="multipart/form-data"
+                              id="image"
+                              onsubmit="return validateImage()"
+                            >
                                 <div class="form-group row">
                                   <div class="col-sm-6 mb-3 mb-sm-0">
                                     <label for="uid">Участок:</label>
@@ -217,7 +246,10 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
 
                                 <div class="form-group row">
                                   <div class="col-sm-6 mb-3 mb-sm-0">
-                                    <label for="dCurrent"><?php if ( $type == "el" ) { echo "Показания: день"; } else { echo "Текущие показания:"; } ?></label>
+                                    <label for="dCurrent"><?php 
+                                      if ( $type == "el" ) { echo "Показания: день";} 
+                                      else { echo "Текущие показания:"; } ?>
+                                    </label>
                                     <input type="number" step="0.01" class="form-control form-control-user" id="dCurrent"
                                       value="<?php
                                         if(is_numeric($latest['dayLast']) && isset($latest['dayLast'])) {
@@ -248,12 +280,50 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
                                 <?php } else {?>
                                     <input type="hidden" id="nCurrent" name="nCurrent" value=0>
                                 <?php } ?>
+                                <!--
                                 <div class="form-group row">
                                   <div class="col-sm-6 mb-3 mb-sm-0">
                                     <label>Фото счетчика</label>
-                                    <input type="file" name="fileToUpload[]" multiple="multiple">
+                                    <input type="file" name="fileToUpload[]"
+                                      multiple="multiple"
+                                      accept=".jpg, .jpeg, .png, .gif">
                                   </div>
                                 </div>
+                                -->
+                                <div class="form-group row">
+		                              <table width="100%">
+			                            <tr>
+				                            <th width="80%" align="center">Фото</th>
+				                            <th>Операции</th>
+			                            </tr>
+                                    <?php $result = $imageModel->getAllImages($uid);?>
+                                  <tr>
+                                    <?php
+                                      if (! empty($result)) {
+                                        foreach ($result as $row) {
+                                    ?>
+                                    <td>
+                                      <img src="<?php echo $row["image"]?>" width="120"
+					                            class="profile-photo" alt="photo"><?php //echo $row["name"]?>
+                                    </td>
+				                            <td>
+                                      <!--<a href="update.php?id=<?php echo $row['id']; ?>" class="btn-action">Edit</a>-->
+                                      <a onclick="confirmDelete(<?php echo $row['id']; ?>)" class="btn-action">Delete</a>
+                                    </td>
+			                            </tr>
+                                  <?php
+                                        }
+                                  ?>
+                                  <td></td>
+                                  <td>
+                                    <input type="file" name="fileToUpload" accept=".jpg, .jpeg, .png, .gif">
+                                  </div>
+                                  </td>
+                                  <?php
+                                      }
+                                  ?>
+                                  </table>
+	                              </div>
                                 <button type="submit" name="submit" class="btn btn-primary btn-user btn-block">
                                   Проверен
                                 </button>
@@ -264,7 +334,6 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
                 </div>
             </div>
         </div>
-
     </div>
 
     <!-- Bootstrap core JavaScript-->
@@ -276,6 +345,22 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
 
     <!-- Custom scripts for all pages-->
     <script src="../js/sb-admin-2.min.js"></script>
+    <script src="jquery-3.2.1.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+		  integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+		  crossorigin="anonymous"></script>
+	  <script type="text/javascript" src="assets/validate.js"></script>
 
+    <script>
+      function validateImage() {
+        var InputFile = document.forms["form"]["image"].value;
+        if (InputFile == "") {
+          error = "No source found";
+          $("#response").html(error).addClass("error");;
+          return false;
+        }
+        return true;
+      }
+    </script>
   </body>
 </html>
