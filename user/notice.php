@@ -3,7 +3,7 @@
 require_once __DIR__ . '/../includes/config.php';
 
 $userData = $_POST['userData'];
-//print_r($userData);
+
 $target_folder = 'uploads/' . $userData['id'];
 $target_file = $target_folder . '/notice.pdf';
 
