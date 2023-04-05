@@ -1,39 +1,50 @@
 <?php
-session_start();
-//error_reporting(0);
-//db Connection file
-include('../includes/config.php');
-//code for createuser
-$phone_regex = array("-", "(", ")", "+38", "+", "_", " ");
-if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
-  header('location:logout.php');
-} else {
-  if(isset($_POST['createuser'])) {
-    $id=intval($_POST['id']);
-    $surName = $_POST['surName'];
-    $name = $_POST['name'];
-    $middlName = $_POST['middlName'] ?: '';
-    $email = $_POST['email'] ?: '';
-    $userName = $_POST['userName'] ?: '';
-    $password = $_POST['password'] ?: '';
-    $phone1 = str_replace($phone_regex, '', $_POST['phone1']);
-    $phone2 = str_replace($phone_regex, '', $_POST['phone2']);
-    if($phone2 == "") $phone2=0;
-    $isMember = 1;
-    $autoInfo = $_POST['autoInfo'] ?: '';
-    $autoNum = $_POST['autoNum'] ?: '';
-    mysqli_close($con);
-    $con = mysqli_connect(DB_SERVER,DB_USER,DB_PASS,DB_NAME);
-    //echo "<script>alert('$id, $surName, $name, $middlName, $userName, $password, $email, $phone1, $phone2, $isMember, $autoInfo, $autoNum');</script>";
-    $query=mysqli_query($con, "call updateResidentProfile($id, '$surName', '$name', '$middlName', '$userName', '$password', '$email', $phone1, $phone2, $isMember, '$autoInfo', '$autoNum')");
-    if ($query) {
-      echo "<script>alert('Новый дачник успешно зарегистрирован');</script>";
-      echo "<script>window.location.href='residents.php'</script>";
-    } else {
-      echo "<script>alert('Что-то пошло не так!. Попробуйте еще раз.');</script>";
+
+  namespace Phppot;
+  session_start();
+  //error_reporting(0);
+
+  include_once __DIR__ . '/../includes/config.php';
+  require_once __DIR__ . '/../lib/UserModel.php';
+  $userModel = new UserModel();
+
+  //code for createuser
+  $phone_regex = array("-", "(", ")", "+38", "+", "_", " ");
+  if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
+    header('location:logout.php');
+  } else {
+    if(isset($_POST['createuser'])) {
+
+      /*
+      $id=intval($_POST['id']);
+      $surName = $_POST['surName'];
+      $name = $_POST['name'];
+      */
+
+      $middlName = $_POST['middlName'] ?: '';
+      $email = $_POST['email'] ?: '';
+      $userName = $_POST['userName'] ?: '';
+      $password = $_POST['password'] ?: '';
+      $phone1 = str_replace($phone_regex, '', $_POST['phone1']);
+      $phone2 = str_replace($phone_regex, '', $_POST['phone2']);
+      if($phone2 == "") $phone2=0;
+      $isMember = 1;
+      $autoInfo = $_POST['autoInfo'] ?: '';
+      $autoNum = $_POST['autoNum'] ?: '';
+      //echo "<script>alert('$id, $surName, $name, $middlName, $userName, $password, $email, $phone1, $phone2, $isMember, $autoInfo, $autoNum');</script>";
+
+      $userModel->call('updateResidentProfile', "$id, '$surName', '$name', '$middlName', '$userName', '$password', '$email', $phone1, $phone2, $isMember, '$autoInfo', '$autoNum'");
+      header("location:residents.php");
+      /*
+      if ($query) {
+        echo "<script>alert('Новый дачник успешно зарегистрирован');</script>";
+        echo "<script>window.location.href='residents.php'</script>";
+      } else {
+        echo "<script>alert('Что-то пошло не так!. Попробуйте еще раз.');</script>";
+      }
+    */
     }
   }
-}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -58,16 +69,8 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
 </head>
 
 <?php
-  mysqli_close($con);
-  $con = mysqli_connect(DB_SERVER,DB_USER,DB_PASS,DB_NAME);
-  if (isset($_GET['uid'])) {
-    $uid=$_GET['uid'];
-  } else {
-    $uid=-1;
-  }
-  echo $uid;
-  $query=mysqli_query($con,"call residents($uid)");
-  while ($result=mysqli_fetch_array($query)) {
+  $query = $userModel->call('residents', $uid);
+  foreach ($query as $result) {
 
 ?>
 

@@ -1,10 +1,16 @@
 <?php
-session_start();
-//error_reporting(0);
-include('../includes/config.php');
-if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
-  header('location:logout.php');
-} else {
+
+  namespace Phppot;
+  session_start();
+  //error_reporting(0);
+
+  include_once __DIR__ . '/../includes/config.php';
+  require_once __DIR__ . '/../lib/UserModel.php';
+  $userModel = new UserModel();
+
+  if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
+    header('location:logout.php');
+  } else {
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -99,9 +105,9 @@ if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
                                   </tfoot>
                                   <tbody>
 <?php
-  $query=mysqli_query($con,"call debtors()");
+  $query = $userModel->call('debtors', '');
   $cnt=1;
-  while ($result=mysqli_fetch_array($query)) {
+  foreach ( $query as $result) {
 ?>
                                     <?php
                                       $phone="Номер телефона не указан";

@@ -1,17 +1,22 @@
 <?php
-session_start();
-//error_reporting(0);
-include('../includes/config.php');
-if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
-  header('location:logout.php');
-} else {
-  if(isset($_POST['report'])) {
-    $start=$_POST['start'];
-    $stop=$_POST['stop'];
+  namespace Phppot;
+  session_start();
+  //error_reporting(0);
+
+  include_once __DIR__ . '/../includes/config.php';
+  require_once __DIR__ . '/../lib/UserModel.php';
+  $userModel = new UserModel();
+
+  if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
+    header('location:logout.php');
   } else {
-    $start=date('Y-m-01');
-    $stop=date("Y-m-d");
-  }
+    if(isset($_POST['report'])) {
+      $start=$_POST['start'];
+      $stop=$_POST['stop'];
+    } else {
+      $start=date('Y-m-01');
+      $stop=date("Y-m-d");
+    }
   //echo "<script>alert('$start  $stop');</script>";
 ?>
 <!DOCTYPE html>
@@ -127,12 +132,9 @@ if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
                                   </tfoot>
                                   <tbody>
 <?php
-  //$mysqli->close();
-  //$con = mysqli_connect(DB_SERVER,DB_USER,DB_PASS,DB_NAME);
-  //echo "<script>alert('$start  $stop');</script>";
-  $query=mysqli_query($con,"call sp_totalReport('$start', '$stop')");
+  $query = $userModel->call('sp_totalReport', "'$start', '$stop'");
   $balance=0; $kDay=0; $kNight=0; $sumEl=0; $kWater=0; $sumWat=0; $sumFee=0; $sumInc=0;
-  while ($result=mysqli_fetch_array($query)) {
+  foreach($query as $result) {
     if ( $result['id'] == 0 OR (
       $result['kDay'] == 0 and
       $result['kNight'] == 0 and

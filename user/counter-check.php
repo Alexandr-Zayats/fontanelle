@@ -1,93 +1,93 @@
 <?php
-namespace Phppot;
+  namespace Phppot;
 
-session_start();
-error_reporting(0);
-require_once __DIR__ . '/../includes/config.php';
-require_once __DIR__ . '/../lib/ImageModel.php';
-$imageModel = new ImageModel();
+  session_start();
+  error_reporting(0);
+  require_once __DIR__ . '/../includes/config.php';
+  require_once __DIR__ . '/../lib/ImageModel.php';
+  require_once __DIR__ . '/../lib/UserModel.php';
 
-$uid=$_GET['uid'];
-$type=$_GET['type'];
-$dCurrent=0;
-$nCurrent=0;
+  $imageModel = new ImageModel();
+  $userModel = new UserModel();
 
-if(isset($_GET['cid'])) { $cid=$_GET['cid']; }
+  $dCurrent=0;
+  $nCurrent=0;
 
-//$cashier=$_SESSION['adid'];
-if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
-  header('location:logout.php');
-} else {
-  $latest=mysqli_fetch_assoc(mysqli_query($con,"call sp_getLastCounterValues($cid)"));
+  //$cashier=$_SESSION['adid'];
+  if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
+    header('location:logout.php');
+  } else {
+    $query = $userModel->call('sp_getLastCounterValues', $cid);
+    $latest = $query[0];
 
 
-  // FILES upload
-  if(isset($_POST['upload'])) {
-    function reArrayFiles( $arr ){
-      foreach( $arr as $key => $all ){
-        foreach( $all as $i => $val ){
-          $new[$i][$key] = $val;    
-        }    
+    // FILES upload
+    if(isset($_POST['upload'])) {
+      function reArrayFiles( $arr ){
+        foreach( $arr as $key => $all ){
+          foreach( $all as $i => $val ){
+            $new[$i][$key] = $val;    
+          }    
+        }
+        return $new;
       }
-      return $new;
-    }
     
-    $target_dir = "uploads/" . $uid . "/";
-    if (!file_exists($target_dir)) {
-      mkdir($target_dir, 0777, true);
-    }
+      $target_dir = "uploads/" . $uid . "/";
+      if (!file_exists($target_dir)) {
+        mkdir($target_dir, 0777, true);
+      }
 
-    if ($_FILES['fileToUpload']) {
-      $file_ary = reArrayFiles($_FILES['fileToUpload']);
-      foreach ($file_ary as $file) {
-        $target_file = $target_dir . date('Ymd') . '-' . basename($file['name']);
-        $imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
-        $check = getimagesize($file["tmp_name"]);
-        $imageModel = new ImageModel();
-        if($check !== false) {
-          // Check if file already exists
-          //if (!file_exists($target_file)) {
-            // Check file size
-            //if ($file['size'] < 500000) {
-               // Allow certain file formats
-              if (in_array($imageFileType, array('jpg', 'png', 'jpeg', 'gif'))) {
-                $source = $file['tmp_name'];
-                $response = $imageModel->compressImage($source, $target_file, 50);
-                if (!empty($response)) {
-                  $id = $imageModel->insertImage($file["name"], $target_file, $uid);
-                  //print($id);
-                  //exit;
+      if ($_FILES['fileToUpload']) {
+        $file_ary = reArrayFiles($_FILES['fileToUpload']);
+        foreach ($file_ary as $file) {
+          $target_file = $target_dir . date('Ymd') . '-' . basename($file['name']);
+          $imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
+          $check = getimagesize($file["tmp_name"]);
+          $imageModel = new ImageModel();
+          if($check !== false) {
+            // Check if file already exists
+            //if (!file_exists($target_file)) {
+              // Check file size
+              //if ($file['size'] < 500000) {
+                // Allow certain file formats
+                if (in_array($imageFileType, array('jpg', 'png', 'jpeg', 'gif'))) {
+                  $source = $file['tmp_name'];
+                  $response = $imageModel->compressImage($source, $target_file, 50);
                   if (!empty($response)) {
-                    $response["type"] = "success";
-                    $response["message"] = "Upload Successfully";
-                    $result = $imageModel->getImageById($id);
+                    $id = $imageModel->insertImage($file["name"], $target_file, $uid);
+                    //print($id);
+                    //exit;
+                    if (!empty($response)) {
+                      $response["type"] = "success";
+                      $response["message"] = "Upload Successfully";
+                      $result = $imageModel->getImageById($id);
+                    }
+                  } else {
+                    $response["type"] = "error";
+                    $response["message"] = "Unable to Upload:$response";
+                  /*
+                  }                
+                  $image = imagecreatefromjpeg($file['tmp_name']);  
+                  unlink("image.jpg");
+                  imagejpeg($image,"image.jpg",50);
+                  if (move_uploaded_file("image.jpg", $target_file)) {
+                  //if (move_uploaded_file($file['tmp_name'], $target_file)) {
+                    $msg = "Файл ". htmlspecialchars( basename( $file['name'])). " сохранен.";
+                    echo "<script>alert('" . $msg . "');</script>";
+                  } else {
+                  */
+                    echo "<script>alert('Произошла ошибка при сохранении файла.');</script>";
                   }
                 } else {
-                  $response["type"] = "error";
-                  $response["message"] = "Unable to Upload:$response";
-                /*
-                }                
-                $image = imagecreatefromjpeg($file['tmp_name']);  
-                unlink("image.jpg");
-                imagejpeg($image,"image.jpg",50);
-                if (move_uploaded_file("image.jpg", $target_file)) {
-                //if (move_uploaded_file($file['tmp_name'], $target_file)) {
-                  $msg = "Файл ". htmlspecialchars( basename( $file['name'])). " сохранен.";
-                  echo "<script>alert('" . $msg . "');</script>";
-                } else {
-                */
-                  echo "<script>alert('Произошла ошибка при сохранении файла.');</script>";
+                  echo "<script>alert('Допустимы только JPG, JPEG, PNG, GIF файлы.');</script>";
                 }
-              } else {
-                echo "<script>alert('Допустимы только JPG, JPEG, PNG, GIF файлы.');</script>";
-              }
+              //} else {
+              //  echo "<script>alert('Файл " . $file['name'] . " слишком большой.');</script>";
+              //}
             //} else {
-            //  echo "<script>alert('Файл " . $file['name'] . " слишком большой.');</script>";
+            //  echo "<script>alert('Файл " . $file['name'] . " уже существует.');</script>";
             //}
-          //} else {
-          //  echo "<script>alert('Файл " . $file['name'] . " уже существует.');</script>";
-          //}
-        } else {
+          } else {
           echo "<script>alert('Файл " . $file['name'] . " не является изображением.');</script>";
         }
       }
@@ -97,47 +97,37 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
   // ------- END of FILES upload
 
   if(isset($_POST['submit'])) {
-    $cid=$_POST['cid'];
-    $name=$_POST['сname'];
-    $counterNum=$_POST['counterNum'];
-    $type=$_POST['type'];
-    $info=$_POST['counterInfo'];
-    $dCurrent=$_POST['dCurrent'];
-    $nCurrent=$_POST['nCurrent'];
-    $location=$_POST['location'];
+    $name = $_POST['сname'];
+    $counterNum = $_POST['counterNum'];
+    $type = $_POST['type'];
+    $info = $_POST['counterInfo'];
+    $dCurrent = $_POST['dCurrent'];
+    $nCurrent = $_POST['nCurrent'];
+    $location = $_POST['location'];
 
-    $dayLast=$latest['dayLast'];
-    $nightLast=$latest['nightLast'];
+
+    $dayLast = $latest['dayLast'];
+    $nightLast = $latest['nightLast'];
 
     //if($nightLast > $nCurrent || $dayLast > $dCurrent) {
       //echo "<script>alert('$nightLast; $nCurrent; $dayLast; $dCurrent');</script>";
       // echo "<script>alert('Введеные показания ниже предыдущих!');</script>";
     //} else {
-      mysqli_close($con);
-      $con = mysqli_connect(DB_SERVER,DB_USER,DB_PASS,DB_NAME);
-      $query = mysqli_query($con, "call sp_updateCounter($cid, '$counterNum', '$name', '$info', '$location')");
-      if ($query) { 
-        mysqli_close($con);
-        $con = mysqli_connect(DB_SERVER,DB_USER,DB_PASS,DB_NAME);
-        $query = mysqli_query($con, "call sp_addCounterValues($uid, $cid,'$dayLast','$dCurrent','$nightLast','$nCurrent')");
-        if ($query) {
-          // echo "<script>alert('Поверка счетчика проведена.');</script>";
-          if ( $type == "el" ) {
-            echo "<script>window.location.href='info.php?uid=$uid&cid=$cid'</script>";
-          } else {
-            echo "<script>window.location.href='water.php?uid=$uid&cid=$cid'</script>";
-          }
-        } else {
-          echo "<script>alert('Что-то пошло не так!. Попробуйте еще раз.');</script>";
-        }
-      } else {
-        echo "<script>alert('Что-то пошло не так!. Попробуйте еще раз.');</script>";
-      }
-    //}
+    //echo $cid . ",'$counterNum','$name','$info','$location'";
+    //echo $uid .",". $cid . ",'$dayLast','$dCurrent','$nightLast','$nCurrent'";
+    //exit;
+    $query = $userModel->call('sp_updateCounter', $cid . ",'$counterNum','$name','$info','$location'");
+    $query = $userModel->call('sp_addCounterValues', $uid .",". $cid . ",'$dayLast','$dCurrent','$nightLast','$nCurrent'");
+
+    if ( $type == "el" ) {
+      header("location:info.php");
+    } else {
+      header("location:'water.php");
+    }
   }
 }
-
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -190,10 +180,8 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
 
 </head>
 <?php
-  mysqli_close($con);
-  $con = mysqli_connect(DB_SERVER,DB_USER,DB_PASS,DB_NAME);
-  $uid=$_GET['uid'];
-  $counter=mysqli_fetch_assoc(mysqli_query($con, "SELECT name, number, info, verDate, location FROM counters WHERE id=$cid;"));
+  $query = $userModel->select('SELECT name, number, info, verDate, location FROM counters WHERE id=?', $cid);
+  $counter = $query[0];
 ?>
   <body class="bg-gradient-primary">
     <div class="container">

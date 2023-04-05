@@ -1,31 +1,36 @@
 <?php
-//db Connection file
-include('../includes/config.php');
-//code for createuser
-if(isset($_POST['createuser'])) {
-  $id=intval($_POST['id']);
-  $street=$_POST['street'];
-  $resident=$_POST['resident'];
-  $size=$_POST['size'];
-  $counterNum=$_POST['counterNum'] ?: '123456';
-  $counterName=$_POST['counterName'] ?: 'основной';
-  $counterInfo=$_POST['counterInfo'] ?: '';
-  $dCurrent=$_POST['dCurrent'] ?: 0;
-  $nCurrent=$_POST['nCurrent'] ?: 0;
-  $result=count(mysqli_fetch_array(mysqli_query($con,"call sp_checkidavailabilty($id)")));
-  if($result>0){
-    echo "<script>alert('Участок уже заерегистрирован!');</script>";
-  } else {
-    mysqli_close($con);
-    $con = mysqli_connect(DB_SERVER,DB_USER,DB_PASS,DB_NAME);
-    // echo "<script>alert('$id, $street, $size, $resident, $counterNum, $counterName, $counterInfo, $dCurrent, $nCurrent');</script>";
-    $query=mysqli_query($con, "call sp_registration($id, $street, $size, $resident, $counterNum, '$counterName', '$counterInfo', $dCurrent, $nCurrent)");
-    if ($query) {
-      echo "<script>alert('Новый садовый участок успешно добавлен');</script>";
-      echo "<script>window.location.href='registered-users.php'</script>";
+
+  namespace Phppot;
+  session_start();
+  //error_reporting(0);
+
+  include_once __DIR__ . '/../includes/config.php';
+  require_once __DIR__ . '/../lib/UserModel.php';
+  $userModel = new UserModel();
+
+  //code for createuser
+  if(isset($_POST['createuser'])) {
+    $id=intval($_POST['id']);
+    $street=$_POST['street'];
+    $resident=$_POST['resident'];
+    $size=$_POST['size'];
+    $counterNum=$_POST['counterNum'] ?: '123456';
+    $counterName=$_POST['counterName'] ?: 'основной';
+    $counterInfo=$_POST['counterInfo'] ?: '';
+    $dCurrent=$_POST['dCurrent'] ?: 0;
+    $nCurrent=$_POST['nCurrent'] ?: 0;
+
+    $query = $userModel->call('sp_checkidavailabilty', $id);
+    $result = $query[0];
+
+    if($result>0){
+      echo "<script>alert('Участок уже заерегистрирован!');</script>";
     } else {
-      echo "<script>alert('Что-то пошло не так!. Попробуйте еще раз.');</script>";
-    }
+    // echo "<script>alert('$id, $street, $size, $resident, $counterNum, $counterName, $counterInfo, $dCurrent, $nCurrent');</script>";
+
+    $query = $userModel->call('sp_registration', "$id, $street, $size, $resident, $counterNum, '$counterName', '$counterInfo', $dCurrent, $nCurrent");
+
+    header("location:registered-users.php");
   }
 }
 
@@ -54,9 +59,7 @@ if(isset($_POST['createuser'])) {
 </head>
 
 <?php
-  mysqli_close($con);
-  $con = mysqli_connect(DB_SERVER,DB_USER,DB_PASS,DB_NAME);
-  $streets=mysqli_query($con,"call sp_streetList()");
+  $query = $userModel->call('sp_streetList');
 ?>
 
 <body class="bg-gradient-primary">
@@ -84,7 +87,7 @@ if(isset($_POST['createuser'])) {
                                         <label for="street">Улица: </label>
                                         <select id="street" name="street" class="btn btn-primary btn-user btn-block">
                                           <?php
-                                          while ($street=mysqli_fetch_array($streets)) {
+                                          foreach ($query as $street ) {
                                             echo "<option value=".$street['id'].">".$street['name']."</option>";
                                           }
                                           ?>
@@ -103,9 +106,8 @@ if(isset($_POST['createuser'])) {
                                     <label for="size">Владелец</label>
                                     <select id="resident" name="resident" class="btn btn-primary btn-user btn-block">
                                       <?php
-                                        $con->next_result();
-                                        $sql=mysqli_query($con,"call residents(0)");
-                                        while ($resident=mysqli_fetch_array($sql)) {
+                                        $sql = $userModel->call('residents', 0);
+                                        foreach ($sql as $resident) {
                                           echo "<option value=".$resident['id'].">".$resident['resName']." ( ".$resident['phone1']." )</option>";
                                         }
                                       ?>

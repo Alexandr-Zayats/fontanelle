@@ -2,32 +2,53 @@
   
   //setlocale(LC_ALL, 'uk_UA.utf8');
   
-  //echo strftime("%A %e %B %Y", mktime(0, 0, 0, 12, 22, 1978));
 
-  //define('DB_SERVER','3.65.146.44');
-  define('DB_SERVER','localhost');
-  define('DB_USER','web');
-  define('DB_PASS' ,'webPassword');
-  define('DB_NAME', 'fontanelle');
-
-  mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
-  $con = mysqli_connect(DB_SERVER,DB_USER,DB_PASS,DB_NAME);
-  /*$mysqli = new mysqli(DB_SERVER,DB_USER,DB_PASS);
-  $mysqli->select_db(DB_NAME);*/
-
-  // Check connection
-  if (mysqli_connect_errno()) {
-    echo "Failed to connect to MySQL: " . mysqli_connect_error();
+  if (isset($_SESSION['adid'])) {
+    $cashier = $_SESSION['adid'];
   }
 
-  /* change character set to utf8
-  if (!$mysqli->set_charset("utf8")) {
-    printf("Error loading character set utf8: %s\n", $mysqli->error);
+  if (isset($_POST['uid'])) {
+    $uid = $_POST['uid'];
+  } elseif( isset($_GET['uid'])) {
+    $uid = $_GET['uid'];
+  } elseif (isset($_SESSION['uid'])) {
+    $uid = $_SESSION['uid'];
   } else {
-    printf("Current character set: %s\n", $mysqli->character_set_name());
+    $uid = -1;
   }
-  //mysqli->close();
-  */
+
+  $_SESSION['uid'] = $uid;
+
+  if (isset($_POST['cid'])) {
+    $cid = $_POST['cid'];
+  } elseif (isset($_GET['cid'])) {
+    $cid = $_GET['cid'];
+  } elseif (isset($_SESSION['cid'])) {
+    $cid = $_SESSION['cid'];
+  }
+  $_SESSION['cid'] = $cid;
+
+  if (isset($_POST['type'])) {
+    $type = $_POST['type'];
+  } elseif (isset($_GET['type'])) {
+    $type = $_GET['type'];
+  } elseif (isset($_SESSION['cType'])) {
+    $type = $_SESSION['cType'];
+  }
+  $_SESSION['cType'] = $type;
+
+  if (isset($_POST['toPay'])) {
+    $toPay = $_POST['toPay'];
+  } elseif( isset($_GET['toPay'])) {
+    $toPay = $_GET['toPay'];
+  } elseif (isset($_SESSION['toPay'])) {
+    $toPay = $_SESSION['toPay'];
+  }
+  $_SESSION['toPay'] = $toPay;
+
+  foreach ($_POST as $key => $value) {
+    ${$key} = $value;
+  }
 
   function dateFormat(String $dat) {
     $monthes = array(

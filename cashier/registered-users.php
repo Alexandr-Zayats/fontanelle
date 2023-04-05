@@ -1,11 +1,20 @@
 <?php
-session_start();
-//error_reporting(0);
-include('../includes/config.php');
-if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
-  header('location:logout.php');
-} else {
+
+  namespace Phppot;
+  session_start();
+  //error_reporting(0);
+
+  include_once __DIR__ . '/../includes/config.php';
+  require_once __DIR__ . '/../lib/UserModel.php';
+  $userModel = new UserModel();
+
+  
+  if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
+    header('location:logout.php');
+  } else {
+    $query = $userModel->call('sp_allregisteredusers', '');
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -97,9 +106,8 @@ if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
                                   </tfoot>
                                   <tbody>
 <?php
-  $query=mysqli_query($con,"call sp_allregisteredusers()");
   $cnt=1;
-  while ($result=mysqli_fetch_array($query)) {
+  foreach ($query as $result) {
 ?>
                                     <?php
                                       $phone="Номер телефона не указан";
@@ -111,24 +119,26 @@ if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
                                       }
                                     ?>
                                     <tr>
-                                      <td style="text-align:right"><?php echo $cnt;?></td>
+                                      <td style="text-align:right">
+                                        <form action="../user/info.php" method="post">
+                                          <input type="hidden" name="uid"
+                                            id="<?php echo $result['id']?>"
+                                            value="<?php echo $result['id']?>"
+                                          >
+                                          <input type="submit" value="<?php echo $cnt?>" class="btn btn-primary btn-user btn-block"/>
+                                        </form>
+                                      </td>
 
                                       <td style="text-align:center">
-                                        <a href="../user/info.php?uid=<?php echo $result['id'];?>">
-                                          <?php echo $result['id'];?>
-                                        </a>
+                                        <?php echo $result['id']?>
                                       </td>
 
                                       <td style="text-align:left">
-                                        <a href="../user/info.php?uid=<?php echo $result['id'];?>">
                                           <?php echo $result['street'];?>
-                                        </a>
                                       </td>
 
 				                              <td style="text-align:left">
-                                        <a href="../user/info.php?uid=<?php echo $result['id'];?>" title="<?php echo $phone?>">
-                                          <?php echo $result['Name'];?>
-                                        </a>
+                                        <?php echo $result['Name']?>
 				                              </td>
 
 				                              <td style="text-align:right">

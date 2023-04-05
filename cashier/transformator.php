@@ -1,35 +1,46 @@
 <?php
-session_start();
-//error_reporting(0);
-include('../includes/config.php');
-$uid=0;
-$counter=1;
-if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
-  header('location:logout.php');
-} else {
-  if(isset($_POST['addvalues'])) {
-    $counter=$_POST['counter'];
-    $dCurrent=$_POST['dCurrent'];
-    $nCurrent=$_POST['nCurrent'];
-  }
-  $latest=mysqli_fetch_assoc(mysqli_query($con,"call sp_getLastCounterValues($counter)"));
-  if(isset($_POST['addvalues'])) {
-    if($latest[nightLast] > $nCurrent || $latest[dayLast] > $dCurrent) {
-      echo "<script>alert('Введеные показания ниже предыдущих!');</script>";
-    } else {
-      mysqli_close($con);
-      $con = mysqli_connect(DB_SERVER,DB_USER,DB_PASS,DB_NAME);
-      // echo "<script>alert('uid=$uid counter=$counter latesD=$latest[dayLast] currentD=$dCurrent latestN=$latest[nightLast] currentN=$nCurrent');</script>";
-      $query=mysqli_query($con,"call sp_addCounterValues($uid,$counter,'$latest[dayLast]','$dCurrent','$latest[nightLast]','$nCurrent')");
-      if ($query) {
-        echo "<script>alert('Показания успешно занесены');</script>";
-        echo "<script>window.location.href='registered-users.php'</script>";
+
+  namespace Phppot;
+  session_start();
+  //error_reporting(0);
+
+  include_once __DIR__ . '/../includes/config.php';
+  require_once __DIR__ . '/../lib/UserModel.php';
+  $userModel = new UserModel();
+
+  $uid=0;
+  $counter=1;
+  if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
+    header('location:logout.php');
+  } else {
+    if(isset($_POST['addvalues'])) {
+      $counter=$_POST['counter'];
+      $dCurrent=$_POST['dCurrent'];
+      $nCurrent=$_POST['nCurrent'];
+    }
+
+    $query = $userModel->call('sp_getLastCounterValues', $counter);
+    $latest = $query[0];
+
+    if(isset($_POST['addvalues'])) {
+      if($latest[nightLast] > $nCurrent || $latest[dayLast] > $dCurrent) {
+        echo "<script>alert('Введеные показания ниже предыдущих!');</script>";
       } else {
-        echo "<script>alert('Что-то пошло не так!. Попробуйте еще раз.');</script>";
+        // echo "<script>alert('uid=$uid counter=$counter latesD=$latest[dayLast] currentD=$dCurrent latestN=$latest[nightLast] currentN=$nCurrent');</script>";
+        
+        $userModel->call('sp_addCounterValues', "$uid,$counter,'$latest[dayLast]','$dCurrent','$latest[nightLast]','$nCurrent'");
+        header("location:registered-users.php");
+        /*
+        if ($query) {
+          echo "<script>alert('Показания успешно занесены');</script>";
+          echo "<script>window.location.href='registered-users.php'</script>";
+        } else {
+          echo "<script>alert('Что-то пошло не так!. Попробуйте еще раз.');</script>";
+        }
+        */
       }
     }
   }
-}
 
 
 ?>

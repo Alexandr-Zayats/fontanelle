@@ -1,22 +1,28 @@
 <?php
-session_start();
-//error_reporting(0);
-include('../includes/config.php');
-$uid=0;
-$cashier=$_SESSION['adid'];
-if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
-  header('location:logout.php');
-} else {
-  if(isset($_POST['payment'])) {
-    echo "<script>window.location.href='registered-users.php'</script>";
-  }
-  if(isset($_POST['report'])) {
-    $start=$_POST['start'];
-    $stop=$_POST['stop'];
+
+  namespace Phppot;
+  session_start();
+  //error_reporting(0);
+
+  include_once __DIR__ . '/../includes/config.php';
+  require_once __DIR__ . '/../lib/UserModel.php';
+  $userModel = new UserModel();
+
+  $uid=0;
+
+  if (strlen($_SESSION['adid'] == 0) || $_SESSION['type'] != "cashier") {
+    header('location:logout.php');
   } else {
-    $start=date('Y-m-01');
-    $stop=date("Y-m-d");
-  }
+    if(isset($_POST['payment'])) {
+      header("location:registered-users.php");
+    }
+    if(isset($_POST['report'])) {
+      $start=$_POST['start'];
+      $stop=$_POST['stop'];
+    } else {
+      $start=date('Y-m-01');
+      $stop=date("Y-m-d");
+    }
 
 
 ?>
@@ -89,9 +95,9 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
                     <tbody>
 <?php
   // $stop=date("Y-m-d");
-  $query=mysqli_query($con,"call sp_balance('$start', '$stop')");
+  $query = $userModel->call('sp_balance', "'$start','$stop'");
   $income=0; $outcome=0;
-  while ($result=mysqli_fetch_array($query)) {
+  foreach ($query as $result) {
 ?>
                       <tr>
                         <td style="text-align:center">Электричество КВт (день)</td>

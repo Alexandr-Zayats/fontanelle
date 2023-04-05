@@ -24,7 +24,12 @@
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top" id="mainNav">
     <div class="container">
       <a class="navbar-brand js-scroll-trigger" href="#page-top">РУЧЕЕК</a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+      <button class="navbar-toggler" type="button" 
+        data-toggle="collapse" data-target="#navbarResponsive"
+        aria-controls="navbarResponsive"
+        aria-expanded="false" 
+        aria-label="Toggle navigation"
+      >
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarResponsive">
@@ -32,15 +37,13 @@
           <li class="nav-item">
             <a class="nav-link js-scroll-trigger" href="information.php">Информация</a>
           </li>
-    
-
-            <li class="nav-item">
+          <li class="nav-item">
             <a class="nav-link js-scroll-trigger" href="login.php">Садовод</a>
           </li>
-            <li class="nav-item">
+          <li class="nav-item">
             <a class="nav-link js-scroll-trigger" href="cashier/">Кассир</a>
           </li>
-            <li class="nav-item">
+          <li class="nav-item">
             <a class="nav-link js-scroll-trigger" href="admin/">Администратор</a>
           </li>
         </ul>
@@ -71,9 +74,6 @@
       </div>
     </div>
   </section>
-
-  
-
 
 
   <!-- Footer -->

@@ -26,7 +26,6 @@
                 Interface
             </div>
 
-                    
             <!-- Nav Item - Charts -->
             <li class="nav-item">
                 <a class="nav-link" href="registered-users.php">
@@ -39,6 +38,12 @@
                 <a class="nav-link" href="residents.php">
                     <i class="fas fa-fw fa-user"></i>
                     <span>Дачники</span></a>
+            </li>
+
+             <li class="nav-item">
+                <a class="nav-link" href="debtors.php">
+                    <i class="fas fa-fw fa-user"></i>
+                    <span>Должники</span></a>
             </li>
 
             <!-- Nav Item - Charts -->
@@ -60,12 +65,6 @@
                 <a class="nav-link" href="transformator.php">
                     <i class="fas fa-fw fa-user"></i>
                     <span>Счетчик</span></a>
-            </li>
-
-            <li class="nav-item">
-                <a class="nav-link" href="debtors.php">
-                    <i class="fas fa-fw fa-user"></i>
-                    <span>Должники</span></a>
             </li>
 
             <!--Nav Item - Charts

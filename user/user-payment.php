@@ -1,54 +1,47 @@
 <?php
-session_start();
-//error_reporting(0);
-include('../includes/config.php');
+  namespace Phppot;
+  session_start();
+  //error_reporting(0);
 
-$uid=$_GET['uid'];
-$type=$_GET['type'];
-$toPay=$_GET['toPay'];
+  include_once __DIR__ . '/../includes/config.php';
+  require_once __DIR__ . '/../lib/UserModel.php';
+  $userModel = new UserModel();
 
-if ($toPay < 0) {
-  $toPay = $toPay*(0-1);
-} else {
-  $toPay="0.00";
-}
 
-$cashier=$_SESSION['adid'];
-if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
-  header('location:logout.php');
-} else {
-  if(isset($_POST['payment'])) {
-    $sum = $_POST['sum'];
-    $fee = $_POST['type'];
-    $type = $_POST['type'];
+  if ($toPay < 0) {
+    $toPay = $toPay*(0-1);
+  } else {
+    $toPay="0.00";
+  }
 
-    if (isset($_POST['year'])) {
-      $year = $_POST['year']."-01-01";
-    } else {
-      $year = "2000-01-01";
-    }
-    if (isset($_POST['bank'])) {
-      $bank = "TRUE";
-    } else {
-      $bank = "FALSE";
-    }
+  if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
+    header('location:logout.php');
+  } else {
+    if(isset($_POST['payment'])) {
+      $sum = $_POST['sum'];
+      $fee = $_POST['type'];
+      $type = $_POST['type'];
 
-    mysqli_close($con);
-    $con = mysqli_connect(DB_SERVER,DB_USER,DB_PASS,DB_NAME);
-    // echo "<script>alert('$cashier $uid $sum $fee $bank');</script>";
-    $query=mysqli_query($con,"call sp_addMoney($cashier, $uid, '$sum', '$fee', '$year', $bank)");
-
-    if ($query) {
-      echo "<script>alert('Счет успешно пополнен');</script>";
-      if ( $type == "el" ) {
-        echo "<script>window.location.href='info.php?uid=$uid'</script>";
-      } elseif ( $type == "wat" )  {
-        echo "<script>window.location.href='water.php?uid=$uid'</script>";
+      if (isset($_POST['year'])) {
+        $year = $_POST['year']."-01-01";
       } else {
-        echo "<script>window.location.href='fee.php?uid=$uid'</script>";
+        $year = "2000-01-01";
       }
+      if (isset($_POST['bank'])) {
+        $bank = "TRUE";
+      } else {
+        $bank = "FALSE";
+      }
+
+    // echo "<script>alert('$cashier $uid $sum $fee $bank');</script>";
+    $query = $userModel->call('sp_addMoney', "$cashier, ". $uid .", '$sum', '$fee', '$year', ".$bank);
+
+    if ( $type == "el" ) {
+      header("location:info.php");
+    } elseif ( $type == "wat" ) {
+      header("location:'water.php");
     } else {
-      echo "<script>alert('Что-то пошло не так!. Попробуйте еще раз.');</script>";
+      header("location:'fee.php");
     }
   }
 }
@@ -175,5 +168,4 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
     <script src="../js/sb-admin-2.min.js"></script>
 
 </body>
-
 </html>

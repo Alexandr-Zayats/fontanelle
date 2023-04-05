@@ -1,10 +1,16 @@
 <?php
-session_start();
-//error_reporting(0);
-include('../includes/config.php');
-if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
-  header('location:logout.php');
-} else {
+
+  namespace Phppot;
+  session_start();
+  //error_reporting(0);
+
+  include_once __DIR__ . '/../includes/config.php';
+  require_once __DIR__ . '/../lib/UserModel.php';
+  $userModel = new UserModel();
+
+  if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
+    header('location:logout.php');
+  } else {
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -62,10 +68,11 @@ if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
                     <!-- DataTales Example -->
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary">Дачники</h6>
-                            <a class="nav-link" href="createResident.php">
-                            <i class="fas fa-fw fa-user"></i>
-                              <span>Добавить</span></a>
+                          <h6 class="m-0 font-weight-bold text-primary">Дачники</h6>
+                          <form action="createResident.php" method="post">
+                            <input type="hidden" name="uid" id="uid" value="-1">
+                            <input type="submit" value="Добавить" class="btn btn-primary btn-user btn-block"/>
+                          </form>
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
@@ -98,9 +105,9 @@ if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
                                   </tfoot>
                                   <tbody>
 <?php
-  $query=mysqli_query($con,"call residents(0)");
+  $query = $userModel->call('residents', 0);
   $cnt=1;
-  while ($result=mysqli_fetch_array($query)) {
+  foreach ($query as $result) {
 ?>
                                     <tr>
                                       <td style="text-align:right"><?php printf('%d', $cnt);?></td>

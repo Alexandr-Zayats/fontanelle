@@ -1,54 +1,46 @@
 <?php
-session_start();
-//error_reporting(0);
-include('../includes/config.php');
-$cashier=$_SESSION['adid'];
-if (strlen($_SESSION['adid'] == 0 || ($_SESSION['type'] != "cashier" && $_SESSION['type'] != "regularUser")) ) {
-//if (false) {
-  header('location:logout.php');
-} else {
-  $uid=$_GET['uid'];
-  if(isset($_GET['cid'])) {
-    $cid=$_GET['cid'];
+
+  namespace Phppot;
+  session_start();
+  //error_reporting(0);
+ 
+  include_once __DIR__ . '/../includes/config.php'; 
+  require_once __DIR__ . '/../lib/UserModel.php';
+  $userModel = new UserModel();
+
+  if (strlen($_SESSION['adid'] == 0 || ($_SESSION['type'] != "cashier" && $_SESSION['type'] != "regularUser")) ) {
+  //if (false) {
+    header('location:logout.php');
   } else {
-    $cid=0;
+    $query = $userModel->call('userInfo', $uid . ", 'el'");
+    $user = $query[0];
   }
-}
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
 
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="">
-    <meta name="author" content="">
+  <title>РУЧЕЕК</title>
 
-    <title>РУЧЕЕК</title>
+  <!-- Custom fonts for this template -->
+  <link href="../vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+  <link
+    href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+    rel="stylesheet">
 
-    <!-- Custom fonts for this template -->
-    <link href="../vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
-    <link
-        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
-        rel="stylesheet">
+  <!-- Custom styles for this template -->
+  <link href="../css/sb-admin-2.min.css" rel="stylesheet">
 
-    <!-- Custom styles for this template -->
-    <link href="../css/sb-admin-2.min.css" rel="stylesheet">
-
-    <!-- Custom styles for this page -->
-    <link href="../vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+  <!-- Custom styles for this page -->
+  <link href="../vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
 
 </head>
-
-<?php
-  // $uid=397;
-  $con->next_result();
-  $query=mysqli_query($con,"call userInfo($uid, 'el')");
-
-  while ($user=mysqli_fetch_assoc($query)) {
-?>
 
 <body id="page-top">
     <!-- Page Wrapper -->
@@ -138,10 +130,8 @@ if (strlen($_SESSION['adid'] == 0 || ($_SESSION['type'] != "cashier" && $_SESSIO
                                 class="btn btn-primary btn-user btn-block"
                               >
                                 <?php foreach ( explode(";", $user['cId']) as &$cId ) {
-                                  // $query->close();
-                                  $con->next_result();
-                                  $sql=mysqli_query($con,"call counterInfo($cId)");
-                                  while ($counter=mysqli_fetch_array($sql)) {
+                                  $sql = $userModel->call('counterInfo', "$cId");
+                                  foreach ($sql as $counter) {
                                     if ($cid==0) { $cid=$counter['id']; }
                                     if ($counter['id'] == $cid) {
                                       echo "<option value=info.php?cid=".$cId."&uid=".$uid." selected>".$counter['name']."</option>";
@@ -155,7 +145,7 @@ if (strlen($_SESSION['adid'] == 0 || ($_SESSION['type'] != "cashier" && $_SESSIO
                           <!-- </h6> -->
                         </td>
                         <td style="text-align:right">
-                          <form action="user-counter.php">
+                          <form action="user-counter.php" method="post">
                             <input type="hidden" id="uid" name="uid" value="<?php echo $uid ?>">
                             <input type="hidden" id="cid" name="cid" value="<?php echo $cid ?>">
                             <input type="hidden" id="type" name="type" value="el">
@@ -163,7 +153,7 @@ if (strlen($_SESSION['adid'] == 0 || ($_SESSION['type'] != "cashier" && $_SESSIO
                           </form>
                         </td>
                         <td style="text-align:right">
-                          <form action="user-payment.php">
+                          <form action="user-payment.php" method="post">
                             <input type="hidden" id="uid" name="uid" value="<?php echo $uid ?>">
                             <input type="hidden" id="type" name="type" value="el">
                             <input type="hidden" id="toPay" name="toPay" value="<?php echo $toPay ?>">
@@ -171,7 +161,7 @@ if (strlen($_SESSION['adid'] == 0 || ($_SESSION['type'] != "cashier" && $_SESSIO
                           </form>
                         </td>
                         <td style="text-align:right">
-                          <form action="counter-check.php">
+                          <form action="counter-check.php"  method="post">
                             <input type="hidden" id="uid" name="uid" value="<?php echo $uid ?>">
                             <input type="hidden" id="cid" name="cid" value="<?php echo $cid ?>">
                             <input type="hidden" id="type" name="type" value="el">
@@ -204,13 +194,16 @@ if (strlen($_SESSION['adid'] == 0 || ($_SESSION['type'] != "cashier" && $_SESSIO
 
                       <tbody>
 <?php
-  $con->next_result();
   $cnt=1;
-  if (mysqli_multi_query($con, "call el_history($uid, $cid)")) {
-    do {
-      if ($result = mysqli_store_result($con)) {
-        while ($countValues = mysqli_fetch_array($result)) {
-          if ( ! is_null($countValues['dCur']) || ! is_null($countValues['nCur']) || ! is_null($countValues['paid']) ) { ?>
+  $date_of_start = date('Y-m-d');
+  $date_of_end = date("Y-m-d", strtotime("-60 month", strtotime(date('Y-m-d'))));
+ 
+  while (strtotime($date_of_start) >= strtotime($date_of_end)) {
+    $query = $userModel->call('el_history', $uid . ", " . $cid . ", " . "'$date_of_start'");
+    
+    foreach  ($query as $countValues ) {
+      if ( ! is_null($countValues['dCur']) || ! is_null($countValues['nCur']) || ! is_null($countValues['paid']) ) { 
+?>
                         <tr>
                           <td style="text-align:right"><?php echo $countValues['date'] ?></td>
                           <td style="text-align:right"><?php echo $countValues['dPrev'] ?: '--';?></td>
@@ -222,14 +215,13 @@ if (strlen($_SESSION['adid'] == 0 || ($_SESSION['type'] != "cashier" && $_SESSIO
                           <td style="text-align:right"><?php printf("%.2f", $countValues['toPay']) ?: '0.00';?></td>
                           <td style="text-align:right"><?php echo $countValues['paid'];?></td>
                         </tr>
- <?php
-          }
+<?php
         }
-        mysqli_free_result($result);
-        $cnt++;
       }
-    } while (mysqli_next_result($con));
-  } ?>
+      $cnt++;
+      $date_of_start = date ("Y-m-d", strtotime("-1 month", strtotime($date_of_start)));
+    }
+?>
                       </tbody>
                     </table>
                   </div>
@@ -242,4 +234,3 @@ if (strlen($_SESSION['adid'] == 0 || ($_SESSION['type'] != "cashier" && $_SESSIO
     </div> <!-- wraper -->
 </body>
 </html>
-<?php } ?>
