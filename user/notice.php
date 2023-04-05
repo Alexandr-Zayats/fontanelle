@@ -1,17 +1,11 @@
 <?php
 //db Connection file
-include('../includes/config.php');
+require_once __DIR__ . '/../includes/config.php';
 
 $userData = $_POST['userData'];
-
-/*
-$monthes = array(
-    1 => 'Січня', 2 => 'Лютого', 3 => 'Березня', 4 => 'Квітня',
-    5 => 'Травня', 6 => 'Червня', 7 => 'Липня', 8 => 'Серпня',
-    9 => 'Вересня', 10 => 'Жовня', 11 => 'Лютого', 12 => 'Грудня'
-);
-echo $monthes[(date('n', strtotime($date)))];
-*/
+//print_r($userData);
+$target_folder = 'uploads/' . $userData['id'];
+$target_file = $target_folder . '/notice.pdf';
 
 if(isset($_POST['close'])) {
   echo "<script>window.location.href='../cashier/debtors.php'</script>";
@@ -33,8 +27,9 @@ elseif(isset($_POST['print'])) {
   $dueDate = dateFormat($final);
   $curDate = dateFormat(date('Y-m-d'));
   
-  require "../vendor/autoload.php";
-  require "../customPdfGenerator.php";
+  require_once __DIR__ . '/../vendor/autoload.php';
+  require_once __DIR__ . '/../lib/customPdfGenerator.php';
+
   $pdf = new CustomPdfGenerator(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
   $pdf->SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
   $pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP, PDF_MARGIN_RIGHT);
@@ -114,6 +109,9 @@ elseif(isset($_POST['print'])) {
 
   // comments
   $pdf->SetFont('', '', 12);
+  $pdf->Write(0, "\n\n", '', 0, 'C', true, 0, false, false, 0);
+  $pdf->writeHTML("Повідомлення вручив: Член Правління _____________ /____________/");
+  $pdf->Write(0, "\n\n", '', 0, 'C', true, 0, false, false, 0);
   $pdf->writeHTML("<b>Контакти:</b>");
   $pdf->writeHTML("Viber: <i>0960906226</i>");
   $pdf->writeHTML("Email: <i>info@rucheyok.org.ua</i>");
@@ -122,10 +120,10 @@ elseif(isset($_POST['print'])) {
   $pdf->writeHTML("СТ Ручейок, +380 (96) 090 62 26, info@rucheyok.org.ua", true, false, false, false, 'C');
 
   // save pdf file
-  if (!file_exists('uploads/' . $userData['id'])) {
-    mkdir('uploads/' . $userData['id'], 0777, true);
+  if (!file_exists($target_folder)) {
+    mkdir($target_folder, 0777, true);
   }
-  $pdf->Output(__DIR__ . '/uploads/' . $userData['id'] . '/notice.pdf', 'F');
+  $pdf->Output(__DIR__ . '/' . $target_file, 'F');
 }
 
 ?>
@@ -155,7 +153,7 @@ elseif(isset($_POST['print'])) {
   <table width="80%" height="90%" align="center">
     <tr height="800">
       <td>
-        <iframe src="uploads/<?php $userData['id']?>/notice.pdf" height="100%" width="100%"></iframe>
+        <iframe src="<?php echo $target_file?>" height="100%" width="100%"></iframe>
       </td>
     </tr>
     <tr height="5%">

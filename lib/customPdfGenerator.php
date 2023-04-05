@@ -3,8 +3,8 @@ class CustomPdfGenerator extends TCPDF
 {
     public function Header() 
     {
-        $image_file = '/web/logo.png';
-        $this->Image($image_file, 10, 3, 25, '', 'PNG', '', 'T', false, 300, '', false, false, 0, false, false, false);
+        //$image_file = '/web/logo.png';
+        //$this->Image($image_file, 10, 3, 25, '', 'PNG', '', 'T', false, 300, '', false, false, 0, false, false, false);
         $this->SetFont('dejavusans', 'I', 12);
         $this->Cell(0, 15, '', 0, false, 'C', 0, '', 0, false, 'M', 'M');
         $this->Ln();
@@ -17,6 +17,12 @@ class CustomPdfGenerator extends TCPDF
         $this->Ln();
         $this->SetFont('dejavusans', 'L', 10);
         $this->Cell(0, 6, 'Голова правління:           ', 0, true, 'R', 0, '', 0, false, 'M', 'M');
+        $image_file = '../img/rucheyok-signin.png';
+        $this->Image($image_file, 150, 35, 40, '', 'PNG', '', 'T', false, 300, '', false, false, 0, false, false, false);
+        $this->Ln();
+        $this->Ln();
+        $this->Ln();
+        $this->Ln();
         $this->Ln();
         $this->Cell(0, 12, '_______________/Заяц О.В./', 0, true, 'R', 0, '', 0, false, 'M', 'M');
     }
