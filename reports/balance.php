@@ -14,7 +14,7 @@
     header('location:logout.php');
   } else {
     if(isset($_POST['payment'])) {
-      header("location:registered-users.php");
+      header("location:index.php");
     }
     if(isset($_POST['report'])) {
       $start=$_POST['start'];

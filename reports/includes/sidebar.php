@@ -13,9 +13,9 @@
 
             <!-- Nav Item - Dashboard -->
             <li class="nav-item">
-                <a class="nav-link" href="dashboard.php">
+                <a class="nav-link" href="../cashier/dashboard.php">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
-                    <span>Платежи</span></a>
+                    <span>Последние Платежи</span></a>
             </li>
 
             <!-- Divider -->
@@ -28,51 +28,39 @@
 
             <!-- Nav Item - Charts -->
             <li class="nav-item">
-                <a class="nav-link" href="registered-users.php">
+                <a class="nav-link" href="../cashier/registered-users.php">
                     <i class="fas fa-fw fa-user"></i>
                     <span>Участки</span></a>
             </li>
 
             <!-- Nav Item - Charts -->
             <li class="nav-item">
-                <a class="nav-link" href="residents.php">
+                <a class="nav-link" href="reports.php">
                     <i class="fas fa-fw fa-user"></i>
-                    <span>Дачники</span></a>
+                    <span>Платежи</span></a>
             </li>
 
              <li class="nav-item">
-                <a class="nav-link" href="debtors.php">
+                <a class="nav-link" href="balance.php">
                     <i class="fas fa-fw fa-user"></i>
-                    <span>Должники</span></a>
+                    <span>Баланс</span></a>
             </li>
 
             <!-- Nav Item - Charts -->
             <li class="nav-item">
-                <a class="nav-link" href="createuser.php">
+                <a class="nav-link" href="transformator.php">
                     <i class="fas fa-fw fa-user"></i>
-                    <span>Добавить участок</span></a>
+                    <span>Счетчик</span></a>
             </li>
 
-            <!-- Nav Item - Charts -->
+            <!--Nav Item - Charts
             <li class="nav-item">
-                <a class="nav-link" href="../reports/">
+                <a class="nav-link" href="spends.php">
                     <i class="fas fa-fw fa-user"></i>
-                    <span>Отчеты</span></a>
+                    <span>Рассходы</span></a>
             </li>
+            -->
 
-            <!--Nav Item - Tables -->
-            <li class="nav-item">
-                <a class="nav-link" href="change-password.php">
-                    <i class="fas fa-cogs fa-sm fa-fw mr-2"></i>
-                    <span>Изменить пароль</span></a>
-            </li>
-
-
-    <li class="nav-item">
-                <a class="nav-link" href="logout.php">
-                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2"></i>
-                    <span>Выход</span></a>
-            </li>
             <!-- Divider -->
             <hr class="sidebar-divider d-none d-md-block">
 

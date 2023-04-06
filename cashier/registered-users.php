@@ -13,6 +13,7 @@
     header('location:logout.php');
   } else {
     $query = $userModel->call('sp_allregisteredusers', '');
+    unset($_SESSION['cid']);
 ?>
 
 <!DOCTYPE html>
@@ -38,6 +39,7 @@
 
     <!-- Custom styles for this page -->
     <link href="../vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+    <script src="../includes/scripts.js"> </script>
 
 </head>
 
@@ -120,17 +122,22 @@
                                     ?>
                                     <tr>
                                       <td style="text-align:right">
-                                        <form action="../user/info.php" method="post">
-                                          <input type="hidden" name="uid"
-                                            id="<?php echo $result['id']?>"
-                                            value="<?php echo $result['id']?>"
-                                          >
-                                          <input type="submit" value="<?php echo $cnt?>" class="btn btn-primary btn-user btn-block"/>
-                                        </form>
+                                          <?php echo $cnt?>
                                       </td>
 
                                       <td style="text-align:center">
-                                        <?php echo $result['id']?>
+                                        <form class="user" id="<?php printf('%d', $result['id'])?>"
+                                          action="../user/info.php" method="post"
+                                        >
+                                          <input type="hidden" name="uid" placeholder=""
+                                            value="<?php printf('%d', $result['id'])?>"/
+                                          >
+                                          <div class="mb-sm-0" style="color:blue;cursor:pointer"
+                                            onclick="submit(<?php printf('%d', $result['id'])?>)"
+                                          >
+                                            <?php printf('%s', $result['id'])?>
+                                          </div>
+                                        </form>
                                       </td>
 
                                       <td style="text-align:left">
@@ -138,7 +145,13 @@
                                       </td>
 
 				                              <td style="text-align:left">
-                                        <?php echo $result['Name']?>
+                                        <form class="user" id="<?php printf('%d', $result['id'])?>" action="../user/info.php" method="post">
+                                          <input type="hidden" name="uid" placeholder="" value="<?php printf('%d', $result['id'])?>">
+                                          <a class="nav-link" style="cursor:pointer" onclick="submit(<?php printf('%d', $result['id'])?>)">
+                                            <i class="fas fa-fw fa-user"></i>
+                                            <span><?php printf('%s', $result['Name'])?></span>
+                                          </a>
+                                        </form>
 				                              </td>
 
 				                              <td style="text-align:right">

@@ -10,11 +10,12 @@
 
   $uid=0;
   $counter=1;
+
   if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
     header('location:logout.php');
   } else {
     if(isset($_POST['addvalues'])) {
-      $counter=$_POST['counter'];
+      //$counter=$_POST['counter'];
       $dCurrent=$_POST['dCurrent'];
       $nCurrent=$_POST['nCurrent'];
     }
@@ -29,7 +30,7 @@
         // echo "<script>alert('uid=$uid counter=$counter latesD=$latest[dayLast] currentD=$dCurrent latestN=$latest[nightLast] currentN=$nCurrent');</script>";
         
         $userModel->call('sp_addCounterValues', "$uid,$counter,'$latest[dayLast]','$dCurrent','$latest[nightLast]','$nCurrent'");
-        header("location:registered-users.php");
+        header("location:index.php");
         /*
         if ($query) {
           echo "<script>alert('Показания успешно занесены');</script>";
@@ -67,10 +68,14 @@
 </head>
 
 <?php
-  mysqli_close($con);
-  $con = mysqli_connect(DB_SERVER,DB_USER,DB_PASS,DB_NAME);
-  //$uid=$_GET['uid'];
-  $counters=mysqli_query($con,"call sp_counterList($uid)");
+/*
+  $query = $userModel->call('sp_counterList', $uid);
+  print($uid);
+  echo " - ";
+  print_r($query);
+  exit;
+  $counters = $query[0];
+*/
 ?>
 
 <body class="bg-gradient-primary">

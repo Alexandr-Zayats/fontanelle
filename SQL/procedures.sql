@@ -69,7 +69,7 @@ BEGIN
     WHERE v.cId=cid
       AND ( v.dCurrent!=v.dPrevius OR v.nCurrent!=v.nPrevius )
       AND  DATE_FORMAT(v.date, '%Y-%m')=DATE_FORMAT(dNow, '%Y-%m')
-    GROUP BY t.id ) as c, 
+    GROUP BY t.id ) as c,
     ( SELECT
       SUM(sum) as sum,
       DATE_FORMAT(date, '%Y-%m-%d') as date
@@ -78,45 +78,38 @@ BEGIN
       AND dst="el"
       AND DATE_FORMAT(date, '%Y-%m')=DATE_FORMAT(dNow, '%Y-%m')
     ) as payment;
-  SET dNow = DATE_SUB(dNow, INTERVAL 1 MONTH);
 END$$
 
 DROP PROCEDURE IF EXISTS wat_history;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `wat_history` (`uid` INT(5), `cid` INT(5))
+CREATE DEFINER=`root`@`localhost` PROCEDURE `wat_history` (`uid` INT(5), `cid` INT(5), `dNow` DATE)
 BEGIN
-  DECLARE dNow DATE;
-  DECLARE dEnd DATE;
-  SET dNow = DATE(NOW());
-  SET dEnd = DATE_SUB(NOW(), INTERVAL 60 MONTH);
-  WHILE DATE(dNow) >= DATE(dEnd) DO
-    SELECT
-      p.sum as paid,
-      SUM(c.dPrev) as dPrev,
-      SUM(c.dCur) as dCur,
-      SUM(c.dDelta) as dDelta,
-      SUM(c.sum) as toPay,
-      COALESCE(p.date, c.date, DATE_FORMAT(dNow, '%Y-%m-%d')) as date
-    FROM
-      ( SELECT
-        min(v.dPrevius) as dPrev,
-        max(v.dCurrent) as dCur,
-        max(v.dCurrent)-min(v.dPrevius) as dDelta,
-        DATE_FORMAT(v.date, '%Y-%m') as date,
-        (max(v.dCurrent)-min(v.dPrevius))*t.water as sum
-      FROM countValues v INNER JOIN tariffs t ON (v.tariffId=t.id)
-      WHERE v.cId=cid
-        AND v.dCurrent!=v.dPrevius
-        AND  DATE_FORMAT(v.date, '%Y-%m')=DATE_FORMAT(dNow, '%Y-%m')
-      GROUP BY t.id ) as c,
-      ( SELECT
-        SUM(SUM) as sum
-      FROM payments p
-      WHERE userId=uid
-        AND dst="wat"
-        AND DATE_FORMAT(p.date, '%Y-%m')=DATE_FORMAT(dNow, '%Y-%m')
-      ) as p;
-    SET dNow = DATE_SUB(dNow, INTERVAL 1 MONTH);
-  END WHILE;
+  SELECT
+    payment.sum as paid,
+    SUM(c.dPrev) as dPrev,
+    SUM(c.dCur) as dCur,
+    SUM(c.dDelta) as dDelta,
+    SUM(c.sum) as toPay,
+    COALESCE(payment.date, c.date, DATE_FORMAT(dNow, '%Y-%m-%d')) as date
+  FROM
+    ( SELECT
+      min(v.dPrevius) as dPrev,
+      max(v.dCurrent) as dCur,
+      max(v.dCurrent)-min(v.dPrevius) as dDelta,
+      DATE_FORMAT(v.date, '%Y-%m-%d') as date,
+      (max(v.dCurrent)-min(v.dPrevius))*t.water as sum
+    FROM countValues v INNER JOIN tariffs t ON (v.tariffId=t.id)
+    WHERE v.cId=cid
+      AND v.dCurrent!=v.dPrevius
+      AND  DATE_FORMAT(v.date, '%Y-%m')=DATE_FORMAT(dNow, '%Y-%m')
+    GROUP BY t.id ) as c,
+    ( SELECT
+      SUM(sum) as sum,
+      DATE_FORMAT(date, '%Y-%m-%d') as date
+    FROM payments
+    WHERE userId=uid
+      AND dst="wat"
+      AND DATE_FORMAT(date, '%Y-%m')=DATE_FORMAT(dNow, '%Y-%m')
+    ) as payment;
 END$$
 
 DROP PROCEDURE IF EXISTS counterInfo;
@@ -550,6 +543,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_recent30payments` ()  BEGIN
 SELECT 
   p.sum, p.type,
   u.id as id,
+  r.id as rId,
   concat(r.surName, " ", r.name, " ", r.middlName ) as name,
   p.date,
   p.dst

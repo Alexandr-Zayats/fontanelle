@@ -35,6 +35,7 @@
   >
   <!-- Custom styles for this template-->
   <link href="../css/sb-admin-2.min.css" rel="stylesheet">
+  <script src="../includes/scripts.js"> </script>
 </head>
 
 <body id="page-top">
@@ -200,7 +201,15 @@
                             <input type="submit" value="<?php echo $result['id']?>" class="btn btn-primary btn-user btn-block"/>
                           </form>
                         </td>
-					              <td><?php echo $result['name'] ?></td>
+					              <td>
+                          <form class="user" id="<?php printf('%d', $result['rId'])?>" action="createResident.php" method="post">
+                            <input type="hidden" name="uid" placeholder="" value="<?php printf('%d', $result['rId'])?>">
+                            <a class="nav-link" style="cursor:pointer" onclick="submit(<?php printf('%d', $result['rId'])?>)">
+                              <i class="fas fa-fw fa-user"></i>
+                              <span><?php printf('%s', $result['name'])?></span>
+                            </a>
+                          </form>
+                        </td>
                         <td style="text-align:right"><?php
                           if ($result['dst'] == 'el') {echo "Электричество"; }
                           elseif ($result['dst'] == "wat") { echo "Вода"; }

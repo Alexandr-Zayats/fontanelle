@@ -1,17 +1,15 @@
 <?php
-session_start();
-//error_reporting(0);
-include('../includes/config.php');
-if (strlen($_SESSION['adid'] == 0 || ($_SESSION['type'] != "cashier" && $_SESSION['type'] != "regularUser")) ) {
-  header('location:logout.php');
-} else {
-  $uid=$_GET['uid'];
-  if(isset($_GET['cid'])) {
-    $cid=$_GET['cid'];
-  } else {
-    $cid=0;
+  namespace Phppot;
+  session_start();
+  //error_reporting(0);
+
+  include_once __DIR__ . '/../includes/config.php';
+  require_once __DIR__ . '/../lib/UserModel.php';
+  $userModel = new UserModel();
+
+  if (strlen($_SESSION['adid'] == 0 || ($_SESSION['type'] != "cashier" && $_SESSION['type'] != "regularUser")) ) {
+    header('location:logout.php');
   }
-}
 ?>
 
 <!DOCTYPE html>
@@ -37,12 +35,14 @@ if (strlen($_SESSION['adid'] == 0 || ($_SESSION['type'] != "cashier" && $_SESSIO
 
     <!-- Custom styles for this page -->
     <link href="../vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+    <script src="../includes/scripts.js"> </script>
 
 </head>
 
 <?php
-  $query=mysqli_query($con,"call userInfo($uid, 'fee')");
-  while ($user=mysqli_fetch_assoc($query)) {
+
+  $query = $userModel->call('userInfo', "$uid, 'fee'");
+  foreach ($query as $user) {
 ?>
 
 <body id="page-top">
@@ -114,7 +114,7 @@ if (strlen($_SESSION['adid'] == 0 || ($_SESSION['type'] != "cashier" && $_SESSIO
                     <table width="100%">
                       <tr>
                         <td>
-                          <form action="user-payment.php">
+                          <form action="user-payment.php" method="post">
                             <input type="hidden" id="uid" name="uid" value="<?php echo $uid ?>">
                             <input type="hidden" id="type" name="type" value="fee">
                             <input type="hidden" id="toPay" name="toPay" value="<?php echo $toPay ?>">
@@ -122,14 +122,14 @@ if (strlen($_SESSION['adid'] == 0 || ($_SESSION['type'] != "cashier" && $_SESSIO
                           </form>
                         </td>
                         <td>
-                          <form action="user-payment.php">
+                          <form action="user-payment.php" method="post">
                             <input type="hidden" id="uid" name="uid" value="<?php echo $uid ?>">
                             <input type="hidden" id="type" name="type" value="inc">
                             <input type="submit" value="Вступительные" class="btn btn-primary btn-user btn-block"/>
                           </form>
                         </td>
                         <td>
-                          <form action="user-payment.php">
+                          <form action="user-payment.php" method="post">
                             <input type="hidden" id="uid" name="uid" value="<?php echo $uid ?>">
                             <input type="hidden" id="type" name="type" value="other">
                             <input type="submit" value="Прочие" class="btn btn-primary btn-user btn-block" />
@@ -152,12 +152,10 @@ if (strlen($_SESSION['adid'] == 0 || ($_SESSION['type'] != "cashier" && $_SESSIO
 
                       <tbody>
 <?php
-  //$query->close();
-  $con->next_result();
-  $sql=mysqli_query($con,"call fee_history($uid)");
   $cnt=1;
-  while ($fee=mysqli_fetch_array($sql))
-{ ?>
+  $sql = $userModel->call('fee_history', $uid);
+  foreach ($sql as $fee) {
+?>
 
                               <tr>
                                 <td style="text-align:right"><?php echo $fee['date'] ?></td>

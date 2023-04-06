@@ -39,6 +39,7 @@
 
   <!-- Custom styles for this page -->
   <link href="../vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+  <script src="../includes/scripts.js"> </script> 
 
 </head>
 

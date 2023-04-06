@@ -1,21 +1,24 @@
 <?php
+  namespace Phppot;
   session_unset();
   session_destroy();
   session_start();
-  include_once('../includes/config.php');
+
+  require_once __DIR__ . '/../lib/UserModel.php';
+  $userModel = new UserModel();
 
   if(isset($_POST['login'])) {
     $name=$_POST['username'];
     $password=md5($_POST['loginpassword']);
-    $query=mysqli_query($con,"call sp_cashierlogin('$name','$password')");
-    $num=mysqli_fetch_array($query);
-    if($num>0) {
-      $_SESSION['adid']=$num['id'];
-      $_SESSION['name']=$num['Name'];
+    $num = $userModel->call('sp_cashierlogin', "'$name','$password'");
+    
+    if(empty($num)) {
+       echo "<script>alert('Неверный ЛОГИН или ПАРОЛЬ');</script>";
+    } else {
+      $_SESSION['adid']=$num[0]['id'];
+      $_SESSION['name']=$num[0]['Name'];
       $_SESSION['type']="cashier";
       header("location:dashboard.php");
-    } else {
-      echo "<script>alert('Неверный ЛОГИН или ПАРОЛЬ');</script>";
     }
   }
 ?>

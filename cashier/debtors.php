@@ -35,6 +35,7 @@
 
     <!-- Custom styles for this page -->
     <link href="../vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+    <script src="../includes/scripts.js"> </script>
 
 </head>
 
@@ -132,14 +133,15 @@
                                       </td>
 
 				                              <td style="text-align:left">
-                                        <form method="post" action="../user/notice.php" class="user">
+                                        <form class="user" id="<?php printf('%d', $result['id'])?>" action="../user/notice.php" method="post">
                                           <?php
                                           foreach ($result as $key => $value) { ?>
                                             <input type="hidden" name="userData[<?php echo $key; ?>]" value="<?php echo $value; ?>">
                                           <?php } ?>
-                                          <button class="btn btn-primary btn-user btn-block">
-                                            <?php printf('%s', $result['Name']);?>
-                                          </button>
+                                          <a class="nav-link" style="cursor:pointer" onclick="submit(<?php printf('%d', $result['id'])?>)">
+                                            <i class="fas fa-fw fa-user"></i>
+                                            <span><?php printf('%s', $result['Name'])?></span>
+                                          </a>
                                         </form>
 				                              </td>
                                       <!--

@@ -15,11 +15,11 @@
   } else {
     if(isset($_POST['createuser'])) {
 
-      /*
+      
       $id=intval($_POST['id']);
       $surName = $_POST['surName'];
       $name = $_POST['name'];
-      */
+      
 
       $middlName = $_POST['middlName'] ?: '';
       $email = $_POST['email'] ?: '';

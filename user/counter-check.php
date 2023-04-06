@@ -3,15 +3,15 @@
 
   session_start();
   error_reporting(0);
-  require_once __DIR__ . '/../includes/config.php';
+  include_once __DIR__ . '/../includes/config.php';
   require_once __DIR__ . '/../lib/ImageModel.php';
   require_once __DIR__ . '/../lib/UserModel.php';
 
   $imageModel = new ImageModel();
   $userModel = new UserModel();
 
-  $dCurrent=0;
-  $nCurrent=0;
+  //$dCurrent=0;
+  //$nCurrent=0;
 
   //$cashier=$_SESSION['adid'];
   if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
@@ -19,7 +19,6 @@
   } else {
     $query = $userModel->call('sp_getLastCounterValues', $cid);
     $latest = $query[0];
-
 
     // FILES upload
     if(isset($_POST['upload'])) {
@@ -97,14 +96,6 @@
   // ------- END of FILES upload
 
   if(isset($_POST['submit'])) {
-    $name = $_POST['сname'];
-    $counterNum = $_POST['counterNum'];
-    $type = $_POST['type'];
-    $info = $_POST['counterInfo'];
-    $dCurrent = $_POST['dCurrent'];
-    $nCurrent = $_POST['nCurrent'];
-    $location = $_POST['location'];
-
 
     $dayLast = $latest['dayLast'];
     $nightLast = $latest['nightLast'];
@@ -113,10 +104,15 @@
       //echo "<script>alert('$nightLast; $nCurrent; $dayLast; $dCurrent');</script>";
       // echo "<script>alert('Введеные показания ниже предыдущих!');</script>";
     //} else {
-    //echo $cid . ",'$counterNum','$name','$info','$location'";
-    //echo $uid .",". $cid . ",'$dayLast','$dCurrent','$nightLast','$nCurrent'";
-    //exit;
-    $query = $userModel->call('sp_updateCounter', $cid . ",'$counterNum','$name','$info','$location'");
+     
+    /*
+    echo $cid . ", '$counterNum', '$cname', '$counterInfo', '$location'" . "\n\n";
+    echo "|| \n";
+    echo $uid .",". $cid . ", '$dayLast', '$dCurrent', '$nightLast', '$nCurrent'";
+    exit;
+    */
+    
+    $query = $userModel->call('sp_updateCounter', $cid . ",'$counterNum','$cname','$counterInfo','$location'");
     $query = $userModel->call('sp_addCounterValues', $uid .",". $cid . ",'$dayLast','$dCurrent','$nightLast','$nCurrent'");
 
     if ( $type == "el" ) {
@@ -204,14 +200,14 @@
                                       value="<?php echo $uid ?>" readonly>
                                   </div>
                                 </div>
-
+<!--
                                 <input type="hidden" id="type" name="type" value="<?php echo $type ?>">
                                 <input type="hidden" id="cid" name="cid" value="<?php echo $cid ?>">
-
+-->
                                 <div class="form-group row">
                                   <div class="col-sm-6 mb-3 mb-sm-0">
-                                    <label for="uid">Счетчик:</label>
-                                    <input type="text" class="form-control form-control-user" id="сname" name="сname"
+                                    <label for="cname">Счетчик:</label>
+                                    <input type="text" class="form-control form-control-user" id="cname" name="cname"
                                       value="<?php echo $counter['name'] ?>">
                                   </div>
                                 </div>

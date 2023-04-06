@@ -37,7 +37,7 @@
         if ( $type == "el" ) {
           header("location:info.php");
         } else {
-          header("location:'water.php");
+          header("location:water.php");
         }
       }
     }

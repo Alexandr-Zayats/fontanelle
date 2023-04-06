@@ -36,23 +36,47 @@
                     
             <!-- Nav Item - Charts -->
             <li class="nav-item">
-                <a class="nav-link" href="info.php?uid=<?php echo $uid ?>">
-                    <i class="fas fa-fw fa-user"></i>
-                    <span>Электричество</span></a>
+              <form class="user" id="elUid"
+                action="info.php" method="post"
+              >
+                <input type="hidden" name="uid" placeholder=""
+                  value="<?php echo $uid?>"
+                >
+                <a class="nav-link" onclick="submit('elUid')" style="cursor:pointer">
+                  <i class="fas fa-fw fa-user"></i>
+                  <span>Электричество</span>
+                </a>
+              </form>
             </li>
 
             <!-- Nav Item - Charts -->
             <li class="nav-item">
-                <a class="nav-link" href="water.php?uid=<?php echo $uid ?>">
-                    <i class="fas fa-fw fa-user"></i>
-                    <span>Вода</span></a>
+              <form class="user" id="watUid"
+                action="water.php" method="post"
+              >
+                <input type="hidden" name="uid" placeholder=""
+                  value="<?php echo $uid?>"
+                >
+                <a class="nav-link" onclick="submit('watUid')" style="cursor:pointer">
+                  <i class="fas fa-fw fa-user"></i>
+                  <span>Вода</span>
+                </a>
+              </form>
             </li>
 
             <!-- Nav Item - Charts -->
             <li class="nav-item">
-                <a class="nav-link" href="fee.php?uid=<?php echo $uid ?>">
-                    <i class="fas fa-fw fa-user"></i>
-                    <span>Членские</span></a>
+              <form class="user" id="feeUid"
+                action="fee.php" method="post"
+              >
+                <input type="hidden" name="uid" placeholder=""
+                  value="<?php echo $uid?>"
+                >
+                <a class="nav-link" onclick="submit('feeUid')" style="cursor:pointer">
+                  <i class="fas fa-fw fa-user"></i>
+                  <span>Членские</span>
+                </a>
+              </form>
             </li>
 
             <hr class="sidebar-divider d-none d-md-block">

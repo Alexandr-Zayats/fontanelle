@@ -35,6 +35,7 @@
 
     <!-- Custom styles for this page -->
     <link href="../vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+    <script src="../includes/scripts.js"> </script>
 
 </head>
 
@@ -81,11 +82,11 @@
                                     <tr>
                                       <th style="width: 3%; text-align:center">#</th>
                                       <th style="width: 3%; text-align:center">ID</th>
-                                      <th style="width: 22%; text-align:center">ФИО</th>
+                                      <th style="width: 27%; text-align:center">ФИО</th>
                                       <th style="width: 6%; text-align:center">Логин</th>
-                                      <th style="width: 15%; text-align:center">Телефон</th>
-                                      <th style="width: 14%; text-align:center">Email</th>
-				                              <th style="width: 21%; text-align:center">Автомобиль</th>
+                                      <th style="width: 14%; text-align:center">Телефон</th>
+                                      <th style="width: 13%; text-align:center">Email</th>
+				                              <th style="width: 19%; text-align:center">Автомобиль</th>
                                       <th style="width: 5%; text-align:center">Участки</th>
                                       <th style="width: 9%; text-align:center">Баланс</th>
                                     </tr>
@@ -112,20 +113,21 @@
                                     <tr>
                                       <td style="text-align:right"><?php printf('%d', $cnt);?></td>
                                       <td style="text-align:center">
-                                        <a href="createResident.php?uid=<?php printf('%d', $result['id']);?>"</a>
                                         <?php printf('%d', $result['id']);?>
                                       </td>
 
                                       <td style="text-align:left">
-                                        <a href="createResident.php?uid=<?php printf('%d', $result['id']);?>">
-                                          <?php printf('%s', $result['resName']);?>
-                                        </a>
+                                        <form class="user" id="<?php printf('%d', $result['id'])?>" action="createResident.php" method="post">
+                                          <input type="hidden" name="uid" placeholder="" value="<?php printf('%d', $result['id'])?>">
+                                          <a class="nav-link" style="cursor:pointer" onclick="submit(<?php printf('%d', $result['id'])?>)">
+                                            <i class="fas fa-fw fa-user"></i>
+                                            <span><?php printf('%s', $result['resName'])?></span>
+                                          </a>
+                                        </form>
                                       </td>
 
                                       <td style="text-align:left">
-                                        <a href="createResident.php?uid=<?php printf('%d', $result['id']);?>">
                                           <?php printf('%s', $result['userName']);?>
-                                        </a>
                                       </td>
 
 				                              <td style="text-align:right">

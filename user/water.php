@@ -1,18 +1,16 @@
 <?php
-session_start();
-//error_reporting(0);
-include('../includes/config.php');
-if (strlen($_SESSION['adid'] == 0 || ($_SESSION['type'] != "cashier" && $_SESSION['type'] != "regularUser")) ) {
-//if (false) {
-  header('location:logout.php');
-} else {
-  $uid=$_GET['uid'];
-  if(isset($_GET['cid'])) {
-    $cid=$_GET['cid'];
-  } else {
-    $cid=0;
+  namespace Phppot;
+  session_start();
+  //error_reporting(0);
+
+  include_once __DIR__ . '/../includes/config.php';
+  require_once __DIR__ . '/../lib/UserModel.php';
+  $userModel = new UserModel();
+
+  if (strlen($_SESSION['adid'] == 0 || ($_SESSION['type'] != "cashier" && $_SESSION['type'] != "regularUser")) ) {
+  //if (false) {
+    header('location:logout.php');
   }
-}
 ?>
 
 <!DOCTYPE html>
@@ -38,14 +36,13 @@ if (strlen($_SESSION['adid'] == 0 || ($_SESSION['type'] != "cashier" && $_SESSIO
 
     <!-- Custom styles for this page -->
     <link href="../vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+    <script src="../includes/scripts.js"> </script>
 
 </head>
 
 <?php
-  // $uid=397;
-  $con->next_result();
-  $query=mysqli_query($con,"call userInfo($uid, 'wat')");
-  while ($user=mysqli_fetch_assoc($query)) {
+  $query = $userModel->call('userInfo', "$uid, 'wat'");
+  foreach ($query as $user) {
 ?>
 
 <body id="page-top">
@@ -129,9 +126,8 @@ if (strlen($_SESSION['adid'] == 0 || ($_SESSION['type'] != "cashier" && $_SESSIO
                               <!-- <label for="counter">Счетчики: </label> -->
                               <select id="counter" name="counter" onchange="window.location = this.options[this.selectedIndex].value" class="btn btn-primary btn-user btn-block">
                                 <?php foreach ( explode(";", $user['cId']) as &$cId ) {
-                                  $con->next_result();
-                                  $sql=mysqli_query($con,"call counterInfo($cId)");
-                                  while ($counter=mysqli_fetch_array($sql)) {
+                                  $sql = $userModel->call('counterInfo', $cId);
+                                  foreach ($sql as $counter) {
                                     if ($cid==0) { $cid=$counter['id']; }
                                     if ($counter['id'] == $cid) {
                                       echo "<option value=water.php?cid=".$cId."&uid=".$uid." selected>".$counter['name']."</option>";
@@ -145,7 +141,7 @@ if (strlen($_SESSION['adid'] == 0 || ($_SESSION['type'] != "cashier" && $_SESSIO
                           <!-- </h6> -->
                         </td>
                         <td style="text-align:right">
-                          <form action="user-counter.php">
+                          <form action="user-counter.php" method="post">
                             <input type="hidden" id="uid" name="uid" value="<?php echo $uid ?>">
                             <input type="hidden" id="cid" name="cid" value="<?php echo $cid ?>">
                             <input type="hidden" id="type" name="type" value="wat">
@@ -153,7 +149,7 @@ if (strlen($_SESSION['adid'] == 0 || ($_SESSION['type'] != "cashier" && $_SESSIO
                           </form>
                         </td>
                         <td style="text-align:right">
-                          <form action="user-payment.php">
+                          <form action="user-payment.php" method="post">
                             <input type="hidden" id="uid" name="uid" value="<?php echo $uid ?>">
                             <input type="hidden" id="type" name="type" value="wat">
                             <input type="hidden" id="toPay" name="toPay" value="<?php echo $toPay ?>">
@@ -179,13 +175,15 @@ if (strlen($_SESSION['adid'] == 0 || ($_SESSION['type'] != "cashier" && $_SESSIO
 
                       <tbody>
 <?php
-  $con->next_result();
   $cnt=1;
-  if (mysqli_multi_query($con, "call wat_history($uid, $cid)")) {
-    do {
-      if ($result = mysqli_store_result($con)) {
-        while ($countValues = mysqli_fetch_array($result)) {
-          if ( ! is_null($countValues['date']) ) { ?>
+  $date_of_start = date('Y-m-d');
+  $date_of_end = date("Y-m-d", strtotime("-60 month", strtotime(date('Y-m-d'))));
+  if($cid > 0) {
+    while (strtotime($date_of_start) >= strtotime($date_of_end)) {
+      $query = $userModel->call('wat_history', $uid . ", " . $cid . ", " . "'$date_of_start'");
+      foreach  ($query as $countValues ) {
+        if ( ! is_null($countValues['dCur']) || ! is_null($countValues['paid']) ) {
+?>
                         <tr>
                           <td style="text-align:right"><?php echo $countValues['date'] ?></td>
                           <td style="text-align:right"><?php echo $countValues['dPrev'];?></td>
@@ -194,13 +192,14 @@ if (strlen($_SESSION['adid'] == 0 || ($_SESSION['type'] != "cashier" && $_SESSIO
                           <td style="text-align:right"><?php printf("%.2f", $countValues['toPay']);?></td>
                           <td style="text-align:right"><?php echo $countValues['paid'];?></td>
                         </tr>
- <?php    }
+ <?php
         }
-        mysqli_free_result($result);
-        $cnt++;
       }
-    } while (mysqli_next_result($con));
-  } ?>
+      $cnt++;
+      $date_of_start = date ("Y-m-d", strtotime("-1 month", strtotime($date_of_start)));
+    }
+  }
+?>
                       </tbody>
                     </table>
                   </div>
