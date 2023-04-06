@@ -61,7 +61,7 @@ elseif(isset($_POST['print'])) {
   $pdf->Write(0, "\n", '', 0, 'C', true, 0, false, false, 0);
 
   // main text
-  $pdf->writeHTML("Доводимо до Вашого відома, що станом на " . $curDate . " за Вашою ділянкою:", true, true, true, true, 'C');
+  $pdf->writeHTML("Доводимо до Вашого відома, що станом на " . $curDate . " за Вашою садовою ділянкою наявні наступні порушення:", true, true, true, true, 'C');
   $pdf->Write(0, "\n", '', 0, 'C', true, 0, false, false, 0);
   $cnt = 0;
   if($userData['fee'] < ($userData['Size'] * 100 * -2)) {
@@ -91,9 +91,10 @@ elseif(isset($_POST['print'])) {
 
   $pdf->Write(0, "\n", '', 0, 'C', true, 0, false, false, 0);
 
-  $pdf->writeHTML("\tПросимо Вас усунути вказані порушеня в термін до " . $dueDate . "\n");
-  $pdf->writeHTML("\tУ випадку ігнорування даного попередження, Правління СТ 'Ручейок' вимушене буде діяти відповідно до умов Договору");
-  $pdf->writeHTML("на обслуговування та Статуту  СТ 'Ручейок', та припинити надання поcлуг з обслуговування Вашої ділянки.");
+  $pdf->writeHTML("Просимо Вас усунути вказані порушеня в термін до " . $dueDate . "\n\n");
+  $pdf->Write(0, "\n", '', 0, 'C', true, 0, false, false, 0);
+  $pdf->writeHTML("У випадку ігнорування даного попередження, відповідно до умов Договору на обслуговування та Статуту СТ 'Ручейок' п.2.10,", true, true, true, true, 'W');
+  $pdf->writeHTML("Правління Управляючого Кооперативу \"СТ 'Ручейок'\" буде вимушене припинити надання поcлуг з обслуговування Вашої садовоЇ ділянки.", true, true, true, true, 'W');
   $pdf->Write(0, "\n", '', 0, 'C', true, 0, false, false, 0);
 
   // invoice table starts here

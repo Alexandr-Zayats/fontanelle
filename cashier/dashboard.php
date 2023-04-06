@@ -177,8 +177,8 @@
                   <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                     <thead>
                       <tr>
-                        <td>#</td>
-                        <th style="width: 5%; text-align:center">Участок</th>
+                        <td style="width: 3%; text-align:right">#</td>
+                        <th style="width: 3%; text-align:center">Участок</th>
                         <th style="width: 30%; text-align:center">ФИО</th>
                         <th style="width: 15%; text-align:center">Назначение</th>
                         <th style="width: 10%; text-align:center">Сумма</th>

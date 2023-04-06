@@ -30,7 +30,7 @@
 
     $query = $userModel->call('sp_registration', "$id, $street, $size, $resident, $counterNum, '$counterName', '$counterInfo', $dCurrent, $nCurrent");
 
-    header("location:registered-users.php");
+    header("Location: " . $_SESSION['sourcePage']);
   }
 }
 

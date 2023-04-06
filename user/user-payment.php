@@ -36,13 +36,7 @@
     // echo "<script>alert('$cashier $uid $sum $fee $bank');</script>";
     $query = $userModel->call('sp_addMoney', "$cashier, ". $uid .", '$sum', '$fee', '$year', ".$bank);
 
-    if ( $type == "el" ) {
-      header("location:info.php");
-    } elseif ( $type == "wat" ) {
-      header("location:water.php");
-    } else {
-      header("location:fee.php");
-    }
+    header("Location: " . $_SESSION['sourcePage']);
   }
 }
 

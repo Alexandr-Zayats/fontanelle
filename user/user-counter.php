@@ -8,17 +8,10 @@
   require_once __DIR__ . '/../lib/UserModel.php';
   $userModel = new UserModel();
 
-  $dCurrent = 0;
-  $nCurrent = 0;
-
 
   if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
     header('location:logout.php');
   } else {
-    if(isset($_POST['addvalues'])) {
-      $dCurrent = $_POST['dCurrent'];
-      $nCurrent = $_POST['nCurrent'];
-    }
 
     $query = $userModel->call('sp_getLastCounterValues', $cid);
     $latest = $query[0];
@@ -32,13 +25,8 @@
       } else {
         //echo "<script>alert('uid=$uid cid=$cid latesD=$latest[dayLast] currentD=$dCurrent latestN=$latest[nightLast] currentN=$nCurrent');</script>";
 
-        $query = $userModel->call('sp_addCounterValues', "$uid, $cid, '$dayLast', '$dCurrent', '$nightLast', '$nCurrent'");
-
-        if ( $type == "el" ) {
-          header("location:info.php");
-        } else {
-          header("location:water.php");
-        }
+        $userModel->call('sp_addCounterValues', "$uid, $cid, '$dayLast', '$dCurrent', '$nightLast', '$nCurrent'");
+        header("Location: " . $_SESSION['sourcePage']);
       }
     }
   }

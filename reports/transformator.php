@@ -30,7 +30,8 @@
         // echo "<script>alert('uid=$uid counter=$counter latesD=$latest[dayLast] currentD=$dCurrent latestN=$latest[nightLast] currentN=$nCurrent');</script>";
         
         $userModel->call('sp_addCounterValues', "$uid,$counter,'$latest[dayLast]','$dCurrent','$latest[nightLast]','$nCurrent'");
-        header("location:index.php");
+
+        header("Location: " . $_SESSION['sourcePage']);
         /*
         if ($query) {
           echo "<script>alert('Показания успешно занесены');</script>";

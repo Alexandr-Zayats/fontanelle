@@ -4,6 +4,7 @@
   session_start();
   //error_reporting(0);
  
+  unset($_SESSION['cid']);
   include_once __DIR__ . '/../includes/config.php'; 
   require_once __DIR__ . '/../lib/UserModel.php';
   $userModel = new UserModel();
@@ -133,7 +134,7 @@
                                 <?php foreach ( explode(";", $user['cId']) as &$cId ) {
                                   $sql = $userModel->call('counterInfo', "$cId");
                                   foreach ($sql as $counter) {
-                                    if ($cid==0) { $cid=$counter['id']; }
+                                    if (!isset($cid)) { $cid=$counter['id']; }
                                     if ($counter['id'] == $cid) {
                                       echo "<option value=info.php?cid=".$cId."&uid=".$uid." selected>".$counter['name']."</option>";
                                     } else {
@@ -201,9 +202,8 @@
  
   while (strtotime($date_of_start) >= strtotime($date_of_end)) {
     $query = $userModel->call('el_history', $uid . ", " . $cid . ", " . "'$date_of_start'");
-    
     foreach  ($query as $countValues ) {
-      if ( ! is_null($countValues['dCur']) || ! is_null($countValues['nCur']) || ! is_null($countValues['paid']) ) { 
+      if ( ! is_null($countValues['dCur']) || ! is_null($countValues['nCur']) || ! is_null($countValues['paid']) ) {
 ?>
                         <tr>
                           <td style="text-align:right"><?php echo $countValues['date'] ?></td>

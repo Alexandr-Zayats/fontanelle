@@ -1,7 +1,10 @@
 <?php
   
   //setlocale(LC_ALL, 'uk_UA.utf8');
-  
+ 
+  if (strpos($_SERVER['HTTP_REFERER'], $_SERVER['REQUEST_URI']) == false) {
+    $_SESSION['sourcePage'] = $_SERVER['HTTP_REFERER'];
+  }
 
   if (isset($_SESSION['adid'])) {
     $cashier = $_SESSION['adid'];
@@ -14,10 +17,11 @@
   } elseif (isset($_SESSION['uid'])) {
     $uid = $_SESSION['uid'];
   } else {
-    $uid = -1;
+    unset($uid);
   }
-
-  $_SESSION['uid'] = $uid;
+  if(isset($uid)) {
+    $_SESSION['uid'] = $uid;
+  }
 
   if (isset($_POST['cid'])) {
     $cid = $_POST['cid'];
@@ -25,8 +29,12 @@
     $cid = $_GET['cid'];
   } elseif (isset($_SESSION['cid'])) {
     $cid = $_SESSION['cid'];
+  } else {
+    unset($cid);
   }
-  $_SESSION['cid'] = $cid;
+  if (isset($cid)) {
+    $_SESSION['cid'] = $cid;
+  }
 
   if (isset($_POST['type'])) {
     $type = $_POST['type'];
@@ -34,8 +42,12 @@
     $type = $_GET['type'];
   } elseif (isset($_SESSION['cType'])) {
     $type = $_SESSION['cType'];
+  } else {
+    unset($type);
   }
-  $_SESSION['cType'] = $type;
+  if (isset($type)) {
+    $_SESSION['cType'] = $type;
+  }
 
   if (isset($_POST['toPay'])) {
     $toPay = $_POST['toPay'];
@@ -43,8 +55,12 @@
     $toPay = $_GET['toPay'];
   } elseif (isset($_SESSION['toPay'])) {
     $toPay = $_SESSION['toPay'];
+  } else {
+    unset($toPay);
   }
-  $_SESSION['toPay'] = $toPay;
+  if(isset($toPay)) {
+    $_SESSION['toPay'] = $toPay;
+  }
 
   foreach ($_POST as $key => $value) {
     ${$key} = $value;

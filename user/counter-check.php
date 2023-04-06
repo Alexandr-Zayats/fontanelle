@@ -115,11 +115,7 @@
     $query = $userModel->call('sp_updateCounter', $cid . ",'$counterNum','$cname','$counterInfo','$location'");
     $query = $userModel->call('sp_addCounterValues', $uid .",". $cid . ",'$dayLast','$dCurrent','$nightLast','$nCurrent'");
 
-    if ( $type == "el" ) {
-      header("location:info.php");
-    } else {
-      header("location:'water.php");
-    }
+    header("Location: " . $_SESSION['sourcePage']);
   }
 }
 ?>

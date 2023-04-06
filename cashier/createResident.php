@@ -14,8 +14,6 @@
     header('location:logout.php');
   } else {
     if(isset($_POST['createuser'])) {
-
-      
       $id=intval($_POST['id']);
       $surName = $_POST['surName'];
       $name = $_POST['name'];
@@ -34,7 +32,8 @@
       //echo "<script>alert('$id, $surName, $name, $middlName, $userName, $password, $email, $phone1, $phone2, $isMember, $autoInfo, $autoNum');</script>";
 
       $userModel->call('updateResidentProfile', "$id, '$surName', '$name', '$middlName', '$userName', '$password', '$email', $phone1, $phone2, $isMember, '$autoInfo', '$autoNum'");
-      header("location:residents.php");
+
+      header("Location: " . $_SESSION['sourcePage']);
       /*
       if ($query) {
         echo "<script>alert('Новый дачник успешно зарегистрирован');</script>";
