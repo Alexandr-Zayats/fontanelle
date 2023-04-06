@@ -2,7 +2,7 @@
   namespace Phppot;
 
   session_start();
-  error_reporting(0);
+  //error_reporting(0);
   include_once __DIR__ . '/../includes/config.php';
   require_once __DIR__ . '/../lib/ImageModel.php';
   require_once __DIR__ . '/../lib/UserModel.php';
@@ -10,10 +10,6 @@
   $imageModel = new ImageModel();
   $userModel = new UserModel();
 
-  //$dCurrent=0;
-  //$nCurrent=0;
-
-  //$cashier=$_SESSION['adid'];
   if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
     header('location:logout.php');
   } else {
@@ -41,85 +37,55 @@
         foreach ($file_ary as $file) {
           $target_file = $target_dir . date('Ymd') . '-' . basename($file['name']);
           $imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
-          $check = getimagesize($file["tmp_name"]);
-          $imageModel = new ImageModel();
-          if($check !== false) {
-            // Check if file already exists
-            //if (!file_exists($target_file)) {
-              // Check file size
-              //if ($file['size'] < 500000) {
-                // Allow certain file formats
-                if (in_array($imageFileType, array('jpg', 'png', 'jpeg', 'gif'))) {
-                  $source = $file['tmp_name'];
-                  $response = $imageModel->compressImage($source, $target_file, 50);
-                  if (!empty($response)) {
-                    $id = $imageModel->insertImage($file["name"], $target_file, $uid);
-                    //print($id);
-                    //exit;
-                    if (!empty($response)) {
-                      $response["type"] = "success";
-                      $response["message"] = "Upload Successfully";
-                      $result = $imageModel->getImageById($id);
-                    }
-                  } else {
-                    $response["type"] = "error";
-                    $response["message"] = "Unable to Upload:$response";
-                  /*
-                  }                
-                  $image = imagecreatefromjpeg($file['tmp_name']);  
-                  unlink("image.jpg");
-                  imagejpeg($image,"image.jpg",50);
-                  if (move_uploaded_file("image.jpg", $target_file)) {
-                  //if (move_uploaded_file($file['tmp_name'], $target_file)) {
-                    $msg = "Файл ". htmlspecialchars( basename( $file['name'])). " сохранен.";
-                    echo "<script>alert('" . $msg . "');</script>";
-                  } else {
-                  */
-                    echo "<script>alert('Произошла ошибка при сохранении файла.');</script>";
-                  }
-                } else {
-                  echo "<script>alert('Допустимы только JPG, JPEG, PNG, GIF файлы.');</script>";
-                }
-              //} else {
-              //  echo "<script>alert('Файл " . $file['name'] . " слишком большой.');</script>";
-              //}
-            //} else {
-            //  echo "<script>alert('Файл " . $file['name'] . " уже существует.');</script>";
-            //}
+          if (in_array($imageFileType, array('jpg', 'png', 'jpeg', 'gif'))) {
+            $source = $file['tmp_name'];
+            $response = $imageModel->compressImage($source, $target_file, 50);
+            if (!empty($response)) {
+              $id = $imageModel->insertImage($file["name"], $target_file, $uid);
+              if (!empty($response)) {
+                $response["type"] = "success";
+                $response["message"] = "Upload Successfully";
+                $result = $imageModel->getImageById($id);
+              }
+            } else {
+              $response["type"] = "error";
+              $response["message"] = "Unable to Upload:$response";
+              echo "<script>alert('Произошла ошибка при сохранении файла.');</script>";
+            }
           } else {
-            echo "<script>alert('Файл " . $file['name'] . " не является изображением.');</script>";
+            echo "<script>alert('Допустимы только JPG, JPEG, PNG, GIF файлы.');</script>";
           }
         }
       }
       header("Location:counter-check.php");
       //header("Location: " . $_SESSION['sourcePage']);
     }
-  // ------- END of FILES upload
+    // ------- END of FILES upload
 
-  if(isset($_POST['submit'])) {
+    if(isset($_POST['apply'])) {
+      $dayLast = $latest['dayLast'];
+      $nightLast = $latest['nightLast'];
 
-    $dayLast = $latest['dayLast'];
-    $nightLast = $latest['nightLast'];
-
-    //if($nightLast > $nCurrent || $dayLast > $dCurrent) {
-      //echo "<script>alert('$nightLast; $nCurrent; $dayLast; $dCurrent');</script>";
-      // echo "<script>alert('Введеные показания ниже предыдущих!');</script>";
-    //} else {
+      /*
+      if($nightLast > $nCurrent || $dayLast > $dCurrent) {
+        echo "<script>alert('$nightLast; $nCurrent; $dayLast; $dCurrent');</script>";
+        echo "<script>alert('Введеные показания ниже предыдущих!');</script>";
+      } else {
      
-    /*
-    echo $cid . ", '$counterNum', '$cname', '$counterInfo', '$location'" . "\n\n";
-    echo "|| \n";
-    echo $uid .",". $cid . ", '$dayLast', '$dCurrent', '$nightLast', '$nCurrent'";
-    exit;
-    */
+      /*
+      echo $cid . ", '$counterNum', '$cname', '$counterInfo', '$location'" . "\n\n";
+      echo "|| \n";
+      echo $uid .",". $cid . ", '$dayLast', '$dCurrent', '$nightLast', '$nCurrent'";
+      exit;
+      */
     
-    $query = $userModel->call('sp_updateCounter', $cid . ",'$counterNum','$cname','$counterInfo','$location'");
-    $query = $userModel->call('sp_addCounterValues', $uid .",". $cid . ",'$dayLast','$dCurrent','$nightLast','$nCurrent'");
+      $userModel->call('sp_updateCounter', $cid . ",'$counterNum','$cname','$counterInfo','$location'");
+      $userModel->call('sp_addCounterValues', $uid .",". $cid . ",'$dayLast','$dCurrent','$nightLast','$nCurrent'");
 
-    //header("Location:counter-check.php");
-    header("Location: " . $_SESSION['sourcePage']);
+      //header("Location:counter-check.php");
+      header("Location: " . $_SESSION['sourcePage']);
+    }
   }
-}
 ?>
 
 <!DOCTYPE html>
@@ -144,6 +110,7 @@
     <!-- Custom styles for this template-->
     <link href="../css/sb-admin-2.min.css" rel="stylesheet">
     <script src="../includes/scripts.js"></script>
+    <script src="../includes/scripts-img.js"></script>
 
 </head>
 <?php
@@ -163,7 +130,7 @@
                                 <h5 style="color:blue">СТ "РУЧЕЕК"</h5>
                                 <h1 class="h4 text-gray-900 mb-4">Текущие показаний</h1>
                             </div>
-                            <form class="user" name="submit" method="post" enctype="multipart/form-data" id="image">
+                              <form class="user" name="apply" method="post" enctype="multipart/form-data" id="apply">
                                 <div class="form-group row">
                                   <div class="col-sm-6 mb-3 mb-sm-0">
                                     <label for="uid">Участок:</label>
@@ -275,6 +242,10 @@
                                   </div>
                                 </div>
                                 -->
+                                <button type="submit" name="apply" class="btn btn-primary btn-user btn-block">
+                                  Проверен
+                                </button>
+                              </form>
                                 <div class="form-group row">
 		                              <table width="100%">
 			                            <tr>
@@ -300,6 +271,7 @@
                                     }
                                   }
                                   ?>
+                                <form class="user" name="image" method="post" enctype="multipart/form-data" id="image">
                                   <tr>
                                     <td>
                                       <div class="col-sm-6 mb-3 mb-sm-0">
@@ -316,10 +288,7 @@
                                 <button type="submit" name="upload" class="btn btn-primary btn-user btn-block">
                                   Добавить файлы
                                 </button>
-                                <button type="submit" name="submit" class="btn btn-primary btn-user btn-block">
-                                  Проверен
-                                </button>
-                            </form>
+                              </form>
                             <hr>
                         </div>
                     </div>
