@@ -87,12 +87,13 @@
             //  echo "<script>alert('Файл " . $file['name'] . " уже существует.');</script>";
             //}
           } else {
-          echo "<script>alert('Файл " . $file['name'] . " не является изображением.');</script>";
+            echo "<script>alert('Файл " . $file['name'] . " не является изображением.');</script>";
+          }
         }
       }
+      header("Location:counter-check.php");
+      //header("Location: " . $_SESSION['sourcePage']);
     }
-    echo "<script>window.location.href='counter-check.php?uid=$uid&cid=$cid&type=el'</script>";
-  }
   // ------- END of FILES upload
 
   if(isset($_POST['submit'])) {
@@ -115,6 +116,7 @@
     $query = $userModel->call('sp_updateCounter', $cid . ",'$counterNum','$cname','$counterInfo','$location'");
     $query = $userModel->call('sp_addCounterValues', $uid .",". $cid . ",'$dayLast','$dCurrent','$nightLast','$nCurrent'");
 
+    //header("Location:counter-check.php");
     header("Location: " . $_SESSION['sourcePage']);
   }
 }
@@ -141,34 +143,7 @@
 
     <!-- Custom styles for this template-->
     <link href="../css/sb-admin-2.min.css" rel="stylesheet">
-    <script type="text/javascript">
-      function myWindow(i,t,wid,hei) {
-        var day= new Date();
-        var id = day.getTime();
-        //Full screen
-        /*
-        var w = (window.width); 
-        var h = (window.height);
-        */
-        
-        // You can also use the original image height and width as
-        var w = wid+55;
-        var h = hei+25;
-        var params = 'width='+(w-5)+',height='+(h-5)+',scrollbars,resizable';
-
-        var message='<html><head><title>'+i+'</title></head><body><h3 aligh="center">'+
-        '<div align="center"><img src="'+i+'" border="0" alt="'+t+'" width="'+wid+'"><br>\
-        '+
-        '<hr width="100&#37;" size="1"><form><input type="button" onclick="javascript:window.close();" value="ЗАКРЫТЬ"><br>\
-        '+
-        '<hr width="100%" size="1"></form></div></body></html>\
-        ';
-        
-        var mywin = open('',id,params);
-        mywin.document.write(message);
-        mywin.document.close();
-      }
-    </script>
+    <script src="../includes/scripts.js"></script>
 
 </head>
 <?php
@@ -303,7 +278,7 @@
                                 <div class="form-group row">
 		                              <table width="100%">
 			                            <tr>
-				                            <th width="80%" align="center">Фото счетчика</th>
+				                            <th width="70%" align="center">Фото счетчика</th>
 				                            <th></th>
 			                            </tr>
                                   <?php
@@ -318,9 +293,7 @@
                                       > <img src="<?php echo $row['image']?>" width="100" border="0"/> </a>
                                     </td>
 				                            <td>
-                                      <!--<a href="update.php?id=<?php echo $row['id']; ?>" class="btn-action">Edit</a>-->
-                                      <a href="image_delete.php?id=<?php echo $row['id']?>&uid=<?php echo $uid?>&cid=<?php echo $cid?>"
-                                        class="btn-action">Удалить</a>
+                                     <?php formSubmit('id', $row['id'], 'Удалить', 'image_delete.php')?> 
                                     </td>
                                   </tr>
                                   <?php
