@@ -65,8 +65,7 @@
     return $curDate;
   }
 
-  function dateDiffInDays($date1, $date2) 
-  {
+  function dateDiffInDays($date1, $date2) {
     // Calculating the difference in timestamps
     $diff = strtotime($date2) - strtotime($date1);
   
@@ -74,4 +73,14 @@
     // 24 * 60 * 60 = 86400 seconds
     return abs(round($diff / 86400));
   }
-?>
+
+  function formSubmit($name, $value, $title, $action) {
+    echo "
+      <form class='user' id='$value' action='$action' method='post'>
+        <input type='hidden' name='$name' placeholder='' value='$value'>
+        <a class='nav-link' style='cursor:pointer' onclick='submit($value)'>
+          <i class='fas fa-fw fa-user'></i>
+          <span>$title</span>
+        </a>
+      </form>";
+  }

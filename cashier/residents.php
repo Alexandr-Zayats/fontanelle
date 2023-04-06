@@ -117,13 +117,7 @@
                                       </td>
 
                                       <td style="text-align:left">
-                                        <form class="user" id="<?php printf('%d', $result['id'])?>" action="createResident.php" method="post">
-                                          <input type="hidden" name="uid" placeholder="" value="<?php printf('%d', $result['id'])?>">
-                                          <a class="nav-link" style="cursor:pointer" onclick="submit(<?php printf('%d', $result['id'])?>)">
-                                            <i class="fas fa-fw fa-user"></i>
-                                            <span><?php printf('%s', $result['resName'])?></span>
-                                          </a>
-                                        </form>
+                                        <?php formSubmit('uid', $result['id'], $result['resName'], 'createResident.php')?>
                                       </td>
 
                                       <td style="text-align:left">

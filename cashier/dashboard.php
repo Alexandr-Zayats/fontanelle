@@ -4,6 +4,7 @@
   session_start();
   //error_reporting(0);
 
+  include_once __DIR__ . '/../includes/config.php';
   require_once __DIR__ . '/../lib/UserModel.php';
   $userModel = new UserModel();
 
@@ -202,13 +203,7 @@
                           </form>
                         </td>
 					              <td>
-                          <form class="user" id="<?php printf('%d', $result['rId'])?>" action="createResident.php" method="post">
-                            <input type="hidden" name="uid" placeholder="" value="<?php printf('%d', $result['rId'])?>">
-                            <a class="nav-link" style="cursor:pointer" onclick="submit(<?php printf('%d', $result['rId'])?>)">
-                              <i class="fas fa-fw fa-user"></i>
-                              <span><?php printf('%s', $result['name'])?></span>
-                            </a>
-                          </form>
+                          <?php formSubmit('uid', $result['rId'], $result['name'], 'createResident.php')?>
                         </td>
                         <td style="text-align:right"><?php
                           if ($result['dst'] == 'el') {echo "Электричество"; }

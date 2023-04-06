@@ -145,13 +145,7 @@
                                       </td>
 
 				                              <td style="text-align:left">
-                                        <form class="user" id="<?php printf('%d', $result['id'])?>" action="../user/info.php" method="post">
-                                          <input type="hidden" name="uid" placeholder="" value="<?php printf('%d', $result['id'])?>">
-                                          <a class="nav-link" style="cursor:pointer" onclick="submit(<?php printf('%d', $result['id'])?>)">
-                                            <i class="fas fa-fw fa-user"></i>
-                                            <span><?php printf('%s', $result['Name'])?></span>
-                                          </a>
-                                        </form>
+                                        <?php formSubmit('uid', $result['id'], $result['Name'], '../user/info.php')?>
 				                              </td>
 
 				                              <td style="text-align:right">
