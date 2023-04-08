@@ -1,19 +1,10 @@
 <?php
-
   namespace Phppot;
-  session_start();
-  //error_reporting(0);
-
   include_once __DIR__ . '/../includes/config.php';
-  require_once __DIR__ . '/../lib/UserModel.php';
-  $userModel = new UserModel();
+  include_once __DIR__ . '/includes/config.php';
 
-  
-  if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
-    header('location:logout.php');
-  } else {
-    $query = $userModel->call('sp_allregisteredusers', '');
-    unset($_SESSION['cid']);
+  $query = $userModel->call('sp_allregisteredusers', '');
+  unset($_SESSION['cid']);
 ?>
 
 <!DOCTYPE html>
@@ -127,7 +118,7 @@
 
                                       <td style="text-align:center">
                                         <form class="user" id="<?php printf('%d', $result['id'])?>"
-                                          action="../user/info.php" method="post"
+                                          action="../user/" method="post"
                                         >
                                           <input type="hidden" name="uid" placeholder=""
                                             value="<?php printf('%d', $result['id'])?>"/
@@ -145,7 +136,7 @@
                                       </td>
 
 				                              <td style="text-align:left">
-                                        <?php formSubmit('uid', $result['id'], $result['Name'], '../user/info.php')?>
+                                        <?php formSubmit('uid', $result['id'], $result['Name'], '../user/')?>
 				                              </td>
 
 				                              <td style="text-align:right">
@@ -212,4 +203,3 @@
 
 </body>
 </html>
-<?php } ?>

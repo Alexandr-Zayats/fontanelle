@@ -1,33 +1,21 @@
 <?php
-
   namespace Phppot;
-  session_start();
-  //error_reporting(0);
-
   include_once __DIR__ . '/../includes/config.php';
-  require_once __DIR__ . '/../lib/UserModel.php';
-  $userModel = new UserModel();
+  include_once __DIR__ . '/includes/config.php';
 
+  $query = $userModel->call('sp_getLastCounterValues', $cid);
+  $latest = $query[0];
 
-  if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
-    header('location:logout.php');
-  } else {
-
-    $query = $userModel->call('sp_getLastCounterValues', $cid);
-    $latest = $query[0];
-
-    if(isset($_POST['addvalues'])) {
-      $dayLast = $latest['dayLast'];
-      $nightLast = $latest['nightLast'];
-      if($nightLast > $nCurrent || $dayLast > $dCurrent) {
-        //echo "<script>alert('$nightLast; $nCurrent; $dayLast; $dCurrent');</script>";
-        echo "<script>alert('Введеные показания ниже предыдущих!');</script>";
-      } else {
-        //echo "<script>alert('uid=$uid cid=$cid latesD=$latest[dayLast] currentD=$dCurrent latestN=$latest[nightLast] currentN=$nCurrent');</script>";
-
-        $userModel->call('sp_addCounterValues', "$uid, $cid, '$dayLast', '$dCurrent', '$nightLast', '$nCurrent'");
-        header("Location: " . $_SESSION['sourcePage']);
-      }
+  if(isset($_POST['addvalues'])) {
+    $dayLast = $latest['dayLast'];
+    $nightLast = $latest['nightLast'];
+    if($nightLast > $nCurrent || $dayLast > $dCurrent) {
+      echo "<script>alert('$nightLast; $nCurrent; $dayLast; $dCurrent');</script>";
+      echo "<script>alert('Введеные показания ниже предыдущих!');</script>";
+    } else {
+      //echo "<script>alert('uid=$uid cid=$cid latesD=$latest[dayLast] currentD=$dCurrent latestN=$latest[nightLast] currentN=$nCurrent');</script>";
+      $userModel->call('sp_addCounterValues', "$uid, $cid, '$dayLast', '$dCurrent', '$nightLast', '$nCurrent'");
+      header("Location: " . $_SESSION['sourcePage']);
     }
   }
 ?>
@@ -125,7 +113,6 @@
                                 <button type="submit" name="addvalues" class="btn btn-primary btn-user btn-block">
                                     Внести
                                 </button>
-                           
                             </form>
                             <hr>
                         </div>
@@ -133,7 +120,6 @@
                 </div>
             </div>
         </div>
-
     </div>
 
     <!-- Bootstrap core JavaScript-->

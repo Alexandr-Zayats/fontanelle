@@ -1,34 +1,30 @@
 <?php
-//db Connection file
-include('../includes/config.php');
-//code for password recovery
-if(isset($_POST['resetpassword']))
-{
-$uname=$_POST['username'];
-$email=$_POST['emailid'];
-$password=md5($_POST['inputpass']);
-$updatetTime = date( 'd-m-Y h:i:s A', time () );
-//checking email if already exists
-   $ret=mysqli_query($con, "call sp_adminpwdrecoveryvalidation('$uname','$email')");
+
+  namespace Phppot;
+  include_once __DIR__ . '/../includes/config.php';
+  include_once __DIR__ . '/includes/config.php';
+
+  //code for password recovery
+  if(isset($_POST['resetpassword'])) {
+    $uname=$_POST['username'];
+    $email=$_POST['emailid'];
+    $password=md5($_POST['inputpass']);
+    $updatetTime = date( 'd-m-Y h:i:s A', time () );
+    //checking email if already exists
+    $ret=mysqli_query($con, "call sp_adminpwdrecoveryvalidation('$uname','$email')");
     $result=mysqli_num_rows($ret);
-    if($result==0){
-
-echo "<script>alert('Username or Email id is invalid');</script>";
-    }else{
-         $ret->close();
-         $con->next_result();
-     $ret=mysqli_query($con,"call sp_adminpasswordrecovery('$uname','$email','$password','$updatetTime')");
-    if ($ret) {
-  
-    echo "<script>alert('Your password successfully reset');</script>";
-    echo "<script>window.location.href='index.php'</script>";
+    if($result==0) {
+      echo "<script>alert('Username or Email id is invalid');</script>";
+    } else {
+      $ret->close();
+      $con->next_result();
+      $ret=mysqli_query($con,"call sp_adminpasswordrecovery('$uname','$email','$password','$updatetTime')");
+      if ($ret) {
+        echo "<script>alert('Your password successfully reset');</script>";
+        echo "<script>window.location.href='index.php'</script>";
+      }
+    }
   }
-}
-}
-
-
-
-
 ?>
 <!DOCTYPE html>
 <html lang="en">

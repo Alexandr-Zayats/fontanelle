@@ -1,11 +1,7 @@
 <?php
-session_start();
-//error_reporting(0);
-include('../includes/config.php');
-if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
-//if(true) {
-  header('location:logout.php');
-} else {
+  namespace Phppot;
+  include_once __DIR__ . '/../includes/config.php';
+  include_once __DIR__ . '/includes/config.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -236,4 +232,3 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
     <script src="../js/demo/chart-pie-demo.js"></script>
 </body>
 </html>
-<?php } ?>

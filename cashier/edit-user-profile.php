@@ -1,24 +1,17 @@
 <?php
-session_start();
-//error_reporting(0);
-include('../includes/config.php');
-if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
-  header('location:logout.php');
-  } else {
+  namespace Phppot;
+  include_once __DIR__ . '/../includes/config.php';
+  include_once __DIR__ . '/includes/config.php';
 
-  if(isset($_POST['update'])) {
-    $name=$_POST['name'];
-    $email=$_POST['email'];
-    $phone=$_POST['phone'];
-    $size=$_POST['size'];
-    $uid=$_GET['uid'];
+  //$updatetTime = date( 'd-m-Y h:i:s A', time () );
+  //echo "<script>alert('$uid $name $email $phone $size');</script>";
+  $query=mysqli_query($con,"call sp_userupdateprofile('$uid','$name','$email','$phone','$size')"); 
+  /*
+  echo "<script>alert('Профайл участка успешно обновлен');</script>";  
+  echo "<script>window.location.href='registered-users.php'</script>";
+  */
+  header("Location: " . $_SESSION['sourcePage']);
 
-    //$updatetTime = date( 'd-m-Y h:i:s A', time () );
-    //echo "<script>alert('$uid $name $email $phone $size');</script>";
-    $query=mysqli_query($con,"call sp_userupdateprofile('$uid','$name','$email','$phone','$size')"); 
-    echo "<script>alert('Профайл участка успешно обновлен');</script>";  
-    echo "<script>window.location.href='registered-users.php'</script>";
-  }
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -68,7 +61,7 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
 <?php 
-$uid=$_GET['uid'];
+
 $query=mysqli_query($con,"call sp_userprofile($uid)");
 
 mysqli_close($con);

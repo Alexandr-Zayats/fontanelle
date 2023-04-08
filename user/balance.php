@@ -1,12 +1,9 @@
 <?php
-session_start();
-//error_reporting(0);
-include('../includes/config.php');
-$uid=0;
-$cashier=$_SESSION['adid'];
-if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
-  header('location:logout.php');
-} else {
+  namespace Phppot;
+  include_once __DIR__ . '/../includes/config.php';
+  include_once __DIR__ . '/includes/config.php';
+
+  $uid=0;
   if(isset($_POST['payment'])) {
     echo "<script>window.location.href='registered-users.php'</script>";
   }

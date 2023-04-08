@@ -1,16 +1,11 @@
 <?php
-session_start();
-//error_reporting(0);
-include('../includes/config.php');
-$uid=$_GET['uid'];
-$cashier=$_SESSION['adid'];
-if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
-  header('location:logout.php');
-} else {
+  namespace Phppot;
+  include_once __DIR__ . '/../includes/config.php';
+  include_once __DIR__ . '/includes/config.php';
+
   if(isset($_POST['payment'])) {
-    $sum=$_POST['sum'];
     $fee=$_POST['type'];
-    mysqli_close($con);
+
     $con = mysqli_connect(DB_SERVER,DB_USER,DB_PASS,DB_NAME);
     //echo "<script>alert('$cashier $uid $sum $fee');</script>";
     $query=mysqli_query($con,"call sp_addMoney($cashier, $uid, '$sum', '$fee')");
@@ -21,12 +16,10 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
       echo "<script>alert('Что-то пошло не так!. Попробуйте еще раз.');</script>";
     }
   }
-}
 
 ?>
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -47,9 +40,7 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
 </head>
 
 <body class="bg-gradient-primary">
-
     <div class="container">
-
         <div class="card o-hidden border-0 shadow-lg my-5">
             <div class="card-body p-0">
                 <!-- Nested Row within Card Body -->
@@ -108,5 +99,4 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
     <script src="../js/sb-admin-2.min.js"></script>
 
 </body>
-
 </html>

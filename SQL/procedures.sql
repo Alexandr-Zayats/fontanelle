@@ -420,9 +420,16 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_cashiercurrentpwdvalidate` (`cur
 select id from cashier where id=uid and UserPassword=currentpwd;
 END$$
 
-DROP PROCEDURE IF EXISTS sp_cashierlogin;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_cashierlogin` (IN `username` VARCHAR(200), IN `cashierpwd` VARCHAR(200))  BEGIN
-select Name,id,UserName from cashier where UserName=username and UserPassword=cashierpwd;
+DROP PROCEDURE IF EXISTS userLogin;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `userLogin` (IN `username` VARCHAR(200), IN `userPass` VARCHAR(200))
+BEGIN
+  SELECT
+    r.id,
+    concat(r.surName, " ", r.name, " ", r.middlName ) as Name,
+    userName, ut.loginType as loginType, ut.url as url 
+  FROM residents r
+    LEFT JOIN userType ut ON ut.id=r.userType
+  WHERE userName=username AND password=userPass;
 END$$
 
 DROP PROCEDURE IF EXISTS sp_cashierpasswordrecovery;

@@ -1,11 +1,7 @@
 <?php
-session_start();
-//error_reporting(0);
-include('../includes/config.php');
-if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
-  header('location:logout.php');
-  } else {
-   
+  namespace Phppot;
+  include_once __DIR__ . '/../includes/config.php';
+  include_once __DIR__ . '/includes/config.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -145,4 +141,3 @@ while ($result=mysqli_fetch_array($query)) {
     <script src="../js/sb-admin-2.min.js"></script>
 </body>
 </html>
-<?php } ?>

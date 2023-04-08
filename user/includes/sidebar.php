@@ -13,15 +13,15 @@
 
             <!-- Nav Item - Dashboard -->
             <li class="nav-item">
-<?php if ($_SESSION['type']=="cashier") { ?>
+            <?php if ($_SESSION['loginType']=="regularUser") { ?>
+                <a class="nav-link" href="../logout.php">
+                    <i class="fas fa-fw fa-user"></i>
+                    <span>Выход</span></a>
+            <?php } else { ?>
                 <a class="nav-link" href="../cashier/registered-users.php">
                     <i class="fas fa-fw fa-user"></i>
                     <span>Список участков</span></a>
-<?php } else { ?>
-                <a class="nav-link" href="logout.php">
-                    <i class="fas fa-fw fa-user"></i>
-                    <span>Выход</span></a>
-<?php } ?>
+            <?php } ?>
 
             </li>
 
@@ -37,7 +37,7 @@
             <!-- Nav Item - Charts -->
             <li class="nav-item">
               <form class="user" id="elUid"
-                action="info.php" method="post"
+                action="index.php" method="post"
               >
                 <input type="hidden" name="uid" placeholder=""
                   value="<?php echo $uid?>"

@@ -38,14 +38,16 @@
             <a class="nav-link js-scroll-trigger" href="information.php">Информация</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link js-scroll-trigger" href="login.php">Садовод</a>
+            <a class="nav-link js-scroll-trigger" href="login.php">Вход</a>
           </li>
+          <!--
           <li class="nav-item">
             <a class="nav-link js-scroll-trigger" href="cashier/">Кассир</a>
           </li>
           <li class="nav-item">
             <a class="nav-link js-scroll-trigger" href="admin/">Администратор</a>
           </li>
+          -->
         </ul>
       </div>
     </div>

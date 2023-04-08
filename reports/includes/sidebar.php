@@ -13,7 +13,7 @@
 
             <!-- Nav Item - Dashboard -->
             <li class="nav-item">
-                <a class="nav-link" href="../cashier/dashboard.php">
+                <a class="nav-link" href="../cashier/">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Последние Платежи</span></a>
             </li>

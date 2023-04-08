@@ -13,7 +13,7 @@
 
             <!-- Nav Item - Dashboard -->
             <li class="nav-item">
-                <a class="nav-link" href="dashboard.php">
+                <a class="nav-link" href="index.php">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Платежи</span></a>
             </li>
@@ -69,7 +69,7 @@
 
 
     <li class="nav-item">
-                <a class="nav-link" href="logout.php">
+                <a class="nav-link" href="../logout.php">
                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2"></i>
                     <span>Выход</span></a>
             </li>

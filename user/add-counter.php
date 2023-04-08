@@ -1,37 +1,19 @@
 <?php
-session_start();
-//error_reporting(0);
-include('../includes/config.php');
-$uid=$_GET['uid'];
-$type=$_GET['type'];
-$cashier=$_SESSION['adid'];
-if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
-  header('location:logout.php');
-} else {
+  namespace Phppot;
+  include_once __DIR__ . '/../includes/config.php';
+  include_once __DIR__ . '/includes/config.php';
+
   if(isset($_POST['payment'])) {
-    $number=$_POST['number'];
-    $name=$_POST['name'];
-    $type=$_POST['type'];
-    $info=$_POST['info'];
-    $dCurrent=$_POST['dCurrent'];
-    $nCurrent=$_POST['nCurrent'];
-    mysqli_close($con);
     $con = mysqli_connect(DB_SERVER,DB_USER,DB_PASS,DB_NAME);
     //echo "<script>alert('$uid $number $name $info');</script>";
     $query=mysqli_query($con,"call sp_addCounter('$uid','$number', '$name', '$info', '$type', $dCurrent, $nCurrent)");
     if ($query) {
       echo "<script>alert('Счетчик добавлен');</script>";
-      if ( $type == "el" ) {
-        echo "<script>window.location.href='info.php?uid=$uid'</script>";
-      } else {
-        echo "<script>window.location.href='water.php?uid=$uid'</script>";
-      }
+      header("Location: " . $_SESSION['sourcePage']);
     } else {
       echo "<script>alert('Что-то пошло не так!. Попробуйте еще раз.');</script>";
     }
   }
-}
-
 ?>
 <!DOCTYPE html>
 <html lang="en">

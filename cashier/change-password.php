@@ -1,13 +1,8 @@
 <?php
-session_start();
-//error_reporting(0);
-include('../includes/config.php');
-$cuid=$_SESSION['adid'];
-if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
-//if (false) {
-  header('location:logout.php');
-} else {
-//Change Password
+  namespace Phppot;
+  include_once __DIR__ . '/../includes/config.php';
+  include_once __DIR__ . '/includes/config.php';
+
   if(isset($_POST['change'])) {
     $cpwd=md5($_POST['currentpwd']);
     $npwd=md5($_POST['newpwd']);  
@@ -16,7 +11,7 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
     $email=$_POST['email'];
     $phone=$_POST['phone'];
 
-//validate current password
+    //validate current password
     $ret=mysqli_query($con, "call sp_cashiercurrentpwdvalidate('$cpwd','$uid')");
     $result=mysqli_num_rows($ret);
     if($result==0) {

@@ -1,69 +1,56 @@
 <?php
-  
+  namespace Phppot;
   //setlocale(LC_ALL, 'uk_UA.utf8');
+
+  session_start();
+  error_reporting(0);
+
+  require_once __DIR__ . '/../lib/UserModel.php';
+  $userModel = new UserModel();
  
   if (strpos($_SERVER['HTTP_REFERER'], $_SERVER['REQUEST_URI']) == false) {
     $_SESSION['sourcePage'] = $_SERVER['HTTP_REFERER'];
   }
 
-  if (isset($_SESSION['adid'])) {
-    $cashier = $_SESSION['adid'];
+  foreach ($_SESSION as $key => $value) {
+    ${$key} = $value;
+  }
+  foreach ($_GET as $key => $value) {
+    ${$key} = $value;
+  }
+  foreach ($_POST as $key => $value) {
+    ${$key} = $value;
   }
 
-  if (isset($_POST['uid'])) {
-    $uid = $_POST['uid'];
-  } elseif( isset($_GET['uid'])) {
-    $uid = $_GET['uid'];
-  } elseif (isset($_SESSION['uid'])) {
-    $uid = $_SESSION['uid'];
-  } else {
-    unset($uid);
-  }
-  if(isset($uid)) {
+  if (isset($uid)) {
     $_SESSION['uid'] = $uid;
   }
 
-  if (isset($_POST['cid'])) {
-    $cid = $_POST['cid'];
-  } elseif (isset($_GET['cid'])) {
-    $cid = $_GET['cid'];
-  } elseif (isset($_SESSION['cid'])) {
-    $cid = $_SESSION['cid'];
-  } else {
-    unset($cid);
-  }
   if (isset($cid)) {
     $_SESSION['cid'] = $cid;
   }
 
-  if (isset($_POST['type'])) {
-    $type = $_POST['type'];
-  } elseif (isset($_GET['type'])) {
-    $type = $_GET['type'];
-  } elseif (isset($_SESSION['cType'])) {
-    $type = $_SESSION['cType'];
-  } else {
-    unset($type);
-  }
-  if (isset($type)) {
-    $_SESSION['cType'] = $type;
-  }
+  // Check login
+  if(isset($_POST['login']) || isset($_SESSION['loginpassword'])) {
+    if(!isset($_SESSION['password'])) {
+      $password = md5($loginpassword);
+    }
 
-  if (isset($_POST['toPay'])) {
-    $toPay = $_POST['toPay'];
-  } elseif( isset($_GET['toPay'])) {
-    $toPay = $_GET['toPay'];
-  } elseif (isset($_SESSION['toPay'])) {
-    $toPay = $_SESSION['toPay'];
-  } else {
-    unset($toPay);
-  }
-  if(isset($toPay)) {
-    $_SESSION['toPay'] = $toPay;
-  }
-
-  foreach ($_POST as $key => $value) {
-    ${$key} = $value;
+    $user = $userModel->call('userLogin', "'$username','$password'");
+    if(empty($user)) {
+      echo "<script>alert('Неверный ЛОГИН или ПАРОЛЬ');</script>";
+      header('location:logout.php');
+    } else {
+      $_SESSION['id'] = $user[0]['id'];
+      $_SESSION['userName'] = $user[0]['userName'];
+      $_SESSION['Name'] = $user[0]['Name'];
+      $_SESSION['loginType'] = $user[0]['loginType'];
+      if(!isset($_SESSION['password'])) {
+        $_SESSION['password'] = $password;
+        print_r($_SESSION);
+        header('location:' . $user[0]['url']);
+      }
+    }
   }
 
   function dateFormat(String $dat) {

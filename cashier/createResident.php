@@ -1,37 +1,27 @@
 <?php
-
   namespace Phppot;
-  session_start();
-  //error_reporting(0);
-
   include_once __DIR__ . '/../includes/config.php';
-  require_once __DIR__ . '/../lib/UserModel.php';
-  $userModel = new UserModel();
+  include_once __DIR__ . '/includes/config.php';
 
   //code for createuser
   $phone_regex = array("-", "(", ")", "+38", "+", "_", " ");
-  if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
-    header('location:logout.php');
-  } else {
-    if(isset($_POST['createuser'])) {
-      $id=intval($_POST['id']);
-      $surName = $_POST['surName'];
-      $name = $_POST['name'];
-      
 
-      $middlName = $_POST['middlName'] ?: '';
-      $email = $_POST['email'] ?: '';
-      $userName = $_POST['userName'] ?: '';
-      $password = $_POST['password'] ?: '';
-      $phone1 = str_replace($phone_regex, '', $_POST['phone1']);
-      $phone2 = str_replace($phone_regex, '', $_POST['phone2']);
-      if($phone2 == "") $phone2=0;
-      $isMember = 1;
-      $autoInfo = $_POST['autoInfo'] ?: '';
-      $autoNum = $_POST['autoNum'] ?: '';
-      //echo "<script>alert('$id, $surName, $name, $middlName, $userName, $password, $email, $phone1, $phone2, $isMember, $autoInfo, $autoNum');</script>";
+  if(isset($_POST['createuser'])) {
+    $id=intval($id);
 
-      $userModel->call('updateResidentProfile', "$id, '$surName', '$name', '$middlName', '$userName', '$password', '$email', $phone1, $phone2, $isMember, '$autoInfo', '$autoNum'");
+    $middlName = $_POST['middlName'] ?: '';
+    $email = $_POST['email'] ?: '';
+    $userName = $_POST['userName'] ?: '';
+    $password = $_POST['password'] ?: '';
+    $phone1 = str_replace($phone_regex, '', $_POST['phone1']);
+    $phone2 = str_replace($phone_regex, '', $_POST['phone2']);
+    if($phone2 == "") $phone2=0;
+    $isMember = 1;
+    $autoInfo = $_POST['autoInfo'] ?: '';
+    $autoNum = $_POST['autoNum'] ?: '';
+    //echo "<script>alert('$id, $surName, $name, $middlName, $userName, $password, $email, $phone1, $phone2, $isMember, $autoInfo, $autoNum');</script>";
+
+    $userModel->call('updateResidentProfile', "$id, '$surName', '$name', '$middlName', '$userName', '$password', '$email', $phone1, $phone2, $isMember, '$autoInfo', '$autoNum'");
 
       header("Location: " . $_SESSION['sourcePage']);
       /*
@@ -42,9 +32,9 @@
         echo "<script>alert('Что-то пошло не так!. Попробуйте еще раз.');</script>";
       }
     */
-    }
   }
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 

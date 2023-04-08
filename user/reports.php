@@ -1,14 +1,9 @@
 <?php
-session_start();
-//error_reporting(0);
-include('../includes/config.php');
-if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
-  header('location:logout.php');
-} else {
-  if(isset($_POST['report'])) {
-    $start=$_POST['start'];
-    $stop=$_POST['stop'];
-  } else {
+  namespace Phppot;
+  include_once __DIR__ . '/../includes/config.php';
+  include_once __DIR__ . '/includes/config.php';
+
+  if(!isset($_POST['report'])) {
     $start="2021-03-01";
     $stop=date("Y-m-d");
   }
@@ -221,4 +216,3 @@ if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
 
 </body>
 </html>
-<?php } ?>

@@ -1,90 +1,76 @@
 <?php
   namespace Phppot;
-
-  session_start();
-  //error_reporting(0);
   include_once __DIR__ . '/../includes/config.php';
+  include_once __DIR__ . '/includes/config.php';
   require_once __DIR__ . '/../lib/ImageModel.php';
-  require_once __DIR__ . '/../lib/UserModel.php';
-
   $imageModel = new ImageModel();
-  $userModel = new UserModel();
 
-  if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
-    header('location:logout.php');
-  } else {
-    $query = $userModel->call('sp_getLastCounterValues', $cid);
-    $latest = $query[0];
+  $query = $userModel->call('sp_getLastCounterValues', $cid);
+  $latest = $query[0];
 
-    // FILES upload
-    if(isset($_POST['upload'])) {
-      function reArrayFiles( $arr ){
-        foreach( $arr as $key => $all ){
-          foreach( $all as $i => $val ){
-            $new[$i][$key] = $val;    
-          }    
-        }
-        return $new;
+  // FILES upload
+  if(isset($_POST['upload'])) {
+    function reArrayFiles( $arr ) {
+      foreach( $arr as $key => $all ){
+        foreach( $all as $i => $val ){
+          $new[$i][$key] = $val;    
+        }    
       }
+      return $new;
+    }
     
-      $target_dir = "uploads/" . $uid . "/";
-      if (!file_exists($target_dir)) {
-        mkdir($target_dir, 0777, true);
-      }
+    $target_dir = "uploads/" . $uid . "/";
+    if (!file_exists($target_dir)) {
+      mkdir($target_dir, 0777, true);
+    }
 
-      if ($_FILES['fileToUpload']) {
-        $file_ary = reArrayFiles($_FILES['fileToUpload']);
-        foreach ($file_ary as $file) {
-          $target_file = $target_dir . date('Ymd') . '-' . basename($file['name']);
-          $imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
-          if (in_array($imageFileType, array('jpg', 'png', 'jpeg', 'gif'))) {
-            $source = $file['tmp_name'];
-            $response = $imageModel->compressImage($source, $target_file, 50);
+    if ($_FILES['fileToUpload']) {
+      $file_ary = reArrayFiles($_FILES['fileToUpload']);
+      foreach ($file_ary as $file) {
+        $target_file = $target_dir . date('Ymd') . '-' . basename($file['name']);
+        $imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
+        if (in_array($imageFileType, array('jpg', 'png', 'jpeg', 'gif'))) {
+          $source = $file['tmp_name'];
+          $response = $imageModel->compressImage($source, $target_file, 50);
+          if (!empty($response)) {
+            $id = $imageModel->insertImage($file["name"], $target_file, $uid);
             if (!empty($response)) {
-              $id = $imageModel->insertImage($file["name"], $target_file, $uid);
-              if (!empty($response)) {
-                $response["type"] = "success";
-                $response["message"] = "Upload Successfully";
-                $result = $imageModel->getImageById($id);
-              }
-            } else {
-              $response["type"] = "error";
-              $response["message"] = "Unable to Upload:$response";
-              echo "<script>alert('Произошла ошибка при сохранении файла.');</script>";
+              $response["type"] = "success";
+              $response["message"] = "Upload Successfully";
+              $result = $imageModel->getImageById($id);
             }
           } else {
-            echo "<script>alert('Допустимы только JPG, JPEG, PNG, GIF файлы.');</script>";
+            $response["type"] = "error";
+            $response["message"] = "Unable to Upload:$response";
+            echo "<script>alert('Произошла ошибка при сохранении файла.');</script>";
           }
+        } else {
+          echo "<script>alert('Допустимы только JPG, JPEG, PNG, GIF файлы.');</script>";
         }
       }
-      header("Location:counter-check.php");
-      //header("Location: " . $_SESSION['sourcePage']);
     }
-    // ------- END of FILES upload
+    header("Location:counter-check.php");
+    //header("Location: " . $_SESSION['sourcePage']);
+  }
+  // ------- END of FILES upload
 
-    if(isset($_POST['apply'])) {
-      $dayLast = $latest['dayLast'];
-      $nightLast = $latest['nightLast'];
-
-      /*
-      if($nightLast > $nCurrent || $dayLast > $dCurrent) {
-        echo "<script>alert('$nightLast; $nCurrent; $dayLast; $dCurrent');</script>";
-        echo "<script>alert('Введеные показания ниже предыдущих!');</script>";
-      } else {
-     
-      /*
+  if(isset($_POST['apply'])) {
+    /*
+    if($nightLast > $nCurrent || $dayLast > $dCurrent) {
+      echo "<script>alert('$nightLast; $nCurrent; $dayLast; $dCurrent');</script>";
+      echo "<script>alert('Введеные показания ниже предыдущих!');</script>";
+    } else { 
       echo $cid . ", '$counterNum', '$cname', '$counterInfo', '$location'" . "\n\n";
       echo "|| \n";
       echo $uid .",". $cid . ", '$dayLast', '$dCurrent', '$nightLast', '$nCurrent'";
       exit;
-      */
+    */
     
-      $userModel->call('sp_updateCounter', $cid . ",'$counterNum','$cname','$counterInfo','$location'");
-      $userModel->call('sp_addCounterValues', $uid .",". $cid . ",'$dayLast','$dCurrent','$nightLast','$nCurrent'");
+    $userModel->call('sp_updateCounter', $cid . ",'$counterNum','$cname','$counterInfo','$location'");
+    $userModel->call('sp_addCounterValues', $uid .",". $cid . ",'$dayLast','$dCurrent','$nightLast','$nCurrent'");
 
-      //header("Location:counter-check.php");
-      header("Location: " . $_SESSION['sourcePage']);
-    }
+    header("Location:index.php");
+    //header("Location: " . $_SESSION['sourcePage']);
   }
 ?>
 
@@ -264,7 +250,7 @@
                                       > <img src="<?php echo $row['image']?>" width="100" border="0"/> </a>
                                     </td>
 				                            <td>
-                                     <?php formSubmit('id', $row['id'], 'Удалить', 'image_delete.php')?> 
+                                     <?php formSubmit('imageId', $row['id'], 'Удалить', 'image_delete.php')?> 
                                     </td>
                                   </tr>
                                   <?php

@@ -1,12 +1,7 @@
 <?php
   namespace Phppot;
-  session_start();
-  //error_reporting(0);
-
   include_once __DIR__ . '/../includes/config.php';
-  require_once __DIR__ . '/../lib/UserModel.php';
-  $userModel = new UserModel();
-
+  include_once __DIR__ . '/includes/config.php';
 
   if ($toPay < 0) {
     $toPay = $toPay*(0-1);
@@ -14,31 +9,27 @@
     $toPay="0.00";
   }
 
-  if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
-    header('location:logout.php');
-  } else {
-    if(isset($_POST['payment'])) {
-      $sum = $_POST['sum'];
-      $fee = $_POST['type'];
-      $type = $_POST['type'];
+  if(isset($_POST['payment'])) {
+    $sum = $_POST['sum'];
+    $fee = $_POST['type'];
+    $type = $_POST['type'];
 
-      if (isset($_POST['year'])) {
-        $year = $_POST['year']."-01-01";
-      } else {
-        $year = "2000-01-01";
-      }
-      if (isset($_POST['bank'])) {
-        $bank = "TRUE";
-      } else {
-        $bank = "FALSE";
-      }
+    if (isset($_POST['year'])) {
+      $year = $_POST['year']."-01-01";
+    } else {
+      $year = "2000-01-01";
+    }
+    if (isset($_POST['bank'])) {
+      $bank = "TRUE";
+    } else {
+      $bank = "FALSE";
+    }
 
     // echo "<script>alert('$cashier $uid $sum $fee $bank');</script>";
-    $query = $userModel->call('sp_addMoney', "$cashier, ". $uid .", '$sum', '$fee', '$year', ".$bank);
+    $query = $userModel->call('sp_addMoney', $_SESSION['id'] . "," . $uid .", '$sum', '$fee', '$year', ".$bank);
 
     header("Location: " . $_SESSION['sourcePage']);
   }
-}
 
 ?>
 <!DOCTYPE html>

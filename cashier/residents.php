@@ -1,17 +1,9 @@
 <?php
-
   namespace Phppot;
-  session_start();
-  //error_reporting(0);
-
   include_once __DIR__ . '/../includes/config.php';
-  require_once __DIR__ . '/../lib/UserModel.php';
-  $userModel = new UserModel();
-
-  if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
-    header('location:logout.php');
-  } else {
+  include_once __DIR__ . '/includes/config.php';
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -206,4 +198,3 @@
 
 </body>
 </html>
-<?php } ?>

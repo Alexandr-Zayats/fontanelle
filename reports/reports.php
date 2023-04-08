@@ -147,7 +147,7 @@
 ?>
                                     <tr>
                                       <td style="text-align:center">
-                                        <a href="../user/info.php?uid=<?php echo $result['id'];?>"</a><?php echo $result['id'];?>
+                                        <a href="../user/index.php?uid=<?php echo $result['id'];?>"</a><?php echo $result['id'];?>
                                       </td>
                                       <td style="text-align:left"><?php echo $result['name'];?></td>
                                       <td style="text-align:right"><?php echo $result['balance']; $balance+=$result['balance'];?></td>

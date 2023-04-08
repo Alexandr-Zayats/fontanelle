@@ -1,16 +1,7 @@
 <?php
-
   namespace Phppot;
-  session_start();
-  //error_reporting(0);
-
   include_once __DIR__ . '/../includes/config.php';
-  require_once __DIR__ . '/../lib/UserModel.php';
-  $userModel = new UserModel();
-
-  if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
-    header('location:logout.php');
-  } else {
+  include_once __DIR__ . '/includes/config.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -123,9 +114,7 @@
                                       <td style="text-align:right" class="user"><?php printf('%d', $cnt);?></td>
 
                                       <td style="text-align:center" class="user">
-                                        <a href="../user/info.php?uid=<?php echo $result['id'];?>">
-                                          <?php printf('%d', $result['id']);?>
-                                        </a>
+                                        <?php printf('%d', $result['id']);?>
                                       </td>
 
                                       <td style="text-align:left" class="user">
@@ -213,4 +202,3 @@
 
 </body>
 </html>
-<?php } ?>

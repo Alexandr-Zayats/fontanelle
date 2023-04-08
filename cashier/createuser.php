@@ -1,19 +1,10 @@
 <?php
-
   namespace Phppot;
-  session_start();
-  //error_reporting(0);
-
   include_once __DIR__ . '/../includes/config.php';
-  require_once __DIR__ . '/../lib/UserModel.php';
-  $userModel = new UserModel();
+  include_once __DIR__ . '/includes/config.php';
 
   //code for createuser
   if(isset($_POST['createuser'])) {
-    $id=intval($_POST['id']);
-    $street=$_POST['street'];
-    $resident=$_POST['resident'];
-    $size=$_POST['size'];
     $counterNum=$_POST['counterNum'] ?: '123456';
     $counterName=$_POST['counterName'] ?: 'основной';
     $counterInfo=$_POST['counterInfo'] ?: '';

@@ -1,16 +1,14 @@
 <?php
-//db Connection file
-require_once __DIR__ . '/../includes/config.php';
-
-$userData = $_POST['userData'];
+  namespace Phppot;
+  include_once __DIR__ . '/../includes/config.php';
+  include_once __DIR__ . '/includes/config.php';
 
 $target_folder = 'uploads/' . $userData['id'];
 $target_file = $target_folder . '/notice.pdf';
 
 if(isset($_POST['close'])) {
   echo "<script>window.location.href='../cashier/debtors.php'</script>";
-}
-elseif(isset($_POST['print'])) {
+} elseif(isset($_POST['print'])) {
   echo "<script>window.location.href='registered-users.php'</script>";
 } else {
 
