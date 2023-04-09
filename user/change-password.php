@@ -1,7 +1,8 @@
 <?php
   namespace Phppot;
-  include_once __DIR__ . '/../includes/config.php';
+  session_start();
   include_once __DIR__ . '/includes/config.php';
+  include_once __DIR__ . '/../includes/config.php';
 
   //Change Password
   if(isset($_POST['change'])) {
@@ -22,7 +23,8 @@
       $con->next_result();
       $query=mysqli_query($con,"call sp_cashierchangepwd('$npwd','$uid','$name','$email','$phone')"); 
       echo "<script>alert('Your password chnaged successfully');</script>";  
-      echo "<script>window.location.href='change-password.php'</script>";
+      // echo "<script>window.location.href='change-password.php'</script>";
+      header("Location: " . $_SESSION['sourcePage']);
     }
   }
 ?>
@@ -96,7 +98,7 @@
                               </div>
                               <div class="card-body">
 <?php
-  $cuid=$_SESSION['adid'];
+  $cuid=$_SESSION['id'];
   $query=mysqli_query($con,"call sp_cashierprofile($cuid)");
   while ($result=mysqli_fetch_array($query)) {
 ?>

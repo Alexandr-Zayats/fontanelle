@@ -4,12 +4,21 @@
 
   session_start();
   error_reporting(0);
-
   require_once __DIR__ . '/../lib/UserModel.php';
   $userModel = new UserModel();
- 
+
+  //print_r($_SESSION['sourcePage']);
+  //print('<br>');
   if (strpos($_SERVER['HTTP_REFERER'], $_SERVER['REQUEST_URI']) == false) {
-    $_SESSION['sourcePage'] = $_SERVER['HTTP_REFERER'];
+    if ( $_SERVER['HTTP_REFERER'] != end($_SESSION['sourcePage']) ) {
+      if(isset($_SESSION['return'])) {
+        unset($_SESSION['return']);
+      } elseif (isset($_SESSION['subpage'])) {
+        $_SESSION['sourcePage'][] = $_SERVER['HTTP_REFERER'];
+        //print_r($_SESSION['sourcePage']);
+        //print('<br>');
+      }
+    }
   }
 
   foreach ($_SESSION as $key => $value) {
@@ -23,34 +32,63 @@
   }
 
   if (isset($uid)) {
-    $_SESSION['uid'] = $uid;
+    $_SESSION['uid'] = intval($uid);
   }
 
   if (isset($cid)) {
-    $_SESSION['cid'] = $cid;
+    $_SESSION['cid'] = intval($cid);
+  }
+  if (isset($cType)) {
+    $_SESSION['cType'] = $cType;
+  }
+
+  if(!isset($allowedUser) || empty($allowedUser)) {
+    $allowedUser = array('admin');
   }
 
   // Check login
-  if(isset($_POST['login']) || isset($_SESSION['loginpassword'])) {
+  if(isset($_POST['login']) || isset($_SESSION['password'])) {
     if(!isset($_SESSION['password'])) {
       $password = md5($loginpassword);
     }
-
     $user = $userModel->call('userLogin', "'$username','$password'");
+
     if(empty($user)) {
       echo "<script>alert('Неверный ЛОГИН или ПАРОЛЬ');</script>";
       header('location:logout.php');
     } else {
-      $_SESSION['id'] = $user[0]['id'];
+      if(isset($_SESSION['password'])) {
+        if (!in_array($_SESSION['loginType'], $allowedUser)) {
+          header('location:logout.php');
+        }
+      } else {
+        session_unset();
+        session_destroy();
+        session_start();
+        $_SESSION['sourcePage'] = array();
+      }
+      // START NEW session
+      $_SESSION['id'] = intval($user[0]['id']);
       $_SESSION['userName'] = $user[0]['userName'];
       $_SESSION['Name'] = $user[0]['Name'];
       $_SESSION['loginType'] = $user[0]['loginType'];
+      $_SESSION['startPage'] = $user[0]['url'];
+      if($_SESSION['loginType'] == 'regularUser') {
+        $_SESSION['uid'] = $_SESSION['id'];
+        $uid =  $_SESSION['id'];
+      }
       if(!isset($_SESSION['password'])) {
         $_SESSION['password'] = $password;
-        print_r($_SESSION);
-        header('location:' . $user[0]['url']);
+        header('location:' . $_SESSION['startPage']);
       }
     }
+  }
+
+  function destPage() {
+    $page = array_pop($_SESSION['sourcePage']);
+    $_SESSION['return'] = true;
+    if(empty($page)) { $page = '/'; }
+    return $page;
   }
 
   function dateFormat(String $dat) {

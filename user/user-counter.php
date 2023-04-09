@@ -1,7 +1,9 @@
 <?php
   namespace Phppot;
-  include_once __DIR__ . '/../includes/config.php';
+  session_start();
+  $_SESSION['subpage'] = true;
   include_once __DIR__ . '/includes/config.php';
+  include_once __DIR__ . '/../includes/config.php';
 
   $query = $userModel->call('sp_getLastCounterValues', $cid);
   $latest = $query[0];
@@ -15,7 +17,7 @@
     } else {
       //echo "<script>alert('uid=$uid cid=$cid latesD=$latest[dayLast] currentD=$dCurrent latestN=$latest[nightLast] currentN=$nCurrent');</script>";
       $userModel->call('sp_addCounterValues', "$uid, $cid, '$dayLast', '$dCurrent', '$nightLast', '$nCurrent'");
-      header("Location: " . $_SESSION['sourcePage']);
+      header('location:' . destPage());
     }
   }
 ?>
@@ -67,9 +69,6 @@
                                       value="<?php echo $uid ?>" readonly>
                                   </div>
                                 </div>
-                                <input type="hidden" id="type" name="type" value="<?php echo $type ?>">
-                                <input type="hidden" id="cid" name="cid" value="<?php echo $cid ?>">
-
                                 <div class="form-group row">
                                   <div class="col-sm-6 mb-3 mb-sm-0">
                                     <label for="uid">Счетчик:</label>
@@ -92,7 +91,7 @@
                                       name="dCurrent" required="true">
                                   </div>
                                 </div>
-                                <?php if ( $type == "el" AND  $latest['nightLast'] != 0 ) { ?>
+                                <?php if ( $cType == "el" AND  $latest['nightLast'] != 0 ) { ?>
                                 <div class="form-group row">
                                   <div class="col-sm-6 mb-3 mb-sm-0">
                                     <label for="nCurrent">Ночь:</label>

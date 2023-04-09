@@ -1,37 +1,23 @@
 <?php
-
   namespace Phppot;
   session_start();
-  //error_reporting(0);
-
+  $_SESSION['subpage'] = true;
+  include_once __DIR__ . '/includes/config.php';
   include_once __DIR__ . '/../includes/config.php';
-  require_once __DIR__ . '/../lib/UserModel.php';
-  $userModel = new UserModel();
 
-  $uid=0;
-  $counter=1;
+  $query = $userModel->call('sp_getLastCounterValues', $cid);
+  $latest = $query[0];
 
-  if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
-    header('location:logout.php');
-  } else {
-    if(isset($_POST['addvalues'])) {
-      //$counter=$_POST['counter'];
-      $dCurrent=$_POST['dCurrent'];
-      $nCurrent=$_POST['nCurrent'];
-    }
-
-    $query = $userModel->call('sp_getLastCounterValues', $counter);
-    $latest = $query[0];
-
-    if(isset($_POST['addvalues'])) {
-      if($latest[nightLast] > $nCurrent || $latest[dayLast] > $dCurrent) {
-        echo "<script>alert('Введеные показания ниже предыдущих!');</script>";
-      } else {
-        // echo "<script>alert('uid=$uid counter=$counter latesD=$latest[dayLast] currentD=$dCurrent latestN=$latest[nightLast] currentN=$nCurrent');</script>";
+  if(isset($_POST['addvalues'])) {
+    if($latest[nightLast] > $nCurrent || $latest[dayLast] > $dCurrent) {
+      echo "<script>alert('Введеные показания ниже предыдущих!');</script>";
+    } else {
+        //echo "<script>alert('uid=$uid cid=$cid latesD=$latest[dayLast] currentD=$dCurrent latestN=$latest[nightLast] currentN=$nCurrent');</script>";
         
-        $userModel->call('sp_addCounterValues', "$uid,$counter,'$latest[dayLast]','$dCurrent','$latest[nightLast]','$nCurrent'");
-
-        header("Location: " . $_SESSION['sourcePage']);
+      //print("0, $cid,'$latest[dayLast]','$dCurrent','$latest[nightLast]','$nCurrent'");
+      //exit;
+      $userModel->call('sp_addCounterValues', "0, $cid,'$latest[dayLast]','$dCurrent','$latest[nightLast]','$nCurrent'");
+      header('location:' . destPage());
         /*
         if ($query) {
           echo "<script>alert('Показания успешно занесены');</script>";
@@ -40,12 +26,10 @@
           echo "<script>alert('Что-то пошло не так!. Попробуйте еще раз.');</script>";
         }
         */
-      }
     }
   }
-
-
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -96,12 +80,13 @@
                             <form class="user" name="addvalues" method="post">
                                 <div class="form-group row">
                                     <div class="col-sm-6 mb-3 mb-sm-0">
-                                      <input type="number" class="form-control form-control-user" id="uid" name="uid" placeholder="Трансформатор" readonly>
+                                      <input type="number" class="form-control form-control-user" id="uid" 
+                                        name="uid" placeholder="Трансформатор" readonly>
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <div class="col-sm-6 mb-3 mb-sm-0">
-                                      <input type="hidden" id="counter" name="counter" value="1">
+                                      <input type="hidden" id="cid" name="cid" value="1">
                                     </div>
                                 </div>
                                 <div class="form-group row">
@@ -109,12 +94,11 @@
                                         <label for="dCurrent">День:</label>
                                         <input type="number" class="form-control form-control-user" id="dCurrent"
                                         value="<?php
-  if(is_numeric($latest['dayLast']) && isset($latest['dayLast'])) {
-    echo $latest['dayLast'];
-  } else {
-    echo '0';
-  }
-?>"
+                                          if(is_numeric($latest['dayLast']) && isset($latest['dayLast'])) {
+                                            echo $latest['dayLast'];
+                                          } else {
+                                            echo '0';
+                                          }?>"
                                         name="dCurrent" required="true">
                                     </div>
                                 </div>
@@ -123,12 +107,11 @@
                                         <label for="nCurrent">Ночь:</label>
                                         <input type="number" class="form-control form-control-user" id="nCurrent"
                                         value="<?php
-  if(is_numeric($latest['nightLast'])) {
-    echo $latest['nightLast'];
-  } else {
-    echo 0;
-  }
-?>"
+                                          if(is_numeric($latest['nightLast'])) {
+                                            echo $latest['nightLast'];
+                                          } else {
+                                            echo 0;
+                                          }?>"
                                           name="nCurrent" required="false">
                                     </div>
                                 </div>

@@ -677,7 +677,7 @@ PROCEDURE `updateResidentProfile` (
   `_name` VARCHAR(30),
   `_middlName` VARCHAR(50),
   `_userName` VARCHAR(15),
-  `_password` BINARY(16),
+  `_password` VARCHAR(32),
   `_email` VARCHAR(120),
   `_phone1` INT(10),
   `_phone2` INT(10), 

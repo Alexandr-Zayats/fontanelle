@@ -1,7 +1,8 @@
 <?php
   namespace Phppot;
-  include_once __DIR__ . '/../includes/config.php';
+  session_start();
   include_once __DIR__ . '/includes/config.php';
+  include_once __DIR__ . '/../includes/config.php';
 
   if(isset($_POST['addvalues'])) {
 
@@ -15,6 +16,7 @@
       if ($query) {
         echo "<script>alert('Показания успешно занесены');</script>";
         echo "<script>window.location.href='registered-users.php'</script>";
+        header("Location: " . $_SESSION['sourcePage']);
       } else {
         echo "<script>alert('Что-то пошло не так!. Попробуйте еще раз.');</script>";
       }
@@ -45,9 +47,7 @@
 </head>
 
 <?php
-  mysqli_close($con);
   $con = mysqli_connect(DB_SERVER,DB_USER,DB_PASS,DB_NAME);
-  $uid=$_GET['uid'];
   $counters=mysqli_query($con,"call sp_counterList($uid)");
 ?>
 

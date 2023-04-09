@@ -1,7 +1,9 @@
 <?php
   namespace Phppot;
-  include_once __DIR__ . '/../includes/config.php';
+  session_start();
+  $_SESSION['subpage'] = true;
   include_once __DIR__ . '/includes/config.php';
+  include_once __DIR__ . '/../includes/config.php';
 
   if ($toPay < 0) {
     $toPay = $toPay*(0-1);
@@ -10,10 +12,6 @@
   }
 
   if(isset($_POST['payment'])) {
-    $sum = $_POST['sum'];
-    $fee = $_POST['type'];
-    $type = $_POST['type'];
-
     if (isset($_POST['year'])) {
       $year = $_POST['year']."-01-01";
     } else {
@@ -26,9 +24,8 @@
     }
 
     // echo "<script>alert('$cashier $uid $sum $fee $bank');</script>";
-    $query = $userModel->call('sp_addMoney', $_SESSION['id'] . "," . $uid .", '$sum', '$fee', '$year', ".$bank);
-
-    header("Location: " . $_SESSION['sourcePage']);
+    $userModel->call('sp_addMoney', $_SESSION['id'] . "," . $uid .", '$sum', '$cType', '$year', ".$bank);
+    header('location:' . destPage());
   }
 
 ?>
@@ -68,9 +65,9 @@
                             <div class="text-center">
                                 <h5 style="color:blue">СТ "РУЧЕЕК"</h5>
                                 <h1 class="h4 text-gray-900 mb-4"><?php
-                                  if ( $type == "el" ) {
+                                  if ( $cType == "el" ) {
                                     echo "Оплата электроенергии";
-                                  } elseif ( $type == "wat" )  {
+                                  } elseif ( $cType == "wat" )  {
                                     echo "Оплата за воду";
                                   } else {
                                     echo "Членские взносы";
@@ -84,7 +81,7 @@
                                       <input type="number" class="form-control form-control-user" id="uid" name="uid" value="<?php echo $uid ?>" readonly>
                                     </div>
                                 </div>
-                                <?php if ( $type == "fee" ) { ?>
+                                <?php if ( $cType == "fee" ) { ?>
                                 <div class="form-group row">
                                     <div class="col-sm-6 mb-3 mb-sm-0">
                                       <select id="year" name="year" class="btn btn-primary btn-user btn-block">
@@ -105,31 +102,16 @@
                                 </div>
                                 <?php } ?>
                                 <div class="form-group row">
-                                    <div class="col-sm-6 mb-3 mb-sm-0">
-                                        <input type="number" min="0.10" max="50000.00" step="0.01"
-                                          class="form-control form-control-user" id="sum" name="sum" required="true"
-					  value="<?php echo $toPay ?>">
-				    </div>
-				    <div class="col-sm-6 mb-3 mb-sm-0">
-					<input type="checkbox" id="bank" name="bank">
-      					  <label for="bank">  На счет</label>
+                                  <div class="col-sm-6 mb-3 mb-sm-0">
+                                    <input type="number" min="0.10" max="50000.00" step="0.01"
+                                      class="form-control form-control-user" id="sum" name="sum" required="true"
+					                            value="<?php echo $toPay ?>">
+				                          </div>
+				                          <div class="col-sm-6 mb-3 mb-sm-0">
+					                          <input type="checkbox" id="bank" name="bank">
+      					                      <label for="bank">  На счет</label>
                                     </div>
                                 </div>
-                                <input type="hidden" id="type" name="type" value="<?php echo $type ?>">
-                                <!-- 
-                                <div class="form-group row">
-                                  <div class="col-sm-6 mb-3 mb-sm-0">
-                                    <input type="radio" id="type" name="type" value="el" required>
-                                    <label for="fee">электричество</label><br>
-                                    <input type="radio" id="type" name="type" value="wat">
-                                    <label for="wat">вода</label><br>
-                                    <input type="radio" id="type" name="type" value="fee">
-                                    <label for="fee">членские взносы</label><br>
-                                    <input type="radio" id="type" name="type" value="inc">
-                                    <label for="income">вступительный взнос</label>
-                                  </div>
-                                </div>
-                                -->
                                 <button type="submit" name="payment" class="btn btn-primary btn-user btn-block">
                                   Оплатить
                                 </button>

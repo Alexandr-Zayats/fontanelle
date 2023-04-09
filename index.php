@@ -1,3 +1,11 @@
+<?php
+  namespace Phppot;
+  session_start();
+  unset($_SESSION['subpage']);
+  if(isset($_SESSION['password'])) {
+    header('location:' . $_SESSION['startPage']);
+  }
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -76,7 +84,6 @@
       </div>
     </div>
   </section>
-
 
   <!-- Footer -->
   <footer class="py-5 bg-dark">

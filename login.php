@@ -1,11 +1,10 @@
 <?php
   namespace Phppot;
-  session_unset();
-  session_destroy();
   session_start();
-
-  require_once __DIR__ . '/lib/UserModel.php';
-  $userModel = new UserModel();
+  unset($_SESSION['subpage']);
+  if(isset($_SESSION['password'])) {
+    header('location:' . $_SESSION['startPage']);
+  }
   include_once __DIR__ . '/includes/config.php';
 ?>
 

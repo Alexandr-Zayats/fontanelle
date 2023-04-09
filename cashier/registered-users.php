@@ -1,7 +1,9 @@
 <?php
   namespace Phppot;
-  include_once __DIR__ . '/../includes/config.php';
+  session_start();
+  unset($_SESSION['subpage']);
   include_once __DIR__ . '/includes/config.php';
+  include_once __DIR__ . '/../includes/config.php';
 
   $query = $userModel->call('sp_allregisteredusers', '');
   unset($_SESSION['cid']);

@@ -1,7 +1,8 @@
 <?php
   namespace Phppot;
-  include_once __DIR__ . '/../includes/config.php';
+  session_start();
   include_once __DIR__ . '/includes/config.php';
+  include_once __DIR__ . '/../includes/config.php';
 
   if(isset($_POST['update'])) {
     //$updatetTime = date( 'd-m-Y h:i:s A', time () );
@@ -63,8 +64,6 @@
 <?php 
 $query=mysqli_query($con,"call sp_userprofile($uid)");
 
-mysqli_close($con);
-$con = mysqli_connect(DB_SERVER,DB_USER,DB_PASS,DB_NAME);
 $counters=mysqli_query($con,"call sp_counterList($uid)");
 
 while ($result=mysqli_fetch_array($query)) {
@@ -89,37 +88,44 @@ while ($result=mysqli_fetch_array($query)) {
                                   <tr>
                                     <th style="width:20%">Участок</th>
                                     <td>
-                                      <input type="number" class="form-control form-control-user" id="id" value="<?php echo $result['id'];?>" name="id" readonly="true">
+                                      <input type="number" class="form-control form-control-user"
+                                        id="id" value="<?php echo $result['id'];?>" name="id" readonly="true">
                                     </td>
                                   </tr>
                                   <tr>
                                     <th>Размер участка (соток)</th>
                                     <td>
-                                      <input type="number" min="0.30" max="100.00" step="0.01" class="form-control form-control-user" id="size" value="<?php echo $result['Size'];?>" name="size" required="true">
+                                      <input type="number" min="0.30" max="100.00" step="0.01"
+                                        class="form-control form-control-user"
+                                        id="size" value="<?php echo $result['Size'];?>" name="size" required="true">
                                     </td>
                                   </tr>
                                   <tr>
                                     <th>ФИО</th>
                                     <td>
-                                      <input type="text" class="form-control form-control-user" id="name" value="<?php echo $result['Name'];?>" name="name" required="true">
+                                      <input type="text" class="form-control form-control-user"
+                                        id="name" value="<?php echo $result['Name'];?>" name="name" required="true">
                                     </td>
                                   </tr>
                                   <tr>
                                     <th>Телефон</th>
                                     <td>
-                                      <input type="tel" class="form-control form-control-user" id="phone" value="<?php echo $result['PhoneNumber'];?>" name="phone" required="false">
+                                      <input type="tel" class="form-control form-control-user" id="phone"
+                                        value="<?php echo $result['PhoneNumber'];?>" name="phone" required="false">
                                     </td>
                                   </tr>
                                   <tr>
                                     <th>Email</th>
                                     <td>
-                                      <input type="email" class="form-control form-control-user" id="email" value="<?php echo $result['EmailId'];?>" name="email" required="false">
+                                      <input type="email" class="form-control form-control-user" id="email"
+                                        value="<?php echo $result['EmailId'];?>" name="email" required="false">
                                     </td>
-				  </tr>
-				  <tr>
+				                          </tr>
+				                          <tr>
                                     <th>Дополнительная Информация</th>
                                     <td>
-                                      <input type="text" class="form-control form-control-user" id="info" value="<?php echo $result['Info'];?>" name="info" required=false>
+                                      <input type="text" class="form-control form-control-user" id="info"
+                                        value="<?php echo $result['Info'];?>" name="info" required=false>
                                     </td>
                                   </tr>
                                   <tr>

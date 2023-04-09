@@ -1,7 +1,9 @@
 <?php
   namespace Phppot;
-  include_once __DIR__ . '/../includes/config.php';
+  session_start();
+  $_SESSION['subpage'] = true;
   include_once __DIR__ . '/includes/config.php';
+  include_once __DIR__ . '/../includes/config.php';
   require_once __DIR__ . '/../lib/ImageModel.php';
   $imageModel = new ImageModel();
 
@@ -49,12 +51,13 @@
         }
       }
     }
-    header("Location:counter-check.php");
-    //header("Location: " . $_SESSION['sourcePage']);
+    header('location:' . $_SERVER['DOCUMENT_URI']);
   }
   // ------- END of FILES upload
 
   if(isset($_POST['apply'])) {
+    $dayLast = $latest['dayLast'];
+    $nightLast = $latest['nightLast'];
     /*
     if($nightLast > $nCurrent || $dayLast > $dCurrent) {
       echo "<script>alert('$nightLast; $nCurrent; $dayLast; $dCurrent');</script>";
@@ -65,12 +68,10 @@
       echo $uid .",". $cid . ", '$dayLast', '$dCurrent', '$nightLast', '$nCurrent'";
       exit;
     */
-    
     $userModel->call('sp_updateCounter', $cid . ",'$counterNum','$cname','$counterInfo','$location'");
-    $userModel->call('sp_addCounterValues', $uid .",". $cid . ",'$dayLast','$dCurrent','$nightLast','$nCurrent'");
+    $userModel->call('sp_addCounterValues', "'$uid','$cid','$dayLast','$dCurrent','$nightLast','$nCurrent'");
 
-    header("Location:index.php");
-    //header("Location: " . $_SESSION['sourcePage']);
+    header('location:' . destPage());
   }
 ?>
 
@@ -124,10 +125,6 @@
                                       value="<?php echo $uid ?>" readonly>
                                   </div>
                                 </div>
-<!--
-                                <input type="hidden" id="type" name="type" value="<?php echo $type ?>">
-                                <input type="hidden" id="cid" name="cid" value="<?php echo $cid ?>">
--->
                                 <div class="form-group row">
                                   <div class="col-sm-6 mb-3 mb-sm-0">
                                     <label for="cname">Счетчик:</label>
@@ -185,7 +182,7 @@
                                 <div class="form-group row">
                                   <div class="col-sm-6 mb-3 mb-sm-0">
                                     <label for="dCurrent"><?php 
-                                      if ( $type == "el" ) { echo "Показания: день";} 
+                                      if ( $cType == "el" ) { echo "Показания: день";} 
                                       else { echo "Текущие показания:"; } ?>
                                     </label>
                                     <input type="number" step="0.01" class="form-control form-control-user" id="dCurrent"
@@ -200,7 +197,7 @@
                                   </div>
                                 </div>
 
-                                <?php if ( $type == "el" AND  $latest['nightLast'] != 0 ) { ?>
+                                <?php if ( $cType == "el" AND  $latest['nightLast'] != 0 ) { ?>
                                 <div class="form-group row">
                                   <div class="col-sm-6 mb-3 mb-sm-0">
                                     <label for="nCurrent">Показания: ночь</label>

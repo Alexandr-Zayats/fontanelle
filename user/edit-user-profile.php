@@ -1,19 +1,19 @@
 <?php
   namespace Phppot;
-  include_once __DIR__ . '/../includes/config.php';
+  session_start();
   include_once __DIR__ . '/includes/config.php';
+  include_once __DIR__ . '/../includes/config.php';
 
   if(isset($_POST['update'])) {
     //$updatetTime = date( 'd-m-Y h:i:s A', time () );
     //echo "<script>alert('$uid $name $email $phone $size $info');</script>";
-    $query=mysqli_query($con,"call sp_userupdateprofile('$uid','$street','$resident','$size','$info')"); 
+    $userModel->call('sp_userupdateprofile', "$uid,'$street','$resident','$size','$info'");
     echo "<script>alert('Профайл участка успешно обновлен');</script>";
-    header("Location: " . $_SESSION['sourcePage'])
+    header("Location: " . $_SESSION['sourcePage']);
   }
 ?>
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
 
     <meta charset="utf-8">
@@ -59,14 +59,10 @@
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
 <?php 
-$uid=$_GET['uid'];
-$query=mysqli_query($con,"call sp_userprofile($uid)");
-
-//mysqli_close($con);
-//$con = mysqli_connect(DB_SERVER,DB_USER,DB_PASS,DB_NAME);
-//$counters=mysqli_query($con,"call sp_counterList($uid)");
-
-while ($result=mysqli_fetch_array($query)) {
+$query = $userModel->call('sp_userprofile', $uid);
+//print_r($query);
+//exit;
+foreach ($query as $result) {
 
 ?>
                     <!-- Page Heading -->
@@ -90,9 +86,8 @@ while ($result=mysqli_fetch_array($query)) {
                                     <td style="text-align:left">
                                       <select id="street" name="street" class="btn btn-primary btn-user btn-block">
                                       <?php
-                                        $con->next_result();
-                                        $sql=mysqli_query($con,"call sp_streetList()");
-                                        while ($street=mysqli_fetch_array($sql)) {
+                                        $sql = $userModel->call('sp_streetList');
+                                        foreach ($sql as $street) {
                                           if ( $street['id'] == $result['streetId'] ) {
                                             echo "<option value=".$street['id']." selected>".$street['name']."</option>";
                                           } else {
@@ -117,10 +112,9 @@ while ($result=mysqli_fetch_array($query)) {
                                     <td style="text-align:left">
                                       <select id="resident" name="resident" class="btn btn-primary btn-user btn-block">
                                       <?php
-                                        $con->next_result();
-                                        $owner=$result['residentId'];
-                                        $sql=mysqli_query($con,"call residents(0)");
-                                        while ($resident=mysqli_fetch_array($sql)) {
+                                        $owner = $result['residentId'];
+                                        $sql =  $userModel->call('residents', 0);
+                                        foreach ($sql as $resident) {
                                           $resId=$resident['id'];
                                           if ($resident['id'] == $owner) {
                                             echo "<option value=".$resident['id']." selected>".$resident['resName']." ( ".$resident['phone1']." )</option>";
@@ -147,8 +141,8 @@ while ($result=mysqli_fetch_array($query)) {
                                     <th>Статус</th>
                                     <td>
                                       <input type="text" class="form-control form-control-user" id="fname" value="
-                                        <?php  $accountstatus=$result['isMember'];
-                                          if($accountstatus==1): echo "Член кооператива"; else: echo "Потребитель"; endif;
+                                        <?php  $accountstatus = $result['isMember'];
+                                          if($accountstatus == 1): echo "Член кооператива"; else: echo "Потребитель"; endif;
                                         ?>" name="fname" required="true">
                                     </td>
                                   </tr>
@@ -160,7 +154,6 @@ while ($result=mysqli_fetch_array($query)) {
                                 </div>
                             </div>
 <?php } ?>
-
                         </div>
                     </div>
                 </div>
@@ -197,4 +190,3 @@ while ($result=mysqli_fetch_array($query)) {
     <script src="../js/sb-admin-2.min.js"></script>
 </body>
 </html>
-<?php } ?>

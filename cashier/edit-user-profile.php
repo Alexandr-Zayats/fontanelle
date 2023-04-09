@@ -1,7 +1,8 @@
 <?php
   namespace Phppot;
-  include_once __DIR__ . '/../includes/config.php';
+  session_start();
   include_once __DIR__ . '/includes/config.php';
+  include_once __DIR__ . '/../includes/config.php';
 
   //$updatetTime = date( 'd-m-Y h:i:s A', time () );
   //echo "<script>alert('$uid $name $email $phone $size');</script>";
@@ -64,8 +65,6 @@
 
 $query=mysqli_query($con,"call sp_userprofile($uid)");
 
-mysqli_close($con);
-$con = mysqli_connect(DB_SERVER,DB_USER,DB_PASS,DB_NAME);
 $counters=mysqli_query($con,"call sp_counterList($uid)");
 
 while ($result=mysqli_fetch_array($query)) {

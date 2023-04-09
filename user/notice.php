@@ -1,15 +1,20 @@
 <?php
   namespace Phppot;
-  include_once __DIR__ . '/../includes/config.php';
+  session_start();
+  $_SESSION['redirect'] = true;
   include_once __DIR__ . '/includes/config.php';
+  include_once __DIR__ . '/../includes/config.php';
 
 $target_folder = 'uploads/' . $userData['id'];
 $target_file = $target_folder . '/notice.pdf';
 
 if(isset($_POST['close'])) {
-  echo "<script>window.location.href='../cashier/debtors.php'</script>";
+  // echo "<script>window.location.href='../cashier/debtors.php'</script>";
+  header('location:' . destPage());
+  
 } elseif(isset($_POST['print'])) {
-  echo "<script>window.location.href='registered-users.php'</script>";
+  // echo "<script>window.location.href='registered-users.php'</script>";
+  header("Location:registered-users.php");
 } else {
 
   $phone="";
@@ -28,7 +33,7 @@ if(isset($_POST['close'])) {
   require_once __DIR__ . '/../vendor/autoload.php';
   require_once __DIR__ . '/../lib/customPdfGenerator.php';
 
-  $pdf = new CustomPdfGenerator(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+  $pdf = new \CustomPdfGenerator(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
   $pdf->SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
   $pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP, PDF_MARGIN_RIGHT);
   $pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);

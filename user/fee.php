@@ -1,13 +1,13 @@
 <?php
   namespace Phppot;
-  include_once __DIR__ . '/../includes/config.php';
+  session_start();
   include_once __DIR__ . '/includes/config.php';
+  include_once __DIR__ . '/../includes/config.php';
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -64,8 +64,21 @@
                   <div class="card-body">
                     <div class="row no-gutters align-items-center">
                       <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                          <?php echo "Участок № ".$user['uId'] ?>
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1"
+                          style="display:flex; flex-direction: row; justify-content: center; align-items: center"
+                        >
+                        <?php if(in_array($_SESSION['loginType'], $allowedUser)) {?>
+                          <form action="fee.php" method="post">
+                            <label for="uid">Участок № </label>
+                            <input type="text" name="uid" id="uid" value="<?php echo $uid?>"
+                              maxlength="3" size="3" pattern="[0-9]+"
+                            >
+                            <input type="submit"value="Перейти" class="btn btn-primary btn-user">
+                          </form>
+                        <?php
+                        } else {
+                          echo "Участок № ".$user['uId'];
+                        } ?>
                         </div>
                         <div class="h5 mb-0 font-weight-bold text-gray-800">
                           <?php echo $user['uName'] ?>
@@ -107,23 +120,20 @@
                       <tr>
                         <td>
                           <form action="user-payment.php" method="post">
-                            <input type="hidden" id="uid" name="uid" value="<?php echo $uid ?>">
-                            <input type="hidden" id="type" name="type" value="fee">
+                            <input type="hidden" id="cType" name="cType" value="fee">
                             <input type="hidden" id="toPay" name="toPay" value="<?php echo $toPay ?>">
                             <input type="submit" value="Членские" class="btn btn-primary btn-user btn-block"/>
                           </form>
                         </td>
                         <td>
                           <form action="user-payment.php" method="post">
-                            <input type="hidden" id="uid" name="uid" value="<?php echo $uid ?>">
-                            <input type="hidden" id="type" name="type" value="inc">
+                            <input type="hidden" id="cType" name="cType" value="inc">
                             <input type="submit" value="Вступительные" class="btn btn-primary btn-user btn-block"/>
                           </form>
                         </td>
                         <td>
                           <form action="user-payment.php" method="post">
-                            <input type="hidden" id="uid" name="uid" value="<?php echo $uid ?>">
-                            <input type="hidden" id="type" name="type" value="other">
+                            <input type="hidden" id="cType" name="cType" value="other">
                             <input type="submit" value="Прочие" class="btn btn-primary btn-user btn-block" />
                           </form>
                         </td>

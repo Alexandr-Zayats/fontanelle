@@ -1,29 +1,29 @@
 <?php
   namespace Phppot;
-  include_once __DIR__ . '/../includes/config.php';
+  session_start();
+  $_SESSION['subpage'] = true;
   include_once __DIR__ . '/includes/config.php';
+  include_once __DIR__ . '/../includes/config.php';
 
-  //code for createuser
   $phone_regex = array("-", "(", ")", "+38", "+", "_", " ");
 
   if(isset($_POST['createuser'])) {
-    $id=intval($id);
-
-    $middlName = $_POST['middlName'] ?: '';
-    $email = $_POST['email'] ?: '';
-    $userName = $_POST['userName'] ?: '';
-    $password = $_POST['password'] ?: '';
-    $phone1 = str_replace($phone_regex, '', $_POST['phone1']);
-    $phone2 = str_replace($phone_regex, '', $_POST['phone2']);
+    $middlName = $middlName ?: '';
+    $email = $email ?: '';
+    $userName = $userName ?: '';
+    $password = $password ?: '';
+    $phone1 = str_replace($phone_regex, '', $phone1);
+    $phone2 = str_replace($phone_regex, '', $phone2);
     if($phone2 == "") $phone2=0;
     $isMember = 1;
-    $autoInfo = $_POST['autoInfo'] ?: '';
-    $autoNum = $_POST['autoNum'] ?: '';
-    //echo "<script>alert('$id, $surName, $name, $middlName, $userName, $password, $email, $phone1, $phone2, $isMember, $autoInfo, $autoNum');</script>";
+    $autoInfo = $autoInfo ?: '';
+    $autoNum = $autoNum ?: '';
+    //print("$id, '$surName', '$name', '$middlName', '$userName', '$password', '$email', $phone1, $phone2, $isMember, '$autoInfo', '$autoNum'");
+    //exit;
 
     $userModel->call('updateResidentProfile', "$id, '$surName', '$name', '$middlName', '$userName', '$password', '$email', $phone1, $phone2, $isMember, '$autoInfo', '$autoNum'");
 
-      header("Location: " . $_SESSION['sourcePage']);
+    header('location:' . destPage());
       /*
       if ($query) {
         echo "<script>alert('Новый дачник успешно зарегистрирован');</script>";

@@ -1,21 +1,9 @@
 <?php
-
   namespace Phppot;
   session_start();
-  //error_reporting(0);
- 
+  unset($_SESSION['subpage']);
+  include_once __DIR__ . '/includes/config.php'; 
   include_once __DIR__ . '/../includes/config.php'; 
-  // require_once __DIR__ . '/../lib/UserModel.php';
-  // $userModel = new UserModel();
-
-  if (strlen($_SESSION['adid'] == 0 || $_SESSION['type'] != "cashier") ) {
-  //if (false) {
-    header('location:../cashier/logout.php');
-/*  } else {
-    $query = $userModel->call('userInfo', $uid . ", 'el'");
-    $user = $query[0];
-*/
-  }
 ?>
 
 <!DOCTYPE html>

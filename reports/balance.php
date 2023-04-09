@@ -1,29 +1,17 @@
 <?php
-
   namespace Phppot;
   session_start();
-  //error_reporting(0);
-
+  $_SESSION['subpage'] = true;
+  include_once __DIR__ . '/includes/config.php';
   include_once __DIR__ . '/../includes/config.php';
-  require_once __DIR__ . '/../lib/UserModel.php';
-  $userModel = new UserModel();
 
-  $uid=0;
-
-  if (strlen($_SESSION['adid'] == 0) || $_SESSION['type'] != "cashier") {
-    header('location:logout.php');
-  } else {
-    if(isset($_POST['payment'])) {
-      header("Location: " . $_SESSION['sourcePage']);
-    }
-    if(isset($_POST['report'])) {
-      $start=$_POST['start'];
-      $stop=$_POST['stop'];
-    } else {
-      $start=date('Y-m-01');
-      $stop=date("Y-m-d");
-    }
-
+  if(isset($_POST['payment'])) {
+    header('location:' . destPage());
+  }
+  if(!isset($_POST['report'])) {
+    $start=date('Y-m-01');
+    $stop=date("Y-m-d");
+  }
 
 ?>
 <!DOCTYPE html>
@@ -150,8 +138,10 @@
                     </tbody>
                     <tfoot>
                       <td style="text-align:right"><b>Итого (грн):</b></td>
-                      <td style="text-align:right"><b><?php $income=($result['pEl'] + $result['pFee'] + $result['pIncome'] + $result['pOther'] +  $result['pWater']); printf("%.2f", $income) ?></b></td>
-                      <td style="text-align:right"><b><?php $outcome=($result['toSpend']+$result['tpOther']+$result['sWater']); printf("%.2f", $outcome) ?></b></td>
+                      <td style="text-align:right"><b>
+                        <?php $income=($result['pEl'] + $result['pFee'] + $result['pIncome'] + $result['pOther'] +  $result['pWater']); printf("%.2f", $income) ?></b></td>
+                      <td style="text-align:right"><b>
+                        <?php $outcome=($result['toSpend']+$result['tpOther']+$result['sWater']); printf("%.2f", $outcome) ?></b></td>
                       <td style="text-align:right"><b><?php printf("%.2f", $income-$outcome) ?></b></td>
                       </tr>
                     </tfoot>
@@ -180,4 +170,3 @@
 </body>
 
 </html>
-<?php } ?>

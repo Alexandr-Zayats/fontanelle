@@ -1,7 +1,8 @@
 <?php
   namespace Phppot;
-  include_once __DIR__ . '/../includes/config.php';
+  session_start();
   include_once __DIR__ . '/includes/config.php';
+  include_once __DIR__ . '/../includes/config.php';
 
   if(isset($_POST['change'])) {
     $cpwd=md5($_POST['currentpwd']);
@@ -20,8 +21,9 @@
       $ret->close();
       $con->next_result();
       $query=mysqli_query($con,"call sp_cashierchangepwd('$npwd','$uid','$name','$email','$phone')"); 
-      echo "<script>alert('Your password chnaged successfully');</script>";  
-      echo "<script>window.location.href='change-password.php'</script>";
+      echo "<script>alert('Your password changed successfully');</script>";  
+      //echo "<script>window.location.href='change-password.php'</script>";
+      header("Location: " . $_SESSION['sourcePage']);
     }
   }
 ?>
@@ -29,7 +31,6 @@
 <html lang="en">
 
 <head>
-
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -95,8 +96,7 @@
                               </div>
                               <div class="card-body">
 <?php
-  $cuid=$_SESSION['adid'];
-  $query=mysqli_query($con,"call sp_cashierprofile($cuid)");
+  $query=mysqli_query($con,"call sp_cashierprofile($id)");
   while ($result=mysqli_fetch_array($query)) {
 ?>
                                 <form method="post" name="changepwd" onsubmit="return checkpass();">

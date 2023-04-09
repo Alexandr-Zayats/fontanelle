@@ -1,7 +1,16 @@
 <?php
   namespace Phppot;
-  include_once __DIR__ . '/../includes/config.php';
+  session_start();
   include_once __DIR__ . '/includes/config.php';
+  include_once __DIR__ . '/../includes/config.php';
+  unset($cid);
+  if(isset($_GET['cid'])) {
+    $cid = $_GET['cid'];
+  }
+  $_SESSION['cType'] = 'wat';
+
+  $query = $userModel->call('userInfo', $uid . ", 'wat'");
+  $user = $query[0];
 ?>
 
 <!DOCTYPE html>
@@ -31,11 +40,6 @@
 
 </head>
 
-<?php
-  $query = $userModel->call('userInfo', "$uid, 'wat'");
-  foreach ($query as $user) {
-?>
-
 <body id="page-top">
     <!-- Page Wrapper -->
     <div id="wrapper">
@@ -63,8 +67,21 @@
                   <div class="card-body">
                     <div class="row no-gutters align-items-center">
                       <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                          <?php echo "Участок № ".$user['uId'] ?>
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1"
+                          style="display:flex; flex-direction: row; justify-content: center; align-items: center"
+                        >
+                        <?php if(in_array($_SESSION['loginType'], $allowedUser)) {?>
+                          <form action="water.php" method="post">
+                            <label for="uid">Участок № </label>
+                            <input type="text" name="uid" id="uid" value="<?php echo $uid?>"
+                              maxlength="3" size="3" pattern="[0-9]+"
+                            >
+                            <input type="submit"value="Перейти" class="btn btn-primary btn-user">
+                          </form>
+                        <?php
+                        } else {
+                          echo "Участок № ".$user['uId'];
+                        } ?>
                         </div>
                         <div class="h5 mb-0 font-weight-bold text-gray-800">
                           <a href="edit-user-profile.php?uid=<?php echo $uid;?>">
@@ -106,7 +123,7 @@
                   <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                     <table width="100%">
                       <tr>
-                        <td><h6 class="m-0 font-weight-bold text-primary">Оплата воды. </h6></td>
+                        <td><h6 class="m-0 font-weight-bold text-primary">Оплата воды.</h6></td>
                         <td style="text-align:right">
                           <a href="add-counter.php?uid=<?php echo $uid;?>&type=wat" class="btn btn-primary btn-user btn-block">Cчетчики (добавить):</a>
                         </td>
@@ -115,15 +132,15 @@
                           <!-- <div class="form-group row"> -->
                             <!-- <div class="col-sm-6 mb-3 mb-sm-0"> -->
                               <!-- <label for="counter">Счетчики: </label> -->
-                              <select id="counter" name="counter" onchange="window.location = this.options[this.selectedIndex].value" class="btn btn-primary btn-user btn-block">
+                              <select id="cid" name="cid" onchange="window.location = this.options[this.selectedIndex].value" class="btn btn-primary btn-user btn-block">
                                 <?php foreach ( explode(";", $user['cId']) as &$cId ) {
                                   $sql = $userModel->call('counterInfo', $cId);
                                   foreach ($sql as $counter) {
-                                    if ($cid==0) { $cid=$counter['id']; }
+                                    if (!isset($cid)) { $cid=$counter['id']; }
                                     if ($counter['id'] == $cid) {
-                                      echo "<option value=water.php?cid=".$cId."&uid=".$uid." selected>".$counter['name']."</option>";
+                                      echo "<option value=".$cId." selected>".$counter['name']."</option>";
                                     } else {
-                                      echo "<option value=water.php?cid=".$cId."&uid=".$uid.">".$counter['name']."</option>";
+                                      echo "<option value=".$cId.">".$counter['name']."</option>";
                                     }
                                   }
                                 }?>
@@ -133,16 +150,15 @@
                         </td>
                         <td style="text-align:right">
                           <form action="user-counter.php" method="post">
-                            <input type="hidden" id="uid" name="uid" value="<?php echo $uid ?>">
                             <input type="hidden" id="cid" name="cid" value="<?php echo $cid ?>">
-                            <input type="hidden" id="type" name="type" value="wat">
+                            <input type="hidden" id="cType" name="cType" value="wat">
                             <input type="submit" value="Внести показания" class="btn btn-primary btn-user btn-block"/>
                           </form>
                         </td>
                         <td style="text-align:right">
                           <form action="user-payment.php" method="post">
-                            <input type="hidden" id="uid" name="uid" value="<?php echo $uid ?>">
-                            <input type="hidden" id="type" name="type" value="wat">
+                            <input type="hidden" id="cid" name="cid" value="<?php echo $cid ?>">
+                            <input type="hidden" id="cType" name="cType" value="wat">
                             <input type="hidden" id="toPay" name="toPay" value="<?php echo $toPay ?>">
                             <input type="submit" value="Оплата" class="btn btn-primary btn-user btn-block"/>
                           </form>
@@ -203,4 +219,3 @@
     </div> <!-- wraper -->
 </body>
 </html>
-<?php } ?>

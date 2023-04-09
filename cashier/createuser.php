@@ -1,7 +1,9 @@
 <?php
   namespace Phppot;
-  include_once __DIR__ . '/../includes/config.php';
+  session_start();
+  $_SESSION['subpage'] = true;
   include_once __DIR__ . '/includes/config.php';
+  include_once __DIR__ . '/../includes/config.php';
 
   //code for createuser
   if(isset($_POST['createuser'])) {
@@ -19,13 +21,11 @@
     } else {
     // echo "<script>alert('$id, $street, $size, $resident, $counterNum, $counterName, $counterInfo, $dCurrent, $nCurrent');</script>";
 
-    $query = $userModel->call('sp_registration', "$id, $street, $size, $resident, $counterNum, '$counterName', '$counterInfo', $dCurrent, $nCurrent");
+      $query = $userModel->call('sp_registration', "$id, $street, $size, $resident, $counterNum, '$counterName', '$counterInfo', $dCurrent, $nCurrent");
 
-    header("Location: " . $_SESSION['sourcePage']);
+      header('location:' . destPage());
+    }
   }
-}
-
-
 ?>
 <!DOCTYPE html>
 <html lang="en">

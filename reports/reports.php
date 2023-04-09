@@ -1,22 +1,13 @@
 <?php
   namespace Phppot;
   session_start();
-  //error_reporting(0);
-
+  include_once __DIR__ . '/includes/config.php';
   include_once __DIR__ . '/../includes/config.php';
-  require_once __DIR__ . '/../lib/UserModel.php';
-  $userModel = new UserModel();
 
-  if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
-    header('location:logout.php');
-  } else {
-    if(isset($_POST['report'])) {
-      $start=$_POST['start'];
-      $stop=$_POST['stop'];
-    } else {
-      $start=date('Y-m-01');
-      $stop=date("Y-m-d");
-    }
+  if(!isset($_POST['report'])) {
+    $start=date('Y-m-01');
+    $stop=date("Y-m-d");
+  }
   //echo "<script>alert('$start  $stop');</script>";
 ?>
 <!DOCTYPE html>
@@ -225,4 +216,3 @@
 
 </body>
 </html>
-<?php } ?>

@@ -1,7 +1,14 @@
 <?php
   namespace Phppot;
-  include_once __DIR__ . '/../includes/config.php';
+  session_start();
+  unset($_SESSION['subpage']);
   include_once __DIR__ . '/includes/config.php';
+  include_once __DIR__ . '/../includes/config.php';
+  unset($cid);
+  if(isset($_GET['cid'])) {
+    $cid = $_GET['cid'];
+  }
+  $_SESSION['cType'] = 'el';
 
   $query = $userModel->call('userInfo', $uid . ", 'el'");
   $user = $query[0];
@@ -60,13 +67,25 @@
                   <div class="card-body">
                     <div class="row no-gutters align-items-center">
                       <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                          <?php echo "Участок № ".$user['uId'] ?>
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1"
+                          style="display:flex; flex-direction:row; justify-content:center; align-items:center; font-size:14"
+                        >
+                        <?php if(in_array($_SESSION['loginType'], $allowedUser)) {?>
+                          <form action="index.php" method="post">
+                            <label for="uid">Участок № </label>
+                            <input type="text" name="uid" id="uid" value="<?php echo $uid?>"
+                              maxlength="3" size="3" pattern="[0-9]+"
+                            >
+                            <input type="submit"value="Перейти" class="btn btn-primary btn-user">
+                          </form>
+                        <?php
+                        } else {
+                          echo "Участок № ".$user['uId'];
+                        } ?>
                         </div>
                         <div class="h5 mb-0 font-weight-bold text-gray-800">
-                          <a href="edit-user-profile.php?uid=<?php echo $uid;?>">
-                            <?php echo $user['uName'] ?>
-                          </a>
+                          <a href="edit-user-profile.php"><?php echo $user['uName']?></a>
+                          <!--<?php formSubmit('uid', $uid, $user['uName'], 'edit-user-profile.php')?>-->
                         </div>
                       </div>
                       <div class="col-auto">
@@ -95,6 +114,8 @@
                   </div>
                 </div>
               </div>
+              <?php if (!in_array($_SESSION['loginType'], $allowedUser)) {?>
+              <?php }?>
             </div>  <!-- row -->
 
             <div class="row">
@@ -104,30 +125,31 @@
                     <table width="100%">
                       <tr>
                         <td><h6 class="m-0 font-weight-bold text-primary">Абонентская книжка. </h6></td>
-			<td style="text-align:right">
-			<?php if ($cashier == 1) { ?>
-			  <a href="add-counter.php?uid=<?php echo $uid;?>&type=el" class="btn btn-primary btn-user btn-block">Cчетчики (добавить):</a>
-			<?php } else { ?>
-			  <a class="btn btn-primary btn-user btn-block">Cчетчики:</a>
-			<?php }?>
+			                  <td style="text-align:right">
+			                  <?php if ($_SESSION['loginType'] == 'admin') { ?>
+			                    <a href="add-counter.php?cType=el" 
+                            class="btn btn-primary btn-user btn-block">Cчетчики (добавить):</a>
+			                  <?php } else { ?>
+			                    <a class="btn btn-primary btn-user btn-block">Cчетчики:</a>
+			                  <?php }?>
                         </td>
                         <td style="text-align:left">
                           <!--<h6 class="m-0 font-weight-bold text-primary"> -->
                           <!-- <div class="form-group row"> -->
                             <!-- <div class="col-sm-6 mb-3 mb-sm-0"> -->
                               <!-- <label for="counter">Счетчики: </label> -->
-                              <select id="counter" name="counter" 
+                              <select id="cid" name="cid" 
                                 onchange="window.location = this.options[this.selectedIndex].value" 
                                 class="btn btn-primary btn-user btn-block"
                               >
-                                <?php foreach ( explode(";", $user['cId']) as &$cId ) {
-                                  $sql = $userModel->call('counterInfo', "$cId");
+                                <?php foreach ( explode(";", $user['cId']) as &$c ) {
+                                  $sql = $userModel->call('counterInfo', "$c");
                                   foreach ($sql as $counter) {
                                     if (!isset($cid)) { $cid=$counter['id']; }
                                     if ($counter['id'] == $cid) {
-                                      echo "<option value=index.php?cid=".$cId."&uid=".$uid." selected>".$counter['name']."</option>";
+                                      echo "<option value=index.php?cid=".$counter['id']." selected>".$counter['name']."</option>";
                                     } else {
-                                      echo "<option value=index.php?cid=".$cId."&uid=".$uid.">".$counter['name']."</option>";
+                                      echo "<option value=index.php?cid=".$counter['id'].">".$counter['name']."</option>";
                                     }
                                   }
                                 }?>
@@ -137,25 +159,22 @@
                         </td>
                         <td style="text-align:right">
                           <form action="user-counter.php" method="post">
-                            <input type="hidden" id="uid" name="uid" value="<?php echo $uid ?>">
                             <input type="hidden" id="cid" name="cid" value="<?php echo $cid ?>">
-                            <input type="hidden" id="type" name="type" value="el">
                             <input type="submit" value="Внести показания" class="btn btn-primary btn-user btn-block"/>
                           </form>
                         </td>
                         <td style="text-align:right">
                           <form action="user-payment.php" method="post">
-                            <input type="hidden" id="uid" name="uid" value="<?php echo $uid ?>">
-                            <input type="hidden" id="type" name="type" value="el">
+                            <input type="hidden" id="cid" name="cid" value="<?php echo $cid ?>">
+                            <input type="hidden" id="cType" name="cType" value="el">
                             <input type="hidden" id="toPay" name="toPay" value="<?php echo $toPay ?>">
                             <input type="submit" value="Оплата" class="btn btn-primary btn-user btn-block"/>
                           </form>
                         </td>
                         <td style="text-align:right">
                           <form action="counter-check.php"  method="post">
-                            <input type="hidden" id="uid" name="uid" value="<?php echo $uid ?>">
                             <input type="hidden" id="cid" name="cid" value="<?php echo $cid ?>">
-                            <input type="hidden" id="type" name="type" value="el">
+                            <input type="hidden" id="cType" name="cType" value="el">
                             <input type="submit" value="Поверка" class="btn btn-primary btn-user btn-block"/>
                           </form>
                         </td>
