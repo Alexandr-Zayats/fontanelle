@@ -72,8 +72,9 @@
                                     <tr>
                                       <th style="width: 3%; text-align:center" rowspan="2">#</th>
                                       <th style="width: 3%; text-align:center" rowspan="2">№</th>
-                                      <th style="width: 14%; text-align:center" rowspan="2">Улица</th>
-                                      <th style="width: 30%; text-align:center" rowspan="2">Владелец</th>
+                                      <th style="width: 9%; text-align:center" rowspan="2">Улица</th>
+                                      <th style="width: 27%; text-align:center" rowspan="2">Владелец</th>
+                                      <th style="width: 8%; text-align:center" rowspan="2">Статус</th>
                                       <th style="width: 24%; text-align:center" colspan="3">Задолженность</th>
                                       <th style="width: 26%; text-align:center" colspan="2">Проверка счетчика</th>
                                     </tr>
@@ -90,6 +91,7 @@
                                       <th style="text-align:center">№</th>
                                       <th style="text-align:center">Улица</th>
                                       <th style="text-align:center">Владелец</th>
+                                      <th style="text-align:center">Статус</th>
                                       <th style="text-align:center">Елект</th>
                                       <th style="text-align:center">Вода</th>
                                       <th style="text-align:center">Членские</th>
@@ -135,11 +137,15 @@
                                           </a>
                                         </form>
 				                              </td>
-                                      <!--
 				                              <td style="text-align:right">
-                                        <?php //echo $result['info'];?>
+                                        <?php
+                                        if($result['type'] == 1) {
+                                          echo "Проживают";
+                                        } elseif($result['type'] == 2) {
+                                          echo "Дачники";
+                                        }
+                                        ?>
                                       </td>
-                                      -->
                                       <td style="text-align:right" class="user">
                                         <?php printf("%s", $result['el']);?>
                                       </td>

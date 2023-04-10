@@ -4,56 +4,11 @@
   $_SESSION['subpage'] = true;
   include_once __DIR__ . '/includes/config.php';
   include_once __DIR__ . '/../includes/config.php';
-  require_once __DIR__ . '/../lib/ImageModel.php';
+  include_once __DIR__ . '/../lib/ImageModel.php';
   $imageModel = new ImageModel();
 
   $query = $userModel->call('sp_getLastCounterValues', $cid);
   $latest = $query[0];
-
-  // FILES upload
-  if(isset($_POST['upload'])) {
-    function reArrayFiles( $arr ) {
-      foreach( $arr as $key => $all ){
-        foreach( $all as $i => $val ){
-          $new[$i][$key] = $val;    
-        }    
-      }
-      return $new;
-    }
-    
-    $target_dir = "uploads/" . $uid . "/";
-    if (!file_exists($target_dir)) {
-      mkdir($target_dir, 0777, true);
-    }
-
-    if ($_FILES['fileToUpload']) {
-      $file_ary = reArrayFiles($_FILES['fileToUpload']);
-      foreach ($file_ary as $file) {
-        $target_file = $target_dir . date('Ymd') . '-' . basename($file['name']);
-        $imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
-        if (in_array($imageFileType, array('jpg', 'png', 'jpeg', 'gif'))) {
-          $source = $file['tmp_name'];
-          $response = $imageModel->compressImage($source, $target_file, 50);
-          if (!empty($response)) {
-            $id = $imageModel->insertImage($file["name"], $target_file, $uid);
-            if (!empty($response)) {
-              $response["type"] = "success";
-              $response["message"] = "Upload Successfully";
-              $result = $imageModel->getImageById($id);
-            }
-          } else {
-            $response["type"] = "error";
-            $response["message"] = "Unable to Upload:$response";
-            echo "<script>alert('Произошла ошибка при сохранении файла.');</script>";
-          }
-        } else {
-          echo "<script>alert('Допустимы только JPG, JPEG, PNG, GIF файлы.');</script>";
-        }
-      }
-    }
-    header('location:' . $_SERVER['DOCUMENT_URI']);
-  }
-  // ------- END of FILES upload
 
   if(isset($_POST['apply'])) {
     $dayLast = $latest['dayLast'];
@@ -215,16 +170,6 @@
                                 <?php } else {?>
                                     <input type="hidden" id="nCurrent" name="nCurrent" value=0>
                                 <?php } ?>
-                                <!--
-                                <div class="form-group row">
-                                  <div class="col-sm-6 mb-3 mb-sm-0">
-                                    <label>Фото счетчика</label>
-                                    <input type="file" name="fileToUpload[]"
-                                      multiple="multiple"
-                                      accept=".jpg, .jpeg, .png, .gif">
-                                  </div>
-                                </div>
-                                -->
                                 <button type="submit" name="apply" class="btn btn-primary btn-user btn-block">
                                   Проверен
                                 </button>
@@ -236,7 +181,7 @@
 				                            <th></th>
 			                            </tr>
                                   <?php
-                                  $result = $imageModel->getAllImages($uid);
+                                  $result = $imageModel->getAllImages($uid, 'counter');
                                   if (! empty($result)) {
                                     foreach ($result as $row) {
                                   ?>
@@ -244,17 +189,18 @@
                                     <td>
                                       <a href="" 
                                         onClick="myWindow('<?php echo $row["image"]?>', '<?php echo $row["image"]?>', 600, 600); return false;"
-                                      > <img src="<?php echo $row['image']?>" width="100" border="0"/> </a>
+                                      > <img src="../<?php echo $row['image']?>" width="100" border="0"/> </a>
                                     </td>
 				                            <td>
-                                     <?php formSubmit('imageId', $row['id'], 'Удалить', 'image_delete.php')?> 
+                                     <?php formSubmit('imageId', $row['id'], 'Удалить', $_SERVER['HTTP_ORIGIN'] .'/image_delete.php')?> 
                                     </td>
                                   </tr>
                                   <?php
                                     }
                                   }
                                   ?>
-                                <form class="user" name="image" method="post" enctype="multipart/form-data" id="image">
+                                <form class="user" name="image" id="image" method="post"
+                                  enctype="multipart/form-data" action="<?php echo $_SERVER['HTTP_ORIGIN'] .'/image_upload.php'?>">
                                   <tr>
                                     <td>
                                       <div class="col-sm-6 mb-3 mb-sm-0">
@@ -268,6 +214,7 @@
                                   </tr>
                                   </table>
 	                              </div>
+                                <?php $_SESSION['iType'] = 'counter'; ?>
                                 <button type="submit" name="upload" class="btn btn-primary btn-user btn-block">
                                   Добавить файлы
                                 </button>

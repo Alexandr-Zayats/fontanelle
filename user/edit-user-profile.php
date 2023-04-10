@@ -1,15 +1,16 @@
 <?php
   namespace Phppot;
   session_start();
+  $_SESSION['subpage'] = true;
   include_once __DIR__ . '/includes/config.php';
   include_once __DIR__ . '/../includes/config.php';
 
   if(isset($_POST['update'])) {
     //$updatetTime = date( 'd-m-Y h:i:s A', time () );
     //echo "<script>alert('$uid $name $email $phone $size $info');</script>";
-    $userModel->call('sp_userupdateprofile', "$uid,'$street','$resident','$size','$info'");
-    echo "<script>alert('Профайл участка успешно обновлен');</script>";
-    header("Location: " . $_SESSION['sourcePage']);
+    $userModel->call('sp_userupdateprofile', "$uid,'$street','$resident','$size','$info', $status");
+    //echo "<script>alert('Профайл участка успешно обновлен');</script>";
+    header('location:' . destPage());
   }
 ?>
 <!DOCTYPE html>
@@ -59,11 +60,8 @@
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
 <?php 
-$query = $userModel->call('sp_userprofile', $uid);
-//print_r($query);
-//exit;
-foreach ($query as $result) {
-
+  $query = $userModel->call('sp_userprofile', $uid);
+  foreach ($query as $result) {
 ?>
                     <!-- Page Heading -->
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
@@ -140,10 +138,10 @@ foreach ($query as $result) {
                                   <tr>
                                     <th>Статус</th>
                                     <td>
-                                      <input type="text" class="form-control form-control-user" id="fname" value="
-                                        <?php  $accountstatus = $result['isMember'];
-                                          if($accountstatus == 1): echo "Член кооператива"; else: echo "Потребитель"; endif;
-                                        ?>" name="fname" required="true">
+                                      <select id="status" name="status" class="btn btn-primary btn-user btn-block">
+                                        <option value=1 <?php if($result['type'] == 1) {echo "selected";}?>>Проживают постоянно</option>";
+                                        <option value=2 <?php if($result['type'] == 2) {echo "selected";}?>>Дачники</option>";
+                                      </select>
                                     </td>
                                   </tr>
                                 </table>

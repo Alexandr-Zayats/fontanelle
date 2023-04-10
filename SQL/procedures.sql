@@ -494,6 +494,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_allregisteredusers` ()  BEGIN
 SELECT u.id as id,
   concat(r.surName, " ", r.name, " ", r.middlName ) as Name,
   s.name as street,
+  u.isActive as type,
   u.info as info,
   u.BalanceEl as el,
   u.BalanceFee as fee,
@@ -513,6 +514,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `debtors` ()  BEGIN
 SELECT u.id as id,
   u.Size as Size,
   concat(r.surName, " ", r.name, " ", r.middlName ) as Name,
+  u.isActive as type,
   s.name as street,
   u.BalanceFee as fee,
   u.BalanceEl as el,
@@ -649,6 +651,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_userprofile` (`uid` INT(5))  BEG
     u.LastUpdationDate as LastUpdationDate,
     r.id as residentId,
     r.isMember as isMember,
+    u.isActive as type,
     concat(r.surName, " ", r.name, " ", r.middlName ) as Name,
     u.Info as Info
   FROM users u
@@ -663,9 +666,9 @@ END$$
 
 DROP PROCEDURE IF EXISTS sp_userupdateprofile;
 CREATE DEFINER=`root`@`localhost` 
-PROCEDURE `sp_userupdateprofile` (`uid` INT(5), `street` INT(3), `resident` INT(5), size DECIMAL(15,2), `info` VARCHAR(250))  
+PROCEDURE `sp_userupdateprofile` (`uid` INT(5), `street` INT(3), `resident` INT(5), size DECIMAL(15,2), `info` VARCHAR(250), `status` INT(1))
 BEGIN
-  UPDATE users SET StreetId=street, LastUpdationDate=current_timestamp(), residentId=resident, Size=size, Info=info 
+  UPDATE users SET StreetId=street, LastUpdationDate=current_timestamp(), residentId=resident, Size=size, Info=info, IsActive=status
   WHERE id=uid;
 END$$
 

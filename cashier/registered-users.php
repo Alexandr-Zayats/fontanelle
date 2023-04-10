@@ -4,8 +4,6 @@
   unset($_SESSION['subpage']);
   include_once __DIR__ . '/includes/config.php';
   include_once __DIR__ . '/../includes/config.php';
-
-  $query = $userModel->call('sp_allregisteredusers', '');
   unset($_SESSION['cid']);
 ?>
 
@@ -75,11 +73,12 @@
                                     <tr>
                                       <th style="width: 3%; text-align:center" rowspan="2">#</th>
                                       <th style="width: 3%; text-align:center" rowspan="2">№</th>
-                                      <th style="width: 9%; text-align:center" rowspan="2">Улица</th>
-                                      <th style="width: 22%; text-align:center" rowspan="2">Владелец</th>
-				                              <th style="width: 22%; text-align:center" rowspan="2">Примечание</th>
-                                      <th style="width: 23%; text-align:center" colspan="3">Баланс</th>
-                                      <th style="width: 13%; text-align:center" rowspan="2">Последний платеж</th>
+                                      <th style="width: 8%; text-align:center" rowspan="2">Улица</th>
+                                      <th style="width: 20%; text-align:center" rowspan="2">Владелец</th>
+                                      <th style="width: 8%; text-align:center" rowspan="2">Статус</th>
+				                              <th style="width: 20%; text-align:center" rowspan="2">Примечание</th>
+                                      <th style="width: 22%; text-align:center" colspan="3">Баланс</th>
+                                      <th style="width: 12%; text-align:center" rowspan="2">Последний платеж</th>
                                     </tr>
                                       <th style="text-align:center">Електр</th>
                                       <th style="text-align:center">Вода</th>
@@ -92,6 +91,7 @@
                                       <th style="text-align:center">№</th>
                                       <th style="text-align:center">Улица</th>
                                       <th style="text-align:center">Владелец</th>
+                                      <th style="text-align:center">Статус</th>
 				                              <th style="text-align:center">Примечание</th>
                                       <th style="text-align:center">Електр</th>
                                       <th style="text-align:center">Вода</th>
@@ -102,6 +102,7 @@
                                   <tbody>
 <?php
   $cnt=1;
+  $query = $userModel->call('sp_allregisteredusers', '');
   foreach ($query as $result) {
 ?>
                                     <?php
@@ -132,17 +133,23 @@
                                           </div>
                                         </form>
                                       </td>
-
                                       <td style="text-align:left">
                                           <?php echo $result['street'];?>
                                       </td>
-
 				                              <td style="text-align:left">
                                         <?php formSubmit('uid', $result['id'], $result['Name'], '../user/')?>
 				                              </td>
-
+                                      <td style="text-align:left">
+                                      <?php
+                                        if($result['type'] == 1) {
+                                          echo "Проживают";
+                                        } elseif($result['type'] == 2) {
+                                          echo "Дачники";
+                                        }
+                                      ?>
+                                      </td>
 				                              <td style="text-align:right">
-                                        <?php echo $result['info'];?>
+                                        <?php echo $result['info']?>
                                       </td>
                                       <td style="text-align:right">
                                         <?php printf("%.2f", $result['el']);?>
