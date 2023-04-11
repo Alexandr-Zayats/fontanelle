@@ -1,10 +1,11 @@
 <?php
-  
-  $date_of_end = date('Y-m-d');
-  $date_of_start = date("Y-m-d", strtotime("-60 month", strtotime(date('Y-m-d'))));
+  namespace Phppot;
+  session_start();
+  //$_SESSION['subpage'] = true;
+  //include_once __DIR__ . '/includes/config.php';
+  include_once __DIR__ . '/lib/ImageModel.php';
+  $imageModel = new ImageModel();
 
-  while (strtotime($date_of_start) <= strtotime($date_of_end)) {
-    echo "$date_of_start" . "\n";
-    $date_of_start = date ("Y-m-d", strtotime("+1 month", strtotime($date_of_start)));
-}
+  $result = $imageModel->getImageById(104);
+  print_r($result);
 ?>

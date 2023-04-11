@@ -3,7 +3,7 @@
   //setlocale(LC_ALL, 'uk_UA.utf8');
 
   session_start();
-  error_reporting(0);
+  //error_reporting(0);
   require_once __DIR__ . '/../lib/UserModel.php';
   $userModel = new UserModel();
 

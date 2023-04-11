@@ -188,7 +188,7 @@
                                   <tr>
                                     <td>
                                       <a href="" 
-                                        onClick="myWindow('<?php echo $row["image"]?>', '<?php echo $row["image"]?>', 600, 600); return false;"
+                                        onClick="myWindow('../<?php echo $row["image"]?>', '<?php echo $row["image"]?>', 600, 600); return false;"
                                       > <img src="../<?php echo $row['image']?>" width="100" border="0"/> </a>
                                     </td>
 				                            <td>
@@ -214,11 +214,11 @@
                                   </tr>
                                   </table>
 	                              </div>
-                                <?php $_SESSION['iType'] = 'counter'; ?>
+                                <?php $_SESSION['iType'] = 'counter'; unset($_SESSION['imageUploadedId']);?>
                                 <button type="submit" name="upload" class="btn btn-primary btn-user btn-block">
                                   Добавить файлы
                                 </button>
-                              </form>
+                                </form>
                             <hr>
                         </div>
                     </div>

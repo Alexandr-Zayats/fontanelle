@@ -314,7 +314,7 @@ GROUP BY u.id ORDER BY u.id;
 END$$
 
 DROP PROCEDURE IF EXISTS sp_addMoney;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_addMoney` (`cashier` INT(3),  `uid` SMALLINT(3), `sum` decimal(8,2), `dst` VARCHAR(15), `dat` DATE, `bank` BOOLEAN )
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_addMoney` (`cashier` INT(3),  `uid` SMALLINT(3), `sum` decimal(8,2), `dst` VARCHAR(15), `dat` DATE, `bank` BOOLEAN, `chck` SMALLINT(7), `verified` BOOLEAN)
 BEGIN
   DECLARE payDate DATE;
   DECLARE firstPAY DATE;
@@ -349,7 +349,7 @@ BEGIN
     update users set BalanceFee=(BalanceFee + sum) WHERE id=uid;
   END IF;
 
-  INSERT INTO payments (cashierId, userId, type, sum, dst, dstDate) VALUES (cashier, uid, bank, sum, dst, payDate);
+  INSERT INTO payments (cashierId, userId, type, sum, dst, dstDate, chck, verified) VALUES (cashier, uid, bank, sum, dst, payDate, chck, verified);
 END$$
 
 DROP PROCEDURE IF EXISTS sp_addCounterValues;
@@ -548,18 +548,19 @@ select * from users where id=uid;
 END$$
 
 DROP PROCEDURE IF EXISTS sp_recent30payments;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_recent30payments` ()  BEGIN
-SELECT 
-  p.sum, p.type,
-  u.id as id,
-  r.id as rId,
-  concat(r.surName, " ", r.name, " ", r.middlName ) as name,
-  p.date,
-  p.dst
-FROM payments p 
-LEFT JOIN users u ON p.userId=u.id
-LEFT JOIN residents r ON u.residentId=r.id
-ORDER BY p.date DESC LIMIT 50;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_recent30payments` ()
+BEGIN
+  SELECT 
+    p.id as pId, p.sum, p.type, p.chck, p.verified,
+    u.id as id,
+    r.id as rId,
+    concat(r.surName, " ", r.name, " ", r.middlName ) as name,
+    p.date,
+    p.dst
+  FROM payments p 
+    LEFT JOIN users u ON p.userId=u.id
+    LEFT JOIN residents r ON u.residentId=r.id
+  ORDER BY p.date DESC LIMIT 100;
 END$$
 
 DROP PROCEDURE IF EXISTS sp_addCounter;
@@ -670,6 +671,13 @@ PROCEDURE `sp_userupdateprofile` (`uid` INT(5), `street` INT(3), `resident` INT(
 BEGIN
   UPDATE users SET StreetId=street, LastUpdationDate=current_timestamp(), residentId=resident, Size=size, Info=info, IsActive=status
   WHERE id=uid;
+END$$
+
+DROP PROCEDURE IF EXISTS uprovePayment;
+CREATE DEFINER=`root`@`localhost`
+PROCEDURE `uprovePayment` (`rId` INT(11), `status` INT(1))
+BEGIN
+  UPDATE payments SET verified=status WHERE id=rId;
 END$$
 
 DROP PROCEDURE IF EXISTS updateResidentProfile;

@@ -4,9 +4,14 @@
   unset($_SESSION['subpage']);
   include_once __DIR__ . '/includes/config.php';
   include_once __DIR__ . '/../includes/config.php';
+  include_once __DIR__ . '/../lib/ImageModel.php';
+  $imageModel = new ImageModel();
  
   $query = $userModel->call('sp_totalPayment', '');
   $result = $query[0];
+  if(isset($vrf) and isset($pId)) {
+    $userModel->call('uprovePayment', "$pId, $vrf");
+  }
 ?>
 
 <!DOCTYPE html>
@@ -29,6 +34,7 @@
   <!-- Custom styles for this template-->
   <link href="../css/sb-admin-2.min.css" rel="stylesheet">
   <script src="../includes/scripts.js"> </script>
+  <script src="../includes/scripts-img.js"></script>
 </head>
 
 <body id="page-top">
@@ -169,12 +175,14 @@
                   <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                     <thead>
                       <tr>
-                        <td style="width: 3%; text-align:right">#</td>
+                        <td style="width: 2%; text-align:right">#</td>
                         <th style="width: 3%; text-align:center">Участок</th>
                         <th style="width: 30%; text-align:center">ФИО</th>
                         <th style="width: 15%; text-align:center">Назначение</th>
                         <th style="width: 10%; text-align:center">Сумма</th>
-                        <th style="width: 30%; text-align:center">Дата и время платежа</th>
+                        <th style="width: 20%; text-align:center">Время проводки</th>
+                        <th style="width: 3%; text-align:center">Проверен</th>
+                        <th style="width: 17%; text-align:center">Чек</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -210,6 +218,37 @@
 					                <td style="text-align:right"><?php echo $result['sum']; ?></td>
 					              <?php endif ?>
                         <td style="text-align:right"><?php echo $result['date']; ?></td>
+                        <td align='center'>
+                          <?php
+                            $approvers = array('admin');
+                            if($result['verified'] == 1) { echo "Да"; }
+                            else {
+                              if (in_array($_SESSION['loginType'], $approvers)) {?>
+                                <form class='user' id='<?php echo $result['pId']?>' action='' method='post'>
+                                  <input type='hidden' name='vrf' value='1'>
+                                  <input type='hidden' name='pId' value="<?php echo $result['pId']?>">
+                                  <a class='nav-link' style='cursor:pointer' onclick='submit(<?php echo $result['pId']?>)'>
+                                    <span>НЕТ</span>
+                                  </a>
+                                </form>
+                                <?php
+                              } else {
+                                echo "НЕТ";
+                              }
+                            }
+                          ?>
+                        </td>
+                        <td>
+                          <?php
+                            $result = $imageModel->getImageById($result['chck']);
+                            if (! empty($result)) {
+                              foreach ($result as $row) {
+                            ?>
+                              <a href=""
+                                onClick="myWindow('../<?php echo $row["image"]?>', '<?php echo $row["image"]?>', 600, 600); return false;"
+                              > <img src="../<?php echo $row['image']?>" width="100" border="0"/> </a>
+                            <?php }}?>
+                        </td>
                       </tr>
                     <?php $cnt++; }?>
                     </tbody>

@@ -88,7 +88,7 @@
                                 <div class="form-group row">
                                   <div class="col-sm-6 mb-3 mb-sm-0">
                                     <label for="size">Размер участка (сотки):</label>
-                                    <input type="number" min="0.50" max="100.00" step="0.01" class="form-control form-control-user"
+                                    <input type="number" min="0.0" max="100.00" step="0.01" class="form-control form-control-user"
                                       value="5.50" id="size" name="size" required="true">
                                   </div>
                                 </div>

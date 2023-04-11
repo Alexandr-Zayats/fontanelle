@@ -4,6 +4,8 @@
   $_SESSION['subpage'] = true;
   include_once __DIR__ . '/includes/config.php';
   include_once __DIR__ . '/../includes/config.php';
+  include_once __DIR__ . '/../lib/ImageModel.php';
+  $imageModel = new ImageModel();
 
   if(isset($_POST['update'])) {
     //$updatetTime = date( 'd-m-Y h:i:s A', time () );
@@ -33,6 +35,8 @@
 
     <!-- Custom styles for this template-->
     <link href="../css/sb-admin-2.min.css" rel="stylesheet">
+    <script src="../includes/scripts.js"> </script>
+    <script src="../includes/scripts-img.js"></script>
 
 </head>
 
@@ -99,7 +103,7 @@
                                   <tr>
                                     <th>Размер участка (соток)</th>
                                     <td>
-                                      <input type="number" min="0.30" max="100.00" step="0.01"
+                                      <input type="number" min="0.0" max="100.00" step="0.01"
                                         class="form-control form-control-user" id="size"
                                         value="<?php echo $result['Size'];?>" name="size" required="true"
                                       >
@@ -144,10 +148,44 @@
                                       </select>
                                     </td>
                                   </tr>
+                                  <tr>
+                                  <?php
+                                  $result = $imageModel->getAllImages($uid, 'doc');
+                                  $_SESSION['iType'] = 'doc';
+                                  if (! empty($result)) {
+                                    echo "<td colspan=2><table><tr>";
+                                    foreach ($result as $row) {?>
+                                      <td>
+                                      <a href=""
+                                        onClick="myWindow('../<?php echo $row["image"]?>', '<?php echo $row["image"]?>', 600, 600); return false;">
+                                        <img src="../<?php echo $row['image']?>" width="100" border="0"/>
+                                      </a>
+                                      <?php formSubmit('imageId', $row['id'], 'Удалить', $_SERVER['HTTP_ORIGIN'] .'/image_delete.php')?>
+                                      </td>
+                                  <?php
+                                    }
+                                    echo "</tr></table></td>";
+                                  } ?>
+                                  </tr>
+                                  <tr>
+                                    <td>
+                                      <button type="submit" name="update" class="btn btn-primary btn-user btn-block">
+                                        Сохранить
+                                      </button>
+                                    </td>
+                            </form>
+                            <form class="user" name="image" id="image" method="post"
+                              enctype="multipart/form-data" action="<?php echo $_SERVER['HTTP_ORIGIN'] .'/image_upload.php'?>">
+                                    <td>
+                                      <button type="submit" name="upload" class="btn btn-primary">
+                                        Прикрепить Документы
+                                      </button>
+                                      <input type="file" name="fileToUpload[]" id="fileUpload"
+                                          multiple="multiple" accept=".jpg, .jpeg, .png, .gif">
+                                      </div>
+                                    </td>
+                                  </tr>
                                 </table>
-                                <button type="submit" name="update" class="btn btn-primary btn-user btn-block">
-                                  Сохранить
-                                </button>
                             </form>
                                 </div>
                             </div>

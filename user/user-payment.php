@@ -4,6 +4,8 @@
   $_SESSION['subpage'] = true;
   include_once __DIR__ . '/includes/config.php';
   include_once __DIR__ . '/../includes/config.php';
+  include_once __DIR__ . '/../lib/ImageModel.php';
+  $imageModel = new ImageModel();
 
   if ($toPay < 0) {
     $toPay = $toPay*(0-1);
@@ -19,12 +21,19 @@
     }
     if (isset($_POST['bank'])) {
       $bank = "TRUE";
+      $verf = "FALSE";
     } else {
       $bank = "FALSE";
+      $verf = "TRUE";
     }
-
+    if(isset( $_SESSION['imageUploadedId'])) {
+      $chck = $_SESSION['imageUploadedId'];
+      unset($_SESSION['imageUploadedId']);
+    } else {
+      $chck = 0;
+    }
     // echo "<script>alert('$cashier $uid $sum $fee $bank');</script>";
-    $userModel->call('sp_addMoney', $_SESSION['id'] . "," . $uid .", '$sum', '$cType', '$year', ".$bank);
+    $userModel->call('sp_addMoney', $_SESSION['id'] . ", $uid, '$sum', '$cType', '$year', $bank, $chck, $verf");
     header('location:' . destPage());
   }
 
@@ -49,6 +58,7 @@
 
     <!-- Custom styles for this template-->
     <link href="../css/sb-admin-2.min.css" rel="stylesheet">
+    <script src="../includes/scripts-img.js"></script>
 </head>
 
 <body class="bg-gradient-primary">
@@ -114,6 +124,44 @@
                                 </div>
                                 <button type="submit" name="payment" class="btn btn-primary btn-user btn-block">
                                   Оплатить
+                                </button>
+                            </form>
+                            <form class="user" name="image" id="image" method="post"
+                              enctype="multipart/form-data" action="<?php echo $_SERVER['HTTP_ORIGIN'] .'/image_upload.php'?>">
+                                <div class="form-group row">
+                                  <div class="col-sm-6 mb-3 mb-sm-0">
+                                    <?php
+                                    if(isset($_SESSION['imageUploadedId'])) {
+                                      $result = $imageModel->getImageById($_SESSION['imageUploadedId']);
+                                      if (! empty($result)) {
+                                        foreach ($result as $row) {
+                                    ?>
+                                    <table>
+                                    <tr>
+                                      <td>
+                                        <a href=""
+                                          onClick="myWindow('../<?php echo $row["image"]?>', '<?php echo $row["image"]?>', 600, 600); return false;"
+                                        > <img src="../<?php echo $row['image']?>" width="100" border="0"/> </a>
+                                      </td>
+                                      <td>
+                                        <?php formSubmit('imageId', $row['id'], 'Удалить', $_SERVER['HTTP_ORIGIN'] .'/image_delete.php')?>
+                                      </td>
+                                    </tr>
+                                    </table>
+                                    <?php
+                                        }
+                                      }
+                                    }?>
+                                  </div>
+                                  <div class="col-sm-6 mb-3 mb-sm-0">
+                                    <input type="file" name="fileToUpload[]" id="fileUpload"
+                                      multiple="multiple" accept=".jpg, .jpeg, .png, .gif"
+                                    >
+                                  </div>
+                                </div>
+                                <?php $_SESSION['iType'] = 'check';?>
+                                <button type="submit" name="upload" class="btn btn-primary btn-user btn-block">
+                                  Прикрепить чек
                                 </button>
                             </form>
                             <hr>

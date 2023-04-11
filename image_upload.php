@@ -35,6 +35,7 @@
             $response["type"] = "success";
             $response["message"] = "Upload Successfully";
             $result = $imageModel->getImageById($id);
+            $_SESSION['imageUploadedId'] = $id;
           }
         } else {
           $response["type"] = "error";
