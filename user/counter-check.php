@@ -180,7 +180,10 @@
 				                            <th align="center">Фото счетчика</th>
 			                            </tr>
                                   <?php
-                                  $result = $imageModel->getAllImages($uid, 'counter');
+                                  unset($_SESSION['imageUploadedId']);
+                                  $_SESSION['iType'] = 'counter';
+                                  $_SESSION['imageOwner'] = $uid;
+                                  $result = $imageModel->getAllImages($_SESSION['imageOwner'], $_SESSION['iType']);
                                   if (! empty($result)) {
                                     foreach ($result as $row) {
                                   ?>
@@ -200,7 +203,6 @@
                                   ?>
                                   </table>
 	                              </div>
-                                <?php $_SESSION['iType'] = 'counter'; unset($_SESSION['imageUploadedId']);?>
                                 <a class="dropdown-item" href="#" data-toggle="modal" data-target="#imageModal">
                                   <i class="btn btn-primary btn-user">Добавть файлы</i>
                                 </a>

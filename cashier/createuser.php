@@ -13,7 +13,7 @@
     $dCurrent=$_POST['dCurrent'] ?: 0;
     $nCurrent=$_POST['nCurrent'] ?: 0;
 
-    $query = $userModel->call('sp_checkidavailabilty', $id);
+    $query = $userModel->call('sp_checkidavailabilty', $uid);
     $result = $query[0];
 
     if($result>0){
@@ -21,7 +21,7 @@
     } else {
     // echo "<script>alert('$id, $street, $size, $resident, $counterNum, $counterName, $counterInfo, $dCurrent, $nCurrent');</script>";
 
-      $query = $userModel->call('sp_registration', "$id, $street, $size, $resident, $counterNum, '$counterName', '$counterInfo', $dCurrent, $nCurrent");
+      $query = $userModel->call('sp_registration', "$uid, $street, $size, $resident, $counterNum, '$counterName', '$counterInfo', $dCurrent, $nCurrent");
 
       header('location:' . destPage());
     }
@@ -69,8 +69,8 @@
                             <form class="user" name="createuser" method="post">
                                 <div class="form-group row">
                                     <div class="col-sm-6 mb-3 mb-sm-0">
-                                        <input type="number" class="form-control form-control-user" id="id"
-                                        placeholder="Номер участка" name="id" min="1" max="500" required="true">
+                                        <input type="number" class="form-control form-control-user" id="uid"
+                                        placeholder="Номер участка" name="uid" min="1" max="500" required="true">
                                     </div>
                                 </div>
                                 <div class="form-group row">

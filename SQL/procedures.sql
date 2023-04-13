@@ -146,7 +146,9 @@ END$$
 DROP PROCEDURE IF EXISTS userInfo;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `userInfo` (`uid` INT(5), `type` VARCHAR(10))  BEGIN
 IF (type = 'el') THEN
-  SELECT u.id as uId,
+  SELECT
+    u.id as uId,
+    r.id as rId,
     concat(r.surName, " ", r.name, " ", r.middlName ) as uName,
     u.TariffId as tariff,
     u.BalanceEl as balance,

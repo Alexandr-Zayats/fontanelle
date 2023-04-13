@@ -65,7 +65,7 @@
                         <div class="card-header py-3">
                           <h6 class="m-0 font-weight-bold text-primary">Дачники</h6>
                           <form action="createResident.php" method="post">
-                            <input type="hidden" name="uid" id="uid" value="-1">
+                            <input type="hidden" name="rId" id="rId" value="-1">
                             <input type="submit" value="Добавить" class="btn btn-primary btn-user btn-block"/>
                           </form>
                         </div>
@@ -111,7 +111,7 @@
                                       </td>
 
                                       <td style="text-align:left">
-                                        <?php formSubmit('uid', $result['id'], $result['resName'], 'createResident.php')?>
+                                        <?php formSubmit('rId', $result['id'], $result['resName'], 'createResident.php')?>
                                       </td>
 
                                       <td style="text-align:left">

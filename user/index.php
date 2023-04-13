@@ -96,25 +96,41 @@
                   <div class="card-body">
                     <div class="row no-gutters align-items-center">
                       <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1"
-                          style="display:flex; flex-direction:row; justify-content:center; align-items:center; font-size:14"
-                        >
-                        <?php if(in_array($_SESSION['loginType'], $allowedUser)) {?>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800"
+                          style="display:flex; flex-direction:row; justify-content:center; align-items:center">
+                          <?php if(in_array($_SESSION['loginType'], $allowedUser)) {
+                            formSubmit('uid', $user['uId'], 'Участок № ', 'edit-user-profile.php')?>
                           <form action="index.php" method="post">
-                            <label for="uid">Участок № </label>
                             <input type="text" name="uid" id="uid" value="<?php echo $uid?>"
                               maxlength="3" size="3" pattern="[0-9]+"
                             >
                             <input type="submit"value="Перейти" class="btn btn-primary btn-user">
                           </form>
-                        <?php
-                        } else {
-                          echo "Участок № ".$user['uId'];
-                        } ?>
+                          <?php
+                          } else {
+                            echo "Участок № ".$user['uId'];
+                          } ?>
+                        </div>
+                      </div>
+                      <div class="col-auto">
+                        <i class="fas fa-users fa-2x text-gray-300"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-primary shadow h-100 py-2">
+                  <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                      <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1"
+                          style="display:flex; flex-direction:row; justify-content:center; align-items:center; font-size:14">
+                          Владелец
                         </div>
                         <div class="h5 mb-0 font-weight-bold text-gray-800">
-                          <a href="edit-user-profile.php"><?php echo $user['uName']?></a>
-                          <!--<?php formSubmit('uid', $uid, $user['uName'], 'edit-user-profile.php')?>-->
+                          <!--<a href="edit-user-profile.php"><?php echo $user['uName']?></a>-->
+                          <?php formSubmit('rId', $user['rId'], $user['uName'], '../cashier/createResident.php')?>
                         </div>
                       </div>
                       <div class="col-auto">
@@ -143,16 +159,12 @@
                   </div>
                 </div>
               </div>
-            </div>  <!-- row -->
+            </div>  
 
+            <!-- row -->
             <div class="row">
               <div class="col-xl-12 col-lg-7">
                 <div class="card shadow mb-4">
-<!--
-                  <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                  </div>
--->
-
                   <div class="table-responsive">
                     <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                       <thead>

@@ -156,8 +156,10 @@
                                   </tr>
                                   <tr>
                                   <?php
-                                  $result = $imageModel->getAllImages($uid, 'doc');
+                                  unset($_SESSION['imageUploadedId']);
                                   $_SESSION['iType'] = 'doc';
+                                  $_SESSION['imageOwner'] = $uid;
+                                  $result = $imageModel->getAllImages($_SESSION['imageOwner'], $_SESSION['iType']);
                                   if (! empty($result)) {
                                     echo "<td colspan=2><table><tr>";
                                     foreach ($result as $row) {?>

@@ -8,22 +8,22 @@
   $imageModel = new ImageModel();
 
   $phone_regex = array("-", "(", ")", "+38", "+", "_", " ");
+  $_SESSION['rId'] = $rId;
 
   if(isset($_POST['createuser'])) {
     $middlName = $middlName ?: '';
     $email = $email ?: '';
     $userName = $userName ?: '';
-    $password = $password ?: '';
-    $phone1 = str_replace($phone_regex, '', $phone1);
-    $phone2 = str_replace($phone_regex, '', $phone2);
-    if($phone2 == "") $phone2=0;
+    $userPass = $userPass ?: '';
+    $phone1 = intval(str_replace($phone_regex, '', $phone1));
+    $phone2 = intval(str_replace($phone_regex, '', $phone2));
     $isMember = 1;
     $autoInfo = $autoInfo ?: '';
     $autoNum = $autoNum ?: '';
-    //print("$id, '$surName', '$name', '$middlName', '$userName', '$password', '$email', $phone1, $phone2, $isMember, '$autoInfo', '$autoNum'");
+    //print("$rId,'$surName','$name','$middlName','$userName','$userPass','$email',$phone1,$phone2,$isMember,'$autoInfo','$autoNum'");
     //exit;
 
-    $userModel->call('updateResidentProfile', "$rId, '$surName', '$name', '$middlName', '$userName', '$password', '$email', $phone1, $phone2, $isMember, '$autoInfo', '$autoNum'");
+    $userModel->call('updateResidentProfile', "$rId, '$surName', '$name', '$middlName', '$userName', '$userPass', '$email', $phone1, $phone2, $isMember, '$autoInfo', '$autoNum'");
 
     header('location:' . destPage());
       /*
@@ -35,7 +35,7 @@
       }
     */
   }
-  $query = $userModel->call('residents', $uid);
+  $query = $userModel->call('residents', $rId);
   $result = $query[0];
 ?>
 
@@ -79,7 +79,7 @@
                             <form class="user" name="createuser" method="post">
                                 <input type="hidden" id="rId" name="rId"
                                   <?php
-                                    echo "value=\"".$uid."\" ";
+                                    echo "value=\"".$rId."\" ";
                                   ?>
                                 >
                                 <div class="formgroup row">
@@ -140,10 +140,10 @@
                                 </div>
                                 <div class="formgroup row">
                                   <div class="col-sm-6 mb-3 mb-sm-0">
-                                    <input type="password" class="form-control form-control-user" id="passwd"
-                                      name="passwd"
+                                    <input type="password" class="form-control form-control-user" id="userPass"
+                                      name="userPass"
                                       <?php
-                                        if(isset($result['password'])) {
+                                        if(isset($result['password']) AND ($result['password'] != "")) {
                                           echo "value=\"".$result['password']."\" ";
                                         } else {
                                           echo "placeholder=\"Пароль\"";
@@ -233,7 +233,10 @@
                                 <div class="form-group row">
                                   <table width="100%">
                                   <?php
-                                  $result = $imageModel->getAllImages($uid, 'passport');
+                                  unset($_SESSION['imageUploadedId']);
+                                  $_SESSION['iType'] = 'passport';
+                                  $_SESSION['imageOwner'] = $rId;
+                                  $result = $imageModel->getAllImages($_SESSION['imageOwner'], $_SESSION['iType']);
                                   if (! empty($result)) {
                                     foreach ($result as $row) {
                                   ?>
@@ -253,7 +256,6 @@
                                   ?>
                                   </table>
                                 </div>
-                                <?php $_SESSION['iType'] = 'passport'; unset($_SESSION['imageUploadedId'])?>
                                 <a class="dropdown-item" href="#" data-toggle="modal" data-target="#imageModal">
                                   <i class="btn btn-primary btn-user">Прикрепить документы</i>
                                 </a>

@@ -132,6 +132,8 @@
                                 <div class="form-group row">
                                   <div class="col-sm-6 mb-3 mb-sm-0">
                                     <?php
+                                    $_SESSION['iType'] = 'check';
+                                    $_SESSION['imageOwner'] = $uid;
                                     if(isset($_SESSION['imageUploadedId'])) {
                                       $result = $imageModel->getImageById($_SESSION['imageUploadedId']);
                                       unset($_SESSION['imageUploadedId']);
@@ -156,7 +158,6 @@
                                     }?>
                                   </div>
                                 </div>
-                                <?php $_SESSION['iType'] = 'check'?>
                                 <a class="dropdown-item" href="#" data-toggle="modal" data-target="#imageModal">
                                   <!--<i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>-->
                                   <i class="btn btn-primary btn-user">Прикрепить чек</i>

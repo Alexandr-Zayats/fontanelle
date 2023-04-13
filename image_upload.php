@@ -16,28 +16,28 @@
     return $new;
   }
     
-  $target_dir = "user/uploads/" . $uid . "/";
+  $target_dir = "user/uploads/";
   if (!file_exists($target_dir)) {
     mkdir($target_dir, 0777, true);
   }
 
-  print_r($_FILES['fileToUpload']);
-  //exit;
   if ($_FILES['fileToUpload']) {
     $file_ary = reArrayFiles($_FILES['fileToUpload']);
     foreach ($file_ary as $file) {
-      $target_file = $target_dir . date('Ymd') . '-' . basename($file['name']);
+      //$target_file = $target_dir . date('Ymd') . '-' . basename($file['name']);
+      $target_file = $target_dir . md5(basename($file['name']) . date('Y-m-d H:i:s:u')) . ".jpg";
       $imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
       if (in_array($imageFileType, array('jpg', 'png', 'jpeg', 'gif'))) {
         $source = $file['tmp_name'];
         $response = $imageModel->compressImage($source, $target_file, 50);
         if (!empty($response)) {
-          $id = $imageModel->insertImage($file["name"], $target_file, $uid, $iType);
+          //print($file["name"] . ", $target_file, $imageOwner, $iType");
+          //exit;
+          $_SESSION['imageUploadedId'] = $imageModel->insertImage($file["name"], $target_file, $imageOwner, $iType);
           if (!empty($response)) {
             $response["type"] = "success";
             $response["message"] = "Upload Successfully";
-            $result = $imageModel->getImageById($id);
-            $_SESSION['imageUploadedId'] = $id;
+            $result = $imageModel->getImageById($_SESSION['imageUploadedId']);
           }
         } else {
           $response["type"] = "error";
