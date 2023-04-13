@@ -176,9 +176,8 @@
                               </form>
                                 <div class="form-group row">
 		                              <table width="100%">
-			                            <tr>
-				                            <th width="70%" align="center">Фото счетчика</th>
-				                            <th></th>
+			                            <tr colspan="2">
+				                            <th align="center">Фото счетчика</th>
 			                            </tr>
                                   <?php
                                   $result = $imageModel->getAllImages($uid, 'counter');
@@ -192,33 +191,19 @@
                                       > <img src="../<?php echo $row['image']?>" width="100" border="0"/> </a>
                                     </td>
 				                            <td>
-                                     <?php formSubmit('imageId', $row['id'], 'Удалить', $_SERVER['HTTP_ORIGIN'] .'/image_delete.php')?> 
+                                      <?php formSubmit('imageId', $row['id'], 'Удалить', $_SERVER['HTTP_ORIGIN'] .'/image_delete.php')?> 
                                     </td>
                                   </tr>
                                   <?php
                                     }
                                   }
                                   ?>
-                                <form class="user" name="image" id="image" method="post"
-                                  enctype="multipart/form-data" action="<?php echo $_SERVER['HTTP_ORIGIN'] .'/image_upload.php'?>">
-                                  <tr>
-                                    <td>
-                                      <div class="col-sm-6 mb-3 mb-sm-0">
-                                        <input type="file"
-                                          name="fileToUpload[]" id="fileUpload"
-                                          multiple="multiple"
-                                          accept=".jpg, .jpeg, .png, .gif"
-                                        >
-                                      </div>
-                                    </td>
-                                  </tr>
                                   </table>
 	                              </div>
                                 <?php $_SESSION['iType'] = 'counter'; unset($_SESSION['imageUploadedId']);?>
-                                <button type="submit" name="upload" class="btn btn-primary btn-user btn-block">
-                                  Добавить файлы
-                                </button>
-                                </form>
+                                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#imageModal">
+                                  <i class="btn btn-primary btn-user">Добавть файлы</i>
+                                </a>
                             <hr>
                         </div>
                     </div>
@@ -227,6 +212,8 @@
         </div>
     </div>
 
+    <!-- Image Modal-->
+    <?php include_once('../includes/image-modal.php')?>
     <!-- Bootstrap core JavaScript-->
     <script src="../vendor/jquery/jquery.min.js"></script>
     <script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>

@@ -42,8 +42,8 @@
     $_SESSION['cType'] = $cType;
   }
 
-  if(!isset($allowedUser) || empty($allowedUser)) {
-    $allowedUser = array('admin');
+  if(!isset($_SESSION['allowedUser']) || empty($_SESSION['allowedUser'])) {
+    $_SESSION['allowedUser'] = array('admin');
   }
 
   // Check login
@@ -58,7 +58,7 @@
       header('location:logout.php');
     } else {
       if(isset($_SESSION['password'])) {
-        if (!in_array($_SESSION['loginType'], $allowedUser)) {
+        if (!in_array($_SESSION['loginType'], $_SESSION['allowedUser'])) {
           header('location:logout.php');
         }
       } else {
@@ -82,6 +82,8 @@
         header('location:' . $_SESSION['startPage']);
       }
     }
+  } else {
+    header('location:'.$_SERVER['HTTP_ORIGIN'].'/logout.php');
   }
 
   function destPage() {
@@ -117,9 +119,9 @@
 
   function formSubmit($name, $value, $title, $action) {
     echo "
-      <form class='user' id='$value' action='$action' method='post'>
+      <form class='user' name='im-$value' id='im-$value' action='$action' method='post'>
         <input type='hidden' name='$name' placeholder='' value='$value'>
-        <a class='nav-link' style='cursor:pointer' onclick='submit($value)'>
+        <a class='nav-link' style='cursor:pointer' onclick='submit(\"im-$value\")'>
           <i class='fas fa-fw fa-user'></i>
           <span>$title</span>
         </a>

@@ -60,18 +60,12 @@
                     <span>Отчеты</span></a>
             </li>
 
-            <!--Nav Item - Tables -->
+            <!--Nav Item - Tables
             <li class="nav-item">
                 <a class="nav-link" href="change-password.php">
                     <i class="fas fa-cogs fa-sm fa-fw mr-2"></i>
                     <span>Изменить пароль</span></a>
-            </li>
-
-
-    <li class="nav-item">
-                <a class="nav-link" href="../logout.php">
-                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2"></i>
-                    <span>Выход</span></a>
+            -->
             </li>
             <!-- Divider -->
             <hr class="sidebar-divider d-none d-md-block">

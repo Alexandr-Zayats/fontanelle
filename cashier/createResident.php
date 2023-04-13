@@ -4,6 +4,8 @@
   $_SESSION['subpage'] = true;
   include_once __DIR__ . '/includes/config.php';
   include_once __DIR__ . '/../includes/config.php';
+  include_once __DIR__ . '/../lib/ImageModel.php';
+  $imageModel = new ImageModel();
 
   $phone_regex = array("-", "(", ")", "+38", "+", "_", " ");
 
@@ -21,7 +23,7 @@
     //print("$id, '$surName', '$name', '$middlName', '$userName', '$password', '$email', $phone1, $phone2, $isMember, '$autoInfo', '$autoNum'");
     //exit;
 
-    $userModel->call('updateResidentProfile', "$id, '$surName', '$name', '$middlName', '$userName', '$password', '$email', $phone1, $phone2, $isMember, '$autoInfo', '$autoNum'");
+    $userModel->call('updateResidentProfile', "$rId, '$surName', '$name', '$middlName', '$userName', '$password', '$email', $phone1, $phone2, $isMember, '$autoInfo', '$autoNum'");
 
     header('location:' . destPage());
       /*
@@ -33,6 +35,8 @@
       }
     */
   }
+  $query = $userModel->call('residents', $uid);
+  $result = $query[0];
 ?>
 
 <!DOCTYPE html>
@@ -55,13 +59,9 @@
 
     <!-- Custom styles for this template-->
     <link href="../css/sb-admin-2.min.css" rel="stylesheet">
+    <script src="../includes/scripts.js"></script>
+    <script src="../includes/scripts-img.js"></script>
 </head>
-
-<?php
-  $query = $userModel->call('residents', $uid);
-  foreach ($query as $result) {
-
-?>
 
 <body class="bg-gradient-primary">
     <div class="container">
@@ -77,7 +77,7 @@
                                 <h1 class="h4 text-gray-900 mb-4">Регистрaция / правка Дачника!</h1>
                             </div>
                             <form class="user" name="createuser" method="post">
-                                <input type="hidden" id="id" name="id"
+                                <input type="hidden" id="rId" name="rId"
                                   <?php
                                     echo "value=\"".$uid."\" ";
                                   ?>
@@ -230,6 +230,33 @@
                                   Сохранить
                                 </button>
                               </form>
+                                <div class="form-group row">
+                                  <table width="100%">
+                                  <?php
+                                  $result = $imageModel->getAllImages($uid, 'passport');
+                                  if (! empty($result)) {
+                                    foreach ($result as $row) {
+                                  ?>
+                                  <tr>
+                                    <td>
+                                      <a href=""
+                                        onClick="myWindow('../<?php echo $row["image"]?>', '<?php echo $row["image"]?>', 600, 600); return false;"
+                                      > <img src="../<?php echo $row['image']?>" width="100" border="0"/> </a>
+                                    </td>
+                                    <td>
+                                      <?php formSubmit('imageId', $row['id'], 'Удалить', $_SERVER['HTTP_ORIGIN'] .'/image_delete.php')?>
+                                    </td>
+                                  </tr>
+                                  <?php
+                                    }
+                                  }
+                                  ?>
+                                  </table>
+                                </div>
+                                <?php $_SESSION['iType'] = 'passport'; unset($_SESSION['imageUploadedId'])?>
+                                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#imageModal">
+                                  <i class="btn btn-primary btn-user">Прикрепить документы</i>
+                                </a>
                             <hr>
                         </div>
                     </div>
@@ -238,6 +265,8 @@
         </div>
     </div>
 
+    <!-- Image Modal-->
+    <?php include_once('../includes/image-modal.php')?>
     <!-- Bootstrap core JavaScript-->
     <script src="../vendor/jquery/jquery.min.js"></script>
     <script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
@@ -247,7 +276,5 @@
 
     <!-- Custom scripts for all pages-->
     <script src="../js/sb-admin-2.min.js"></script>
-<?php } ?> 
 </body>
-
 </html>

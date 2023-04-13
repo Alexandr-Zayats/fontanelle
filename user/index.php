@@ -2,6 +2,8 @@
   namespace Phppot;
   session_start();
   unset($_SESSION['subpage']);
+  $_SESSION['cType'] = 'el';
+
   include_once __DIR__ . '/includes/config.php';
   include_once __DIR__ . '/../includes/config.php';
   unset($cid);
@@ -58,7 +60,34 @@
           <div class="container-fluid">
             <!-- Page Heading -->
             <div class="d-sm-flex align-items-center justify-content-between mb-4">
-              <h1 class="h3 mb-0 text-gray-800">Электричество</h1>
+              <h1 class="h3 mb-0 font-weight-bold text-primary">Абонентская книжка: электричество</h1>
+              <div class="flex-row align-items-left justify-content-between">
+                <?php if ($_SESSION['loginType'] == 'admin') { ?>
+                  <a href="add-counter.php?cType=el">
+                    Cчетчики (добавить):  
+                  </a>
+                <?php } else { ?>
+                  <a class="btn btn-primary btn-user">Cчетчики:</a>
+                <?php }?>
+                <select id="cid" name="cid"
+                  onchange="window.location = this.options[this.selectedIndex].value"
+                  class="btn btn-primary btn-user"
+                >
+                  <?php foreach ( explode(";", $user['cId']) as &$c ) {
+                    $sql = $userModel->call('counterInfo', "$c");
+                    foreach ($sql as $counter) {
+                      if (!isset($cid)) { $cid=$counter['id']; }
+                        if ($counter['id'] == $cid) {
+                          echo "<option value=index.php?cid=".$counter['id']." selected>".$counter['name']."</option>";
+                          $_SESSION['cid'] = $cid;
+                        } else {
+                          echo "<option value=index.php?cid=".$counter['id'].">".$counter['name']."</option>";
+                        }
+                      }
+                    }
+                  ?>
+                </select>
+              </div>
             </div>
 
             <div class="row">
@@ -114,73 +143,15 @@
                   </div>
                 </div>
               </div>
-              <?php if (!in_array($_SESSION['loginType'], $allowedUser)) {?>
-              <?php }?>
             </div>  <!-- row -->
 
             <div class="row">
               <div class="col-xl-12 col-lg-7">
                 <div class="card shadow mb-4">
+<!--
                   <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                    <table width="100%">
-                      <tr>
-                        <td><h6 class="m-0 font-weight-bold text-primary">Абонентская книжка. </h6></td>
-			                  <td style="text-align:right">
-			                  <?php if ($_SESSION['loginType'] == 'admin') { ?>
-			                    <a href="add-counter.php?cType=el" 
-                            class="btn btn-primary btn-user btn-block">Cчетчики (добавить):</a>
-			                  <?php } else { ?>
-			                    <a class="btn btn-primary btn-user btn-block">Cчетчики:</a>
-			                  <?php }?>
-                        </td>
-                        <td style="text-align:left">
-                          <!--<h6 class="m-0 font-weight-bold text-primary"> -->
-                          <!-- <div class="form-group row"> -->
-                            <!-- <div class="col-sm-6 mb-3 mb-sm-0"> -->
-                              <!-- <label for="counter">Счетчики: </label> -->
-                              <select id="cid" name="cid" 
-                                onchange="window.location = this.options[this.selectedIndex].value" 
-                                class="btn btn-primary btn-user btn-block"
-                              >
-                                <?php foreach ( explode(";", $user['cId']) as &$c ) {
-                                  $sql = $userModel->call('counterInfo', "$c");
-                                  foreach ($sql as $counter) {
-                                    if (!isset($cid)) { $cid=$counter['id']; }
-                                    if ($counter['id'] == $cid) {
-                                      echo "<option value=index.php?cid=".$counter['id']." selected>".$counter['name']."</option>";
-                                    } else {
-                                      echo "<option value=index.php?cid=".$counter['id'].">".$counter['name']."</option>";
-                                    }
-                                  }
-                                }?>
-                              </select>
-                            <!-- </div> -->
-                          <!-- </h6> -->
-                        </td>
-                        <td style="text-align:right">
-                          <form action="user-counter.php" method="post">
-                            <input type="hidden" id="cid" name="cid" value="<?php echo $cid ?>">
-                            <input type="submit" value="Внести показания" class="btn btn-primary btn-user btn-block"/>
-                          </form>
-                        </td>
-                        <td style="text-align:right">
-                          <form action="user-payment.php" method="post">
-                            <input type="hidden" id="cid" name="cid" value="<?php echo $cid ?>">
-                            <input type="hidden" id="cType" name="cType" value="el">
-                            <input type="hidden" id="toPay" name="toPay" value="<?php echo $toPay ?>">
-                            <input type="submit" value="Оплата" class="btn btn-primary btn-user btn-block"/>
-                          </form>
-                        </td>
-                        <td style="text-align:right">
-                          <form action="counter-check.php"  method="post">
-                            <input type="hidden" id="cid" name="cid" value="<?php echo $cid ?>">
-                            <input type="hidden" id="cType" name="cType" value="el">
-                            <input type="submit" value="Поверка" class="btn btn-primary btn-user btn-block"/>
-                          </form>
-                        </td>
-                      </tr>
-                    </table>
                   </div>
+-->
 
                   <div class="table-responsive">
                     <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
@@ -241,5 +212,26 @@
         </div> <!-- content -->
       </div> <!-- content-wrapper -->
     </div> <!-- wraper -->
+    <a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+  </a>
+  <!-- Logout Modal-->
+  <?php include_once('../includes/logout-modal.php');?>
+  <!-- Bootstrap core JavaScript-->
+  <script src="../vendor/jquery/jquery.min.js"></script>
+  <script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Core plugin JavaScript-->
+  <script src="../vendor/jquery-easing/jquery.easing.min.js"></script>
+
+  <!-- Custom scripts for all pages-->
+  <script src="../js/sb-admin-2.min.js"></script>
+
+  <!-- Page level plugins -->
+  <script src="../vendor/chart.js/Chart.min.js"></script>
+
+  <!-- Page level custom scripts -->
+  <script src="../js/demo/chart-area-demo.js"></script>
+  <script src="../js/demo/chart-pie-demo.js"></script>
 </body>
 </html>

@@ -32,7 +32,8 @@
     } else {
       $chck = 0;
     }
-    // echo "<script>alert('$cashier $uid $sum $fee $bank');</script>";
+    //print($_SESSION['id'] . ", $uid, '$sum', '$cType', '$year', $bank, $chck, $verf");
+    //exit;
     $userModel->call('sp_addMoney', $_SESSION['id'] . ", $uid, '$sum', '$cType', '$year', $bank, $chck, $verf");
     header('location:' . destPage());
   }
@@ -58,6 +59,8 @@
 
     <!-- Custom styles for this template-->
     <link href="../css/sb-admin-2.min.css" rel="stylesheet">
+    <script src="../includes/scripts-img.js"></script>
+    <script src="../includes/scripts.js"></script>
     <script src="../includes/scripts-img.js"></script>
 </head>
 
@@ -126,13 +129,12 @@
                                   Оплатить
                                 </button>
                             </form>
-                            <form class="user" name="image" id="image" method="post"
-                              enctype="multipart/form-data" action="<?php echo $_SERVER['HTTP_ORIGIN'] .'/image_upload.php'?>">
                                 <div class="form-group row">
                                   <div class="col-sm-6 mb-3 mb-sm-0">
                                     <?php
                                     if(isset($_SESSION['imageUploadedId'])) {
                                       $result = $imageModel->getImageById($_SESSION['imageUploadedId']);
+                                      unset($_SESSION['imageUploadedId']);
                                       if (! empty($result)) {
                                         foreach ($result as $row) {
                                     ?>
@@ -153,17 +155,12 @@
                                       }
                                     }?>
                                   </div>
-                                  <div class="col-sm-6 mb-3 mb-sm-0">
-                                    <input type="file" name="fileToUpload[]" id="fileUpload"
-                                      multiple="multiple" accept=".jpg, .jpeg, .png, .gif"
-                                    >
-                                  </div>
                                 </div>
-                                <?php $_SESSION['iType'] = 'check';?>
-                                <button type="submit" name="upload" class="btn btn-primary btn-user btn-block">
-                                  Прикрепить чек
-                                </button>
-                            </form>
+                                <?php $_SESSION['iType'] = 'check'?>
+                                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#imageModal">
+                                  <!--<i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>-->
+                                  <i class="btn btn-primary btn-user">Прикрепить чек</i>
+                                </a>
                             <hr>
                         </div>
                     </div>
@@ -172,6 +169,8 @@
         </div>
     </div>
 
+    <!-- image Modal-->
+    <?php include_once('../includes/image-modal.php')?>
     <!-- Bootstrap core JavaScript-->
     <script src="../vendor/jquery/jquery.min.js"></script>
     <script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>

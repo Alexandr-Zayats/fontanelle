@@ -18,7 +18,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -37,7 +36,6 @@
     <link href="../css/sb-admin-2.min.css" rel="stylesheet">
     <script src="../includes/scripts.js"> </script>
     <script src="../includes/scripts-img.js"></script>
-
 </head>
 
 <body id="page-top">
@@ -149,6 +147,14 @@
                                     </td>
                                   </tr>
                                   <tr>
+                                    <td>
+                                      <button type="submit" name="update" class="btn btn-primary btn-user btn-block">
+                                        Сохранить
+                                      </button>
+                                    </td>
+                              </form>  
+                                  </tr>
+                                  <tr>
                                   <?php
                                   $result = $imageModel->getAllImages($uid, 'doc');
                                   $_SESSION['iType'] = 'doc';
@@ -169,25 +175,13 @@
                                   </tr>
                                   <tr>
                                     <td>
-                                      <button type="submit" name="update" class="btn btn-primary btn-user btn-block">
-                                        Сохранить
-                                      </button>
-                                    </td>
-                            </form>
-                            <form class="user" name="image" id="image" method="post"
-                              enctype="multipart/form-data" action="<?php echo $_SERVER['HTTP_ORIGIN'] .'/image_upload.php'?>">
-                                    <td>
-                                      <button type="submit" name="upload" class="btn btn-primary">
-                                        Прикрепить Документы
-                                      </button>
-                                      <input type="file" name="fileToUpload[]" id="fileUpload"
-                                          multiple="multiple" accept=".jpg, .jpeg, .png, .gif">
-                                      </div>
+                                      <a class="dropdown-item" href="#" data-toggle="modal" data-target="#imageModal">
+                                        <i class="btn btn-primary btn-user">Прикрепить документы</i>
+                                      </a>
                                     </td>
                                   </tr>
                                 </table>
-                            </form>
-                                </div>
+                              </div>
                             </div>
 <?php } ?>
                         </div>
@@ -213,8 +207,10 @@
         <i class="fas fa-angle-up"></i>
     </a>
 
+    <!-- Image Modal-->
+    <?php include_once('../includes/image-modal.php')?>
     <!-- Logout Modal-->
-     <?php include_once('includes/logout-modal.php');?>
+     <?php include_once('../includes/logout-modal.php');?>
     <!-- Bootstrap core JavaScript-->
     <script src="../vendor/jquery/jquery.min.js"></script>
     <script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>

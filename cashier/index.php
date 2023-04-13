@@ -51,7 +51,6 @@
         <!-- Topbar -->
         <?php include_once('includes/topbar.php');?>
         <!-- End of Topbar -->
-
         <!-- Begin Page Content -->
         <div class="container-fluid">
           <!-- Page Heading -->
@@ -276,7 +275,7 @@
     <i class="fas fa-angle-up"></i>
   </a>
   <!-- Logout Modal-->
-  <?php include_once('includes/logout-modal.php');?>
+  <?php include_once('../includes/logout-modal.php');?>
   <!-- Bootstrap core JavaScript-->
   <script src="../vendor/jquery/jquery.min.js"></script>
   <script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>

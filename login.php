@@ -5,7 +5,9 @@
   if(isset($_SESSION['password'])) {
     header('location:' . $_SESSION['startPage']);
   }
-  include_once __DIR__ . '/includes/config.php';
+  if(isset($_POST['login'])) {
+    include_once __DIR__ . '/includes/config.php';
+  }
 ?>
 
 <!DOCTYPE html>
@@ -45,7 +47,7 @@
                   <div class="text-center">
                     <h1 class="h4 text-gray-900 mb-4">Рады видеть Вас снова!</h1>
                   </div>
-                  <form class="user" method="post">
+                  <form class="user" method="post" action="">
                     <div class="form-group">
                       <input type="text" class="form-control form-control-user"
                         id="username" aria-describedby="emailHelp"

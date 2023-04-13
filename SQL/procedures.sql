@@ -334,19 +334,21 @@ BEGIN
     SET YEAR_INT = (SELECT TIMESTAMPDIFF( YEAR, payDate, firstPAY ));
     IF ( payDate BETWEEN DATE("1970-01-01") AND firstPAY ) THEN
       IF ( dst = 'fee' ) THEN
-        update users set BalanceFee=(BalanceFee - YEAR_INT*SIZE*100) WHERE id=uid;
+        update users set BalanceFee=(BalanceFee - YEAR_INT*@SIZE*100) WHERE id=uid;
       END IF;
     END IF;
   END IF;
 
-  IF (dst = 'el') THEN
-    update users set BalanceEl=(BalanceEl + sum) WHERE id=uid;
-  END IF;
-  IF (dst = 'wat') THEN
-    update users set BalanceWat=(BalanceWat + sum) WHERE id=uid;
-  END IF;
-  IF (dst = 'fee') THEN
-    update users set BalanceFee=(BalanceFee + sum) WHERE id=uid;
+  IF(verified = 1) THEN
+    IF (dst = 'el') THEN
+      update users set BalanceEl=(BalanceEl + sum) WHERE id=uid;
+    END IF;
+    IF (dst = 'wat') THEN
+      update users set BalanceWat=(BalanceWat + sum) WHERE id=uid;
+    END IF;
+    IF (dst = 'fee') THEN
+      update users set BalanceFee=(BalanceFee + sum) WHERE id=uid;
+    END IF;
   END IF;
 
   INSERT INTO payments (cashierId, userId, type, sum, dst, dstDate, chck, verified) VALUES (cashier, uid, bank, sum, dst, payDate, chck, verified);
@@ -677,6 +679,18 @@ DROP PROCEDURE IF EXISTS uprovePayment;
 CREATE DEFINER=`root`@`localhost`
 PROCEDURE `uprovePayment` (`rId` INT(11), `status` INT(1))
 BEGIN
+  SELECT userId, sum, dst INTO @uid, @sum, @dst  FROM payments WHERE id=rId;
+  IF(status = 1) THEN
+    IF (@dst = 'el') THEN
+      update users set BalanceEl=(BalanceEl + @sum) WHERE id=@uid;
+    END IF;
+    IF (@dst = 'wat') THEN
+      update users set BalanceWat=(BalanceWat + @sum) WHERE id=@uid;
+    END IF;
+    IF (@dst = 'fee') THEN
+      update users set BalanceFee=(BalanceFee + @sum) WHERE id=@uid;
+    END IF;
+  END IF;
   UPDATE payments SET verified=status WHERE id=rId;
 END$$
 

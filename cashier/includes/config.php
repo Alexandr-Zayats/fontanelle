@@ -1,3 +1,3 @@
 <?php
-  $allowedUser = array('cashier', 'admin');
+  $_SESSION['allowedUser'] = array('cashier', 'admin');
 ?>

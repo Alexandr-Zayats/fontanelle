@@ -137,7 +137,7 @@ while ($result=mysqli_fetch_array($query)) {
     </a>
 
     <!-- Logout Modal-->
-     <?php include_once('includes/logout-modal.php');?>
+     <?php include_once('../includes/logout-modal.php');?>
     <!-- Bootstrap core JavaScript-->
     <script src="../vendor/jquery/jquery.min.js"></script>
     <script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>

@@ -21,6 +21,8 @@
     mkdir($target_dir, 0777, true);
   }
 
+  print_r($_FILES['fileToUpload']);
+  //exit;
   if ($_FILES['fileToUpload']) {
     $file_ary = reArrayFiles($_FILES['fileToUpload']);
     foreach ($file_ary as $file) {
