@@ -1,7 +1,8 @@
 <?php
   namespace Phppot;
   session_start();
-  $_SESSION['redirect'] = true;
+  $_SESSION['subpage'] = true;
+
   include_once __DIR__ . '/includes/config.php';
   include_once __DIR__ . '/../includes/config.php';
 
@@ -77,7 +78,7 @@ if(isset($_POST['close'])) {
   }
   if(isset($userData['verEl']) && $userData['verEl'] != "" && dateDiffInDays(date('Y-m-d'), $userData['verEl']) > 180) {
     $cnt++;
-    $pdf->writeHTML("\t" . $cnt .". Не надані фото показників лічильника електроенергії, остання звірка -  " . dateFormat($userData['verEl']) . ";\n");
+    $pdf->writeHTML("\t" . $cnt .". Не надані фото показників лічильника електроенергії, остання звірка відбулася до -  " . dateFormat($userData['verEl']) . ";\n");
   }
   if($userData['wat'] < -1000 ) {
     $cnt++;
@@ -87,10 +88,12 @@ if(isset($_POST['close'])) {
     $cnt++;
     $pdf->writeHTML("\t" . $cnt .". Не надано показники лічильника споживання води, остання звірка - " . dateFormat($userData['verWat']) . ";\n");
   }
+  /*
   if($userData['counterLocation'] == 'внутри') {
     $cnt++;
     $pdf->writeHTML("\t" . $cnt .". Наявні порушення п3.1 додатку №2 до Договору про обслуговування, а саме щодо місця встановлення приладів обліку споживання електроенергії.;\n");
   }
+  */
 
   $pdf->Write(0, "\n", '', 0, 'C', true, 0, false, false, 0);
 

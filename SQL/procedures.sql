@@ -525,7 +525,9 @@ SELECT u.id as id,
   u.BalanceWat as wat,
   r.phone1 as phone1,
   r.phone2 as phone2,
-  (SELECT location FROM counters WHERE userId=u.id AND type='el' LIMIT 1) as counterLocation, 
+  (SELECT location FROM counters WHERE userId=u.id AND type='el' LIMIT 1) as counterLocation,
+  DATE_FORMAT((SELECT max(date) FROM payments WHERE userId=u.id AND dst='el'  LIMIT 1), '%Y-%m-%d') as lastPayEl,
+  DATE_FORMAT((SELECT max(date) FROM payments WHERE userId=u.id AND dst='wat'  LIMIT 1), '%Y-%m-%d') as lastPayWat,
   DATE_FORMAT((SELECT max(verDate) FROM counters WHERE userId=u.id AND type='el'  LIMIT 1), '%Y-%m-%d') as verEl,
   DATE_FORMAT((SELECT max(verDate) FROM counters WHERE userId=u.id AND type='wat' LIMIT 1), '%Y-%m-%d') as verWat
 FROM users u

@@ -94,6 +94,7 @@
   $query = $userModel->call('debtors', '');
   $cnt=1;
   foreach ( $query as $result) {
+    if( dateDiffInDays(date('Y-m-d'), $result['verEl']) > 180 || $result['fee'] < $result['Size'] * 100 * -2 ) {
 ?>
                                     <?php
                                       $phone="Номер телефона не указан";
@@ -152,7 +153,7 @@
                                         <?php if(isset($result['verWat'])) { printf("%s", dateFormat($result['verWat'])); }?>
                                       </td>
                                     </tr>
-<?php $cnt++; } ?>
+<?php $cnt++; } }?>
                                     </tbody>
                                 </table>
                             </div>

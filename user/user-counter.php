@@ -12,7 +12,7 @@
     $dayLast = $latest['dayLast'];
     $nightLast = $latest['nightLast'];
     if($nightLast > $nCurrent || $dayLast > $dCurrent) {
-      echo "<script>alert('$nightLast; $nCurrent; $dayLast; $dCurrent');</script>";
+      //echo "<script>alert('$nightLast; $nCurrent; $dayLast; $dCurrent');</script>";
       echo "<script>alert('Введеные показания ниже предыдущих!');</script>";
     } else {
       //echo "<script>alert('uid=$uid cid=$cid latesD=$latest[dayLast] currentD=$dCurrent latestN=$latest[nightLast] currentN=$nCurrent');</script>";

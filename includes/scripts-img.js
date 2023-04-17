@@ -13,8 +13,6 @@ function myWindow(i,t,wid,hei) {
   var params = 'width='+(w-5)+',height='+(h-5)+',scrollbars,resizable';
 
   var message='<html><head><title>'+i+'</title></head><body><h3 aligh="center">'+
-  '<? $_SESSION['subpage'] = true;?>\
-  '+
   '<div align="center"><img src="'+i+'" border="0" alt="'+t+'" width="'+wid+'"><br>\
   '+
   '<hr width="100&#37;" size="1"><form><input type="button" onclick="javascript:window.close();" value="ЗАКРЫТЬ"><br>\
