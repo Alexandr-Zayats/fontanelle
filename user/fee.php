@@ -68,7 +68,7 @@
                           style="display:flex; flex-direction:row; justify-content:center; align-items:center">
                           <?php if(in_array($_SESSION['loginType'], $allowedUser)) {
                             formSubmit('uid', $user['uId'], 'Участок № ', 'edit-user-profile.php')?>
-                          <form action="index.php" method="post">
+                          <form action="fee.php" method="post">
                             <input type="text" name="uid" id="uid" value="<?php echo $uid?>"
                               maxlength="3" size="3" pattern="[0-9]+"
                             >

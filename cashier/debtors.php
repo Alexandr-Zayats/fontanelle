@@ -94,7 +94,7 @@
   $query = $userModel->call('debtors', '');
   $cnt=1;
   foreach ( $query as $result) {
-    if( dateDiffInDays(date('Y-m-d'), $result['verEl']) > 180 || $result['fee'] < $result['Size'] * 100 * -2 ) {
+    if( dateDiffInDays(date('Y-m-d'), $result['verWat']) > 180 || dateDiffInDays(date('Y-m-d'), $result['verEl']) > 180 || $result['fee'] < $result['Size'] * 100 * -2 ) {
 ?>
                                     <?php
                                       $phone="Номер телефона не указан";

@@ -12,7 +12,13 @@
     $start=date('Y-m-01');
     $stop=date("Y-m-d");
   }
-
+/*
+  $query = $userModel->select('SELECT id FROM users WHERE id NOT IN (select userId from payments WHERE dst="fee" GROUP BY userId) AND Size>0;', "");
+  foreach ($query as $qID) {
+    $userModel->call('sp_addMoney', "285, ".$qID['id'].", 1, 'fee', '2008-01-01', 1, 0, 0");
+  }
+  exit;
+*/
 ?>
 <!DOCTYPE html>
 <html lang="en">
