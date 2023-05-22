@@ -35,6 +35,7 @@
   <link href="../css/sb-admin-2.min.css" rel="stylesheet">
   <script src="../includes/scripts.js"> </script>
   <script src="../includes/scripts-img.js"></script>
+  <script src="../includes/drag_upload_image.js"></script>
 </head>
 
 <body id="page-top">
@@ -186,6 +187,8 @@
                     </thead>
                     <tbody>
                     <?php
+                      $_SESSION['iType'] = 'check';
+                      $_SESSION['imageOwner'] = -1;
                       $query = $userModel->call('sp_recent30payments', '');
                       $cnt=1;
                       foreach ($query as $result) {
@@ -239,14 +242,36 @@
                         </td>
                         <td>
                           <?php
-                            $result = $imageModel->getImageById($result['chck']);
-                            if (! empty($result)) {
-                              foreach ($result as $row) {
-                            ?>
-                              <a href=""
-                                onClick="myWindow('../<?php echo $row["image"]?>', '<?php echo $row["image"]?>', 600, 600); return false;"
-                              > <img src="../<?php echo $row['image']?>" width="100" border="0"/> </a>
-                            <?php }}?>
+                            if($result['type']) {
+                              $images = $imageModel->getImageById($result['chck']);
+                              if (! empty($images)) {
+                                foreach ($images as $row) {
+                              ?>
+                                <a href=""
+                                  onClick="myWindow('../<?php echo $row["image"]?>', '<?php echo $row["image"]?>', 600, 600); return false;"
+                                > <img src="../<?php echo $row['image']?>" width="100" border="0"/> </a>
+                              <?php 
+                                }
+                              } else {?>
+                                <link rel="stylesheet" href="../css/images.css" />
+                                <form action="../drag_image_upload.php" id="myForm" method="post" class="upload_form">
+                                  <input type="file" name="files[]" id="file" class="form_input" multiple=""/>
+                                    <div class="upload_box">
+                                      <p>чек</p>
+                                    </div>
+                                </form>
+<!--
+                              <div id="drop_file_zone" ondrop="upload_file(event)" ondragover="return false">
+                                <div id="drag_upload_file">
+                                  <p>прикрепить чек</p>
+                                </div>
+                              </div>
+                              <div class="img-content"></div>
+                              <script src="../includes/drag_upload.js"></script>
+-->
+                            <?php 
+                            }
+                          } else { echo ""; } ?>
                         </td>
                       </tr>
                     <?php $cnt++; }?>
@@ -275,7 +300,9 @@
     <i class="fas fa-angle-up"></i>
   </a>
   <!-- Logout Modal-->
-  <?php include_once('../includes/logout-modal.php');?>
+  <?php include_once('../includes/logout-modal.php')?>
+  <!-- image Modal-->
+  <?php include_once('../includes/image-modal.php')?>
   <!-- Bootstrap core JavaScript-->
   <script src="../vendor/jquery/jquery.min.js"></script>
   <script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>

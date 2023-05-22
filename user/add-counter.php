@@ -65,14 +65,14 @@
                                 <div class="col-sm-6 mb-3 mb-sm-0">
                                   <label for="uid">Имя:</label>
                                   <input type="text" class="form-control form-control-user"
-                                    id="name" name="name" required="true" value="сарай">
+                                    id="name" name="name" required="true" value="Основной">
                                 </div>
                               </div>
                               <div class="form-group row">
                                 <div class="col-sm-6 mb-3 mb-sm-0">
                                   <label for="uid">Описание:</label>
                                   <input type="text" class="form-control form-control-user"
-                                    id="info" name="info" required="true" value="счетчик в сарае">
+                                    id="info" name="info" required="true" value="счетчик">
                                 </div>
                               </div>
                               <div class="form-group row">

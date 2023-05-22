@@ -63,7 +63,7 @@
               <h1 class="h3 mb-0 font-weight-bold text-primary">Абонентская книжка: вода</h1>
               <div class="flex-row align-items-left justify-content-between">
                 <?php if ($_SESSION['loginType'] == 'admin') { ?>
-                  <a href="add-counter.php?cType=el">
+                  <a href="add-counter.php?cType=wat">
                     Cчетчики (добавить):
                   </a>
                 <?php } else { ?>

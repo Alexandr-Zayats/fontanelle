@@ -104,7 +104,7 @@
                             <input type="text" name="uid" id="uid" value="<?php echo $uid?>"
                               maxlength="3" size="3" pattern="[0-9]+"
                             >
-                            <input type="submit"value="Перейти" class="btn btn-primary btn-user">
+                            <input type="submit" value="Перейти" class="btn btn-primary btn-user">
                           </form>
                           <?php
                           } else {
