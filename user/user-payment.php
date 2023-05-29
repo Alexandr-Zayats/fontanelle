@@ -7,8 +7,8 @@
   include_once __DIR__ . '/../lib/ImageModel.php';
   $imageModel = new ImageModel();
 
-  if ($toPay < 0) {
-    $toPay = $toPay*(0-1);
+  if ($_SESSION['toPay'] < 0) {
+    $toPay = $_SESSION['toPay']*(0-1);
   } else {
     $toPay="0.00";
   }
