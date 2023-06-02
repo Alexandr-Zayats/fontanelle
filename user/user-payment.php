@@ -80,10 +80,14 @@
                                 <h1 class="h4 text-gray-900 mb-4"><?php
                                   if ( $cType == "el" ) {
                                     echo "Оплата электроенергии";
-                                  } elseif ( $cType == "wat" )  {
+                                  } elseif ( $cType == "wat" ) {
                                     echo "Оплата за воду";
-                                  } else {
+                                  } elseif ( $cType == "inc" ) {
+                                    echo "Вступительный взнос";
+                                  } elseif ( $cType == "fee" ) {
                                     echo "Членские взносы";
+                                  } elseif ( $cType == "other" )  {
+                                    echo "Целевой збор";
                                   }
                                 ?></h1>
                             </div>

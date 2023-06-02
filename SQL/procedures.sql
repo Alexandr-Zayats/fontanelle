@@ -321,6 +321,8 @@ BEGIN
   DECLARE payDate DATE;
   DECLARE firstPAY DATE;
   DECLARE YEAR_INT SMALLINT(100);
+
+  START TRANSACTION;
   IF ( dat = '2000-01-01' ) THEN
     SET payDate = DATE(NOW());
   ELSE
@@ -354,6 +356,7 @@ BEGIN
   END IF;
 
   INSERT INTO payments (cashierId, userId, type, sum, dst, dstDate, chck, verified) VALUES (cashier, uid, bank, sum, dst, payDate, chck, verified);
+  COMMIT;
 END$$
 
 DROP PROCEDURE IF EXISTS sp_addCounterValues;
@@ -683,8 +686,9 @@ DROP PROCEDURE IF EXISTS uprovePayment;
 CREATE DEFINER=`root`@`localhost`
 PROCEDURE `uprovePayment` (`rId` INT(11), `status` INT(1))
 BEGIN
-  SELECT userId, sum, dst INTO @uid, @sum, @dst  FROM payments WHERE id=rId;
-  IF(status = 1) THEN
+  START TRANSACTION;
+  SELECT userId, sum, dst, verified INTO @uid, @sum, @dst, @verified  FROM payments WHERE id=rId;
+  IF(status = 1 AND  @verified != 1) THEN
     IF (@dst = 'el') THEN
       update users set BalanceEl=(BalanceEl + @sum) WHERE id=@uid;
     END IF;
@@ -696,6 +700,7 @@ BEGIN
     END IF;
   END IF;
   UPDATE payments SET verified=status WHERE id=rId;
+  COMMIT;
 END$$
 
 DROP PROCEDURE IF EXISTS updateResidentProfile;
