@@ -10,10 +10,10 @@
   if(isset($_GET['cid'])) {
     $cid = $_GET['cid'];
   }
-  $_SESSION['cType'] = 'el';
 
   $query = $userModel->call('userInfo', $uid . ", 'el'");
   $user = $query[0];
+
 ?>
 
 <!DOCTYPE html>

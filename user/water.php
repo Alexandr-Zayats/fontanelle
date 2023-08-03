@@ -9,7 +9,6 @@
   if(isset($_GET['cid'])) {
     $cid = $_GET['cid'];
   }
-  $_SESSION['cType'] = 'wat';
 
   $query = $userModel->call('userInfo', $uid . ", 'wat'");
   $user = $query[0];

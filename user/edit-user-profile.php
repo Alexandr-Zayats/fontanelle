@@ -10,6 +10,7 @@
   if(isset($_POST['update'])) {
     //$updatetTime = date( 'd-m-Y h:i:s A', time () );
     //echo "<script>alert('$uid $name $email $phone $size $info');</script>";
+    // print "sp_userupdateprofile ($uid,'$street','$resident','$size','$info', $status)";
     $userModel->call('sp_userupdateprofile', "$uid,'$street','$resident','$size','$info', $status");
     //echo "<script>alert('Профайл участка успешно обновлен');</script>";
     header('location:' . destPage());

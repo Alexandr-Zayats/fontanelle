@@ -20,8 +20,6 @@
     $isMember = 1;
     $autoInfo = $autoInfo ?: '';
     $autoNum = $autoNum ?: '';
-    //print("$rId,'$surName','$name','$middlName','$userName','$userPass','$email',$phone1,$phone2,$isMember,'$autoInfo','$autoNum'");
-    //exit;
 
     //print "call('updateResidentProfile', \"$rId, '$surName', '$name', '$middlName', '$userName', '$userPass', '$email', $phone1, $phone2, $isMember, '$autoInfo', '$autoNum'\")";
     $userModel->call('updateResidentProfile', "$rId, '$surName', '$name', '$middlName', '$userName', '$userPass', '$email', $phone1, $phone2, $isMember, '$autoInfo', '$autoNum'");
@@ -36,6 +34,8 @@
       }
     */
   }
+  // print_r($_POST);
+  // print "residents($rId)";
   $query = $userModel->call('residents', $rId);
   $result = $query[0];
 ?>

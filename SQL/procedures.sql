@@ -159,7 +159,9 @@ IF (type = 'el') THEN
  WHERE c.type=type AND u.id=uid;
 END IF;
 IF (type = 'wat') THEN
-  SELECT u.id as uId,
+  SELECT
+    u.id as uId,
+    r.id as rId,
     concat(r.surName, " ", r.name, " ", r.middlName ) as uName,
     u.TariffId as tariff,
     u.BalanceWat as balance,
@@ -170,7 +172,9 @@ IF (type = 'wat') THEN
   WHERE c.type=type AND u.id=uid;
 END IF;
 IF (type = 'fee') THEN
-  SELECT u.id as uId,
+  SELECT
+    u.id as uId,
+    r.id as rId,
     concat(r.surName, " ", r.name, " ", r.middlName ) as uName,
     u.TariffId as tariff,
     u.BalanceFee as balance,
@@ -704,7 +708,13 @@ END$$
 
 DROP PROCEDURE IF EXISTS sp_userupdateprofile;
 CREATE DEFINER=`root`@`localhost` 
-PROCEDURE `sp_userupdateprofile` (`uid` INT(5), `street` INT(3), `resident` INT(5), size DECIMAL(15,2), `info` VARCHAR(250), `status` INT(1))
+PROCEDURE `sp_userupdateprofile` (
+  `uid` INT(5),
+  `street` INT(3),
+  `resident` INT(5),
+  size DECIMAL(15,2),
+  `info` VARCHAR(250) CHARSET utf8,
+  `status` INT(1))
 BEGIN
   UPDATE users SET StreetId=street, LastUpdationDate=current_timestamp(), residentId=resident, Size=size, Info=info, IsActive=status
   WHERE id=uid;
