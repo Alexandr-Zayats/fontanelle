@@ -418,8 +418,15 @@ FROM payments;
 END$$
 
 DROP PROCEDURE IF EXISTS sp_cashierchangepwd;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_cashierchangepwd` (`newpwd` VARCHAR(120), `uid` SMALLINT(5), `name` VARCHAR(200), email VARCHAR(200), phone VARCHAR(120))  BEGIN
-update cashier set UserPassword=newpwd,LastUpdationDate=current_timestamp(),Name=name,PhoneNumber=phone,EmailId=email WHERE id=uid;
+CREATE DEFINER=`root`@`localhost`
+PROCEDURE `sp_cashierchangepwd` (
+  `newpwd` VARCHAR(120),
+  `uid` SMALLINT(5),
+  `name` VARCHAR(200) CHARSET utf8,
+  email VARCHAR(200),
+  phone VARCHAR(120))
+BEGIN
+  update cashier set UserPassword=newpwd,LastUpdationDate=current_timestamp(),Name=name,PhoneNumber=phone,EmailId=email WHERE id=uid;
 END$$
 
 DROP PROCEDURE IF EXISTS sp_cashiercurrentpwdvalidate;
@@ -573,7 +580,16 @@ BEGIN
 END$$
 
 DROP PROCEDURE IF EXISTS sp_addCounter;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_addCounter` (`uid` int(3), serial decimal(15), `name` VARCHAR(120), `info` VARCHAR(250), `type` VARCHAR(6), `dCurrent` DECIMAL(8,2), `nCurrent` DECIMAL(8,2)) BEGIN
+CREATE DEFINER=`root`@`localhost`
+PROCEDURE `sp_addCounter` (
+  `uid` int(3),
+  serial decimal(15),
+  `name` VARCHAR(120) CHARSET utf8,
+  `info` VARCHAR(250) CHARSET utf8, 
+  `type` VARCHAR(6),
+  `dCurrent` DECIMAL(8,2),
+  `nCurrent` DECIMAL(8,2))
+BEGIN
 INSERT into counters (userId, number, name, info, type) values (uid,serial,name,info,type);
 INSERT into countValues (cId, tariffId, dPrevius, dCurrent, nPrevius, nCurrent, type)
   values (
@@ -585,7 +601,13 @@ INSERT into countValues (cId, tariffId, dPrevius, dCurrent, nPrevius, nCurrent, 
 END$$
 
 DROP PROCEDURE IF EXISTS sp_updateCounter;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_updateCounter` (`cuid` SMALLINT(5), serial decimal(15), `name` VARCHAR(120), `info` VARCHAR(250), `location` VARCHAR(20))
+CREATE DEFINER=`root`@`localhost`
+PROCEDURE `sp_updateCounter` (
+  `cuid` SMALLINT(5),
+  serial decimal(15),
+  `name` VARCHAR(120) CHARSET utf8,
+  `info` VARCHAR(250) CHARSET utf8,
+  `location` VARCHAR(20) CHARSET utf8)
 BEGIN
 UPDATE counters
 SET number = serial, name = name, info = info, verDate = NOW(), location = location
@@ -596,12 +618,12 @@ DROP PROCEDURE IF EXISTS sp_registration;
 CREATE DEFINER=`root`@`localhost`
 PROCEDURE `sp_registration` (
   `uid` int(3),
-  `street` int(3), 
+  `street` int(3),
   `size` DECIMAL(5,2), 
-  `resident` int(5), 
+  `resident` int(5),
   `counterNum` DECIMAL(20), 
-  `counterName` VARCHAR(120), 
-  `counterInfo` VARCHAR(250), 
+  `counterName` VARCHAR(120) CHARSET utf8,
+  `counterInfo` VARCHAR(250) CHARSET utf8,
   `dCurrent` DECIMAL(8,2), 
   `nCurrent` DECIMAL(8,2)) 
 BEGIN
@@ -617,8 +639,14 @@ BEGIN
 END$$
 
 DROP PROCEDURE IF EXISTS sp_signup;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_signup` (`name` VARCHAR(120), `emalid` VARCHAR(200), `inputpwd` VARCHAR(200), `isactve` INT(1))  BEGIN
-insert into users(Name,EmailId,UserPassword,IsActive) value(name,emalid,inputpwd,isactve);
+CREATE DEFINER=`root`@`localhost`
+PROCEDURE `sp_signup` (
+  `name` VARCHAR(120) CHARSET utf8,
+  `emalid` VARCHAR(200),
+  `inputpwd` VARCHAR(200),
+  `isactve` INT(1))
+BEGIN
+ insert into users(Name,EmailId,UserPassword,IsActive) value(name,emalid,inputpwd,isactve);
 END$$
 
 DROP PROCEDURE IF EXISTS sp_userchangepwd;
@@ -671,7 +699,7 @@ END$$
 
 DROP PROCEDURE IF EXISTS sp_userpwdrecoveryvalidation;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_userpwdrecoveryvalidation` (`name` VARCHAR(120), `useremail` VARCHAR(150))  BEGIN
-SELECT id from users where Name=name and EmailId=useremail;
+  SELECT id from users where Name=name and EmailId=useremail;
 END$$
 
 DROP PROCEDURE IF EXISTS sp_userupdateprofile;
@@ -707,16 +735,16 @@ DROP PROCEDURE IF EXISTS updateResidentProfile;
 CREATE DEFINER=`root`@`localhost` 
 PROCEDURE `updateResidentProfile` (
   `uid` SMALLINT(5),
-  `_surName` VARCHAR(40),
-  `_name` VARCHAR(30),
-  `_middlName` VARCHAR(50),
-  `_userName` VARCHAR(15),
+  `_surName` VARCHAR(40) CHARSET utf8,
+  `_name` VARCHAR(30) CHARSET utf8,
+  `_middlName` VARCHAR(50) CHARSET utf8,
+  `_userName` VARCHAR(15) CHARSET utf8,
   `_password` VARCHAR(32),
   `_email` VARCHAR(120),
   `_phone1` INT(10),
   `_phone2` INT(10), 
   `_isMember` TINYINT(1), 
-  `_autoInfo` VARCHAR(100), 
+  `_autoInfo` VARCHAR(100) CHARSET utf8, 
   `_autoNum` VARCHAR(20))  
 BEGIN
 IF ( uid > 0 ) THEN

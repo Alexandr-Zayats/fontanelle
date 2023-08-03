@@ -23,6 +23,7 @@
     //print("$rId,'$surName','$name','$middlName','$userName','$userPass','$email',$phone1,$phone2,$isMember,'$autoInfo','$autoNum'");
     //exit;
 
+    //print "call('updateResidentProfile', \"$rId, '$surName', '$name', '$middlName', '$userName', '$userPass', '$email', $phone1, $phone2, $isMember, '$autoInfo', '$autoNum'\")";
     $userModel->call('updateResidentProfile', "$rId, '$surName', '$name', '$middlName', '$userName', '$userPass', '$email', $phone1, $phone2, $isMember, '$autoInfo', '$autoNum'");
 
     header('location:' . destPage());

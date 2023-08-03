@@ -22,7 +22,8 @@
       echo "|| \n";
       echo $uid .",". $cid . ", '$dayLast', '$dCurrent', '$nightLast', '$nCurrent'";
       exit;
-    */
+     */
+    print "sp_updateCounter ($cid ,'$counterNum','$cname','$counterInfo','$location')";
     $userModel->call('sp_updateCounter', $cid . ",'$counterNum','$cname','$counterInfo','$location'");
     $userModel->call('sp_addCounterValues', "'$uid','$cid','$dayLast','$dCurrent','$nightLast','$nCurrent'");
 
