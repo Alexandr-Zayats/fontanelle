@@ -7,7 +7,7 @@
   //define('DB_SERVER','3.65.146.44');
   define('DB_SERVER','localhost');
   define('DB_USER','web');
-  define('DB_PASS' ,'webPassword');
+  define('DB_PASS' ,'webPassword12$');
   define('DB_NAME', 'fontanelle');
 
   mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
