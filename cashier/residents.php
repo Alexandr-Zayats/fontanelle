@@ -1,11 +1,11 @@
 <?php
-session_start();
-//error_reporting(0);
-include('../includes/config.php');
-if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
-  header('location:logout.php');
-} else {
+  namespace Phppot;
+  session_start();
+  unset($_SESSION['subpage']);
+  include_once __DIR__ . '/includes/config.php';
+  include_once __DIR__ . '/../includes/config.php';
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -29,6 +29,7 @@ if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
 
     <!-- Custom styles for this page -->
     <link href="../vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+    <script src="../includes/scripts.js"> </script>
 
 </head>
 
@@ -62,10 +63,11 @@ if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
                     <!-- DataTales Example -->
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary">Дачники</h6>
-                            <a class="nav-link" href="createResident.php">
-                            <i class="fas fa-fw fa-user"></i>
-                              <span>Добавить</span></a>
+                          <h6 class="m-0 font-weight-bold text-primary">Дачники</h6>
+                          <form action="createResident.php" method="post">
+                            <input type="hidden" name="rId" id="rId" value="-1">
+                            <input type="submit" value="Добавить" class="btn btn-primary btn-user btn-block"/>
+                          </form>
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
@@ -74,11 +76,11 @@ if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
                                     <tr>
                                       <th style="width: 3%; text-align:center">#</th>
                                       <th style="width: 3%; text-align:center">ID</th>
-                                      <th style="width: 22%; text-align:center">ФИО</th>
+                                      <th style="width: 27%; text-align:center">ФИО</th>
                                       <th style="width: 6%; text-align:center">Логин</th>
-                                      <th style="width: 15%; text-align:center">Телефон</th>
-                                      <th style="width: 14%; text-align:center">Email</th>
-				                              <th style="width: 21%; text-align:center">Автомобиль</th>
+                                      <th style="width: 14%; text-align:center">Телефон</th>
+                                      <th style="width: 13%; text-align:center">Email</th>
+				                              <th style="width: 19%; text-align:center">Автомобиль</th>
                                       <th style="width: 5%; text-align:center">Участки</th>
                                       <th style="width: 9%; text-align:center">Баланс</th>
                                     </tr>
@@ -98,27 +100,22 @@ if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
                                   </tfoot>
                                   <tbody>
 <?php
-  $query=mysqli_query($con,"call residents(0)");
+  $query = $userModel->call('residents', 0);
   $cnt=1;
-  while ($result=mysqli_fetch_array($query)) {
+  foreach ($query as $result) {
 ?>
                                     <tr>
                                       <td style="text-align:right"><?php printf('%d', $cnt);?></td>
                                       <td style="text-align:center">
-                                        <a href="createResident.php?uid=<?php printf('%d', $result['id']);?>"</a>
                                         <?php printf('%d', $result['id']);?>
                                       </td>
 
                                       <td style="text-align:left">
-                                        <a href="createResident.php?uid=<?php printf('%d', $result['id']);?>">
-                                          <?php printf('%s', $result['resName']);?>
-                                        </a>
+                                        <?php formSubmit('rId', $result['id'], $result['resName'], 'createResident.php')?>
                                       </td>
 
                                       <td style="text-align:left">
-                                        <a href="createResident.php?uid=<?php printf('%d', $result['id']);?>">
                                           <?php printf('%s', $result['userName']);?>
-                                        </a>
                                       </td>
 
 				                              <td style="text-align:right">
@@ -182,7 +179,7 @@ if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
     </a>
 
     <!-- Logout Modal-->
-<?php include_once('includes/logout-modal.php');?>
+<?php include_once('../includes/logout-modal.php');?>
 
     <!-- Bootstrap core JavaScript-->
     <script src="../vendor/jquery/jquery.min.js"></script>
@@ -203,4 +200,3 @@ if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
 
 </body>
 </html>
-<?php } ?>

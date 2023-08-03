@@ -1,37 +1,14 @@
 <?php
-session_start();
-//error_reporting(0);
-include('../includes/config.php');
-$uid=$_GET['uid'];
-$type=$_GET['type'];
-$cashier=$_SESSION['adid'];
-if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
-  header('location:logout.php');
-} else {
-  if(isset($_POST['payment'])) {
-    $number=$_POST['number'];
-    $name=$_POST['name'];
-    $type=$_POST['type'];
-    $info=$_POST['info'];
-    $dCurrent=$_POST['dCurrent'];
-    $nCurrent=$_POST['nCurrent'];
-    mysqli_close($con);
-    $con = mysqli_connect(DB_SERVER,DB_USER,DB_PASS,DB_NAME);
-    //echo "<script>alert('$uid $number $name $info');</script>";
-    $query=mysqli_query($con,"call sp_addCounter('$uid','$number', '$name', '$info', '$type', $dCurrent, $nCurrent)");
-    if ($query) {
-      echo "<script>alert('Счетчик добавлен');</script>";
-      if ( $type == "el" ) {
-        echo "<script>window.location.href='info.php?uid=$uid'</script>";
-      } else {
-        echo "<script>window.location.href='water.php?uid=$uid'</script>";
-      }
-    } else {
-      echo "<script>alert('Что-то пошло не так!. Попробуйте еще раз.');</script>";
-    }
-  }
-}
+  namespace Phppot;
+  session_start();
+  $_SESSION['subpage'] = true;
+  include_once __DIR__ . '/includes/config.php';
+  include_once __DIR__ . '/../includes/config.php';
 
+  if(isset($_POST['payment'])) {
+    $userModel->call('sp_addCounter', "'$uid','$number','$name','$info','$cType',$dCurrent,$nCurrent");
+    header('location:' . destPage());
+  }
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -66,56 +43,51 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
                         <div class="p-5">
                             <div class="text-center">
                                 <h5 style="color:blue">СТ "РУЧЕЕК"</h5>
-                                <h1 class="h4 text-gray-900 mb-4">Cчетчик <?php if ($type == "el") { echo "електрический";} else { echo "воды";} ?> </h1>
+                                <h1 class="h4 text-gray-900 mb-4">Cчетчик <?php if ($cType == "el") { echo "електрический";} else { echo "воды";} ?> </h1>
                             </div>
                             <form class="user" name="payment" method="post">
                               <div class="form-group row">
                                 <div class="col-sm-6 mb-3 mb-sm-0">
                                   <label for="uid">Участок:</label>
-                                  <input type="number" class="form-control form-control-user" id="uid" name="uid" value="<?php echo $uid ?>" readonly>
+                                  <input type="number" class="form-control form-control-user"
+                                    id="uid" name="uid" value="<?php echo $uid ?>" readonly>
                                 </div>
                               </div>
-                              <!--
-                              <div class="form-group row">
-                                <div class="col-sm-6 mb-3 mb-sm-0">
-                                  <input type="radio" id="el" name="type" value="el" required>
-                                  <label for="el">электричество</label><br>
-                                  <input type="radio" id="wat" name="type" value="wat">
-                                  <label for="wat">вода</label><br>
-                                </div>
-                              </div>
-                              -->
-                              <input type="hidden" id="type" name="type" value="<?php echo $type ?>">
+                              <input type="hidden" id="cType" name="cType" value="<?php echo $cType ?>">
                               <div class="form-group row">
                                 <div class="col-sm-6 mb-3 mb-sm-0">
                                   <label for="uid">Серийный номер:</label>
-                                  <input type="number" class="form-control form-control-user" value="1111111111" id="number" name="number" required="true">
+                                  <input type="number" class="form-control form-control-user"
+                                    value="1111111111" id="number" name="number" required="true">
                                 </div>
                               </div>
                               <div class="form-group row">
                                 <div class="col-sm-6 mb-3 mb-sm-0">
                                   <label for="uid">Имя:</label>
-                                  <input type="text" class="form-control form-control-user" id="name" name="name" required="true" value="сарай">
+                                  <input type="text" class="form-control form-control-user"
+                                    id="name" name="name" required="true" value="Основной">
                                 </div>
                               </div>
                               <div class="form-group row">
                                 <div class="col-sm-6 mb-3 mb-sm-0">
                                   <label for="uid">Описание:</label>
-                                  <input type="text" class="form-control form-control-user" id="info" name="info" required="true" value="счетчик в сарае">
+                                  <input type="text" class="form-control form-control-user"
+                                    id="info" name="info" required="true" value="счетчик">
                                 </div>
                               </div>
                               <div class="form-group row">
                                 <div class="col-sm-6 mb-3 mb-sm-0">
-                                  <label for="dCurrent">Первичные показания <?php if ($type == "el") { echo "(день)"; } ?>:</label>
+                                  <label for="dCurrent">Первичные показания <?php if ($cType == "el") { echo "(день)"; } ?>:</label>
                                   <input type="number" min="0.00" step="0.01" class="form-control form-control-user" id="dCurrent"
                                   value="0.00" name="dCurrent" required="true">
                                 </div>
                               </div>
-                              <?php if ($type == "el") { echo ""; ?>
+                              <?php if ($cType == "el") { echo ""; ?>
                               <div class="form-group row">
                                 <div class="col-sm-6 mb-3 mb-sm-0">
                                   <label for="nCurrent">Первичные показания (ночь):</label>
-                                  <input type="number" class="form-control form-control-user" id="nCurrent" value="0" name="nCurrent" required="true">
+                                  <input type="number" class="form-control form-control-user"
+                                    id="nCurrent" value="0" name="nCurrent" required="true">
                                 </div>
                               </div>
                               <?php } else { ?>
@@ -133,17 +105,12 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
         </div>
 
     </div>
-
     <!-- Bootstrap core JavaScript-->
     <script src="../vendor/jquery/jquery.min.js"></script>
     <script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-
     <!-- Core plugin JavaScript-->
     <script src="../vendor/jquery-easing/jquery.easing.min.js"></script>
-
     <!-- Custom scripts for all pages-->
     <script src="../js/sb-admin-2.min.js"></script>
-
 </body>
-
 </html>

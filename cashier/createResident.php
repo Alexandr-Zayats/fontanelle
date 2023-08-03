@@ -1,40 +1,44 @@
 <?php
-session_start();
-//error_reporting(0);
-//db Connection file
-include('../includes/config.php');
-//code for createuser
-$phone_regex = array("-", "(", ")", "+38", "+", "_", " ");
-if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
-  header('location:logout.php');
-} else {
+  namespace Phppot;
+  session_start();
+  $_SESSION['subpage'] = true;
+  include_once __DIR__ . '/includes/config.php';
+  include_once __DIR__ . '/../includes/config.php';
+  include_once __DIR__ . '/../lib/ImageModel.php';
+  $imageModel = new ImageModel();
+
+  $phone_regex = array("-", "(", ")", "+38", "+", "_", " ");
+  $_SESSION['rId'] = $rId;
+
   if(isset($_POST['createuser'])) {
-    $id=intval($_POST['id']);
-    $surName = $_POST['surName'];
-    $name = $_POST['name'];
-    $middlName = $_POST['middlName'] ?: '';
-    $email = $_POST['email'] ?: '';
-    $userName = $_POST['userName'] ?: '';
-    $password = $_POST['password'] ?: '';
-    $phone1 = str_replace($phone_regex, '', $_POST['phone1']);
-    $phone2 = str_replace($phone_regex, '', $_POST['phone2']);
-    if($phone2 == "") $phone2=0;
+    $middlName = $middlName ?: '';
+    $email = $email ?: '';
+    $userName = $userName ?: '';
+    $userPass = $userPass ?: '';
+    $phone1 = intval(str_replace($phone_regex, '', $phone1));
+    $phone2 = intval(str_replace($phone_regex, '', $phone2));
     $isMember = 1;
-    $autoInfo = $_POST['autoInfo'] ?: '';
-    $autoNum = $_POST['autoNum'] ?: '';
-    mysqli_close($con);
-    $con = mysqli_connect(DB_SERVER,DB_USER,DB_PASS,DB_NAME);
-    //echo "<script>alert('$id, $surName, $name, $middlName, $userName, $password, $email, $phone1, $phone2, $isMember, $autoInfo, $autoNum');</script>";
-    $query=mysqli_query($con, "call updateResidentProfile($id, '$surName', '$name', '$middlName', '$userName', '$password', '$email', $phone1, $phone2, $isMember, '$autoInfo', '$autoNum')");
-    if ($query) {
-      echo "<script>alert('Новый дачник успешно зарегистрирован');</script>";
-      echo "<script>window.location.href='residents.php'</script>";
-    } else {
-      echo "<script>alert('Что-то пошло не так!. Попробуйте еще раз.');</script>";
-    }
+    $autoInfo = $autoInfo ?: '';
+    $autoNum = $autoNum ?: '';
+    //print("$rId,'$surName','$name','$middlName','$userName','$userPass','$email',$phone1,$phone2,$isMember,'$autoInfo','$autoNum'");
+    //exit;
+
+    $userModel->call('updateResidentProfile', "$rId, '$surName', '$name', '$middlName', '$userName', '$userPass', '$email', $phone1, $phone2, $isMember, '$autoInfo', '$autoNum'");
+
+    header('location:' . destPage());
+      /*
+      if ($query) {
+        echo "<script>alert('Новый дачник успешно зарегистрирован');</script>";
+        echo "<script>window.location.href='residents.php'</script>";
+      } else {
+        echo "<script>alert('Что-то пошло не так!. Попробуйте еще раз.');</script>";
+      }
+    */
   }
-}
+  $query = $userModel->call('residents', $rId);
+  $result = $query[0];
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -55,21 +59,9 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
 
     <!-- Custom styles for this template-->
     <link href="../css/sb-admin-2.min.css" rel="stylesheet">
+    <script src="../includes/scripts.js"></script>
+    <script src="../includes/scripts-img.js"></script>
 </head>
-
-<?php
-  mysqli_close($con);
-  $con = mysqli_connect(DB_SERVER,DB_USER,DB_PASS,DB_NAME);
-  if (isset($_GET['uid'])) {
-    $uid=$_GET['uid'];
-  } else {
-    $uid=-1;
-  }
-  echo $uid;
-  $query=mysqli_query($con,"call residents($uid)");
-  while ($result=mysqli_fetch_array($query)) {
-
-?>
 
 <body class="bg-gradient-primary">
     <div class="container">
@@ -85,9 +77,9 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
                                 <h1 class="h4 text-gray-900 mb-4">Регистрaция / правка Дачника!</h1>
                             </div>
                             <form class="user" name="createuser" method="post">
-                                <input type="hidden" id="id" name="id"
+                                <input type="hidden" id="rId" name="rId"
                                   <?php
-                                    echo "value=\"".$uid."\" ";
+                                    echo "value=\"".$rId."\" ";
                                   ?>
                                 >
                                 <div class="formgroup row">
@@ -148,10 +140,10 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
                                 </div>
                                 <div class="formgroup row">
                                   <div class="col-sm-6 mb-3 mb-sm-0">
-                                    <input type="password" class="form-control form-control-user" id="passwd"
-                                      name="passwd"
+                                    <input type="password" class="form-control form-control-user" id="userPass"
+                                      name="userPass"
                                       <?php
-                                        if(isset($result['password'])) {
+                                        if(isset($result['password']) AND ($result['password'] != "")) {
                                           echo "value=\"".$result['password']."\" ";
                                         } else {
                                           echo "placeholder=\"Пароль\"";
@@ -238,6 +230,35 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
                                   Сохранить
                                 </button>
                               </form>
+                                <div class="form-group row">
+                                  <table width="100%">
+                                  <?php
+                                  unset($_SESSION['imageUploadedId']);
+                                  $_SESSION['iType'] = 'passport';
+                                  $_SESSION['imageOwner'] = $rId;
+                                  $result = $imageModel->getAllImages($_SESSION['imageOwner'], $_SESSION['iType']);
+                                  if (! empty($result)) {
+                                    foreach ($result as $row) {
+                                  ?>
+                                  <tr>
+                                    <td>
+                                      <a href=""
+                                        onClick="myWindow('../<?php echo $row["image"]?>', '<?php echo $row["image"]?>', 600, 600); return false;"
+                                      > <img src="../<?php echo $row['image']?>" width="100" border="0"/> </a>
+                                    </td>
+                                    <td>
+                                      <?php formSubmit('imageId', $row['id'], 'Удалить', $_SERVER['HTTP_ORIGIN'] .'/image_delete.php')?>
+                                    </td>
+                                  </tr>
+                                  <?php
+                                    }
+                                  }
+                                  ?>
+                                  </table>
+                                </div>
+                                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#imageModal">
+                                  <i class="btn btn-primary btn-user">Прикрепить документы</i>
+                                </a>
                             <hr>
                         </div>
                     </div>
@@ -246,6 +267,8 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
         </div>
     </div>
 
+    <!-- Image Modal-->
+    <?php include_once('../includes/image-modal.php')?>
     <!-- Bootstrap core JavaScript-->
     <script src="../vendor/jquery/jquery.min.js"></script>
     <script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
@@ -255,7 +278,5 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
 
     <!-- Custom scripts for all pages-->
     <script src="../js/sb-admin-2.min.js"></script>
-<?php } ?> 
 </body>
-
 </html>

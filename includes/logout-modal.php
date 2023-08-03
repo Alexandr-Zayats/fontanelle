@@ -2,7 +2,6 @@
     <a class="scroll-to-top rounded" href="#page-top">
         <i class="fas fa-angle-up"></i>
     </a>
-
     <!-- Logout Modal-->
     <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
         aria-hidden="true">
@@ -17,7 +16,7 @@
                 <div class="modal-body">Нажмите "Выход" если вы действительно хотите закончить работу.</div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                    <a class="btn btn-primary" href="logout.php">Выход</a>
+                    <a class="btn btn-primary" href="<?php echo $_SERVER['HTTP_ORIGIN']?>/logout.php">Выход</a>
                 </div>
             </div>
         </div>

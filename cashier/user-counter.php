@@ -1,33 +1,27 @@
 <?php
-session_start();
-//error_reporting(0);
-include('../includes/config.php');
-$uid=$_GET['uid'];
-if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
-  header('location:logout.php');
-} else {
+  namespace Phppot;
+  session_start();
+  include_once __DIR__ . '/includes/config.php';
+  include_once __DIR__ . '/../includes/config.php';
+
   if(isset($_POST['addvalues'])) {
-    $counter=$_POST['counter'];
-    $dCurrent=$_POST['dCurrent'];
-    $nCurrent=$_POST['nCurrent'];
+
     $latest=mysqli_fetch_assoc(mysqli_query($con,"call sp_getLastCounterValues($counter)"));
     if($latest[nightLast] > $nCurrent || $latest[dayLast] > $dCurrent) {
       echo "<script>alert('Введеные показания ниже предыдущих!');</script>";
     } else {
-      mysqli_close($con);
       $con = mysqli_connect(DB_SERVER,DB_USER,DB_PASS,DB_NAME);
       // echo "<script>alert('uid=$uid counter=$counter latesD=$latest[dayLast] currentD=$dCurrent latestN=$latest[nightLast] currentN=$nCurrent');</script>";
       $query=mysqli_query($con,"call sp_addCounterValues($uid,$counter,'$latest[dayLast]','$dCurrent','$latest[nightLast]','$nCurrent')");
       if ($query) {
         echo "<script>alert('Показания успешно занесены');</script>";
         echo "<script>window.location.href='registered-users.php'</script>";
+        header("Location: " . $_SESSION['sourcePage']);
       } else {
         echo "<script>alert('Что-то пошло не так!. Попробуйте еще раз.');</script>";
       }
     }
   }
-}
-
 
 ?>
 <!DOCTYPE html>
@@ -53,9 +47,7 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
 </head>
 
 <?php
-  mysqli_close($con);
   $con = mysqli_connect(DB_SERVER,DB_USER,DB_PASS,DB_NAME);
-  $uid=$_GET['uid'];
   $counters=mysqli_query($con,"call sp_counterList($uid)");
 ?>
 
@@ -146,5 +138,4 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
     <script src="../js/sb-admin-2.min.js"></script>
 
 </body>
-
 </html>

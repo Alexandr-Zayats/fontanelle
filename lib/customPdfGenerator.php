@@ -1,6 +1,6 @@
 <?php
-class CustomPdfGenerator extends TCPDF 
-{
+// namespace Phppot;
+  class CustomPdfGenerator extends TCPDF  {
     public function Header() 
     {
         //$image_file = '/web/logo.png';
@@ -73,4 +73,5 @@ class CustomPdfGenerator extends TCPDF
         $this->Ln();
         $this->Cell(array_sum($w), 0, '', 'T');
     }
-}
+  }
+?>

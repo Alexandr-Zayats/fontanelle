@@ -1,50 +1,27 @@
 <?php
-session_start();
-//error_reporting(0);
-include('../includes/config.php');
-$uid=$_GET['uid'];
-$type=$_GET['type'];
-$dCurrent=0;
-$nCurrent=0;
+  namespace Phppot;
+  session_start();
+  $_SESSION['subpage'] = true;
+  include_once __DIR__ . '/includes/config.php';
+  include_once __DIR__ . '/../includes/config.php';
 
-if(isset($_GET['cid'])) { $cid=$_GET['cid']; }
+  $query = $userModel->call('sp_getLastCounterValues', $cid);
+  $latest = $query[0];
 
-if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
-  header('location:logout.php');
-} else {
   if(isset($_POST['addvalues'])) {
-    $cid=$_POST['cid'];
-    $type=$_POST['type'];
-    $dCurrent=$_POST['dCurrent'];
-    $nCurrent=$_POST['nCurrent'];
-  }
-  $latest=mysqli_fetch_assoc(mysqli_query($con,"call sp_getLastCounterValues($cid)"));
-  if(isset($_POST['addvalues'])) {
-    $dayLast=$latest['dayLast'];
-    $nightLast=$latest['nightLast'];
+    $dayLast = $latest['dayLast'];
+    $nightLast = $latest['nightLast'];
     if($nightLast > $nCurrent || $dayLast > $dCurrent) {
       //echo "<script>alert('$nightLast; $nCurrent; $dayLast; $dCurrent');</script>";
       echo "<script>alert('Введеные показания ниже предыдущих!');</script>";
     } else {
-      mysqli_close($con);
-      $con = mysqli_connect(DB_SERVER,DB_USER,DB_PASS,DB_NAME);
       //echo "<script>alert('uid=$uid cid=$cid latesD=$latest[dayLast] currentD=$dCurrent latestN=$latest[nightLast] currentN=$nCurrent');</script>";
-      $query=mysqli_query($con,"call sp_addCounterValues($uid, $cid,'$dayLast','$dCurrent','$nightLast','$nCurrent')");
-      if ($query) {
-        echo "<script>alert('Показания успешно занесены');</script>";
-        if ( $type == "el" ) {
-          echo "<script>window.location.href='info.php?uid=$uid&cid=$cid'</script>";
-        } else {
-          echo "<script>window.location.href='water.php?uid=$uid&cid=$cid'</script>";
-        }
-      } else {
-        echo "<script>alert('Что-то пошло не так!. Попробуйте еще раз.');</script>";
-      }
+      $userModel->call('sp_addCounterValues', "$uid, $cid, '$dayLast', '$dCurrent', '$nightLast', '$nCurrent'");
+      header('location:' . destPage());
     }
   }
-}
-
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -67,10 +44,8 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
     <link href="../css/sb-admin-2.min.css" rel="stylesheet">
 </head>
 <?php
-  mysqli_close($con);
-  $con = mysqli_connect(DB_SERVER,DB_USER,DB_PASS,DB_NAME);
-  $uid=$_GET['uid'];
-  $counter=mysqli_fetch_row(mysqli_query($con, "SELECT name FROM counters WHERE id=$cid;"));
+  $query = $userModel->select('SELECT name FROM counters WHERE id=?', $cid);
+  $counter = $query[0]['name'];
 ?>
 <body class="bg-gradient-primary">
 
@@ -94,14 +69,11 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
                                       value="<?php echo $uid ?>" readonly>
                                   </div>
                                 </div>
-                                <input type="hidden" id="type" name="type" value="<?php echo $type ?>">
-                                <input type="hidden" id="cid" name="cid" value="<?php echo $cid ?>">
-
                                 <div class="form-group row">
                                   <div class="col-sm-6 mb-3 mb-sm-0">
                                     <label for="uid">Счетчик:</label>
                                     <input type="text" class="form-control form-control-user" id="сname" name="сname"
-                                      value="<?php echo $counter[0] ?>" readonly>
+                                      value="<?php echo $counter ?>" readonly>
                                   </div>
                                 </div>
 
@@ -119,7 +91,7 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
                                       name="dCurrent" required="true">
                                   </div>
                                 </div>
-                                <?php if ( $type == "el" AND  $latest['nightLast'] != 0 ) { ?>
+                                <?php if ( $cType == "el" AND  $latest['nightLast'] != 0 ) { ?>
                                 <div class="form-group row">
                                   <div class="col-sm-6 mb-3 mb-sm-0">
                                     <label for="nCurrent">Ночь:</label>
@@ -140,7 +112,6 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
                                 <button type="submit" name="addvalues" class="btn btn-primary btn-user btn-block">
                                     Внести
                                 </button>
-                           
                             </form>
                             <hr>
                         </div>
@@ -148,7 +119,6 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
                 </div>
             </div>
         </div>
-
     </div>
 
     <!-- Bootstrap core JavaScript-->

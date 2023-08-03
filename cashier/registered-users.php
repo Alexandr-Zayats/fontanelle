@@ -1,11 +1,12 @@
 <?php
-session_start();
-//error_reporting(0);
-include('../includes/config.php');
-if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
-  header('location:logout.php');
-} else {
+  namespace Phppot;
+  session_start();
+  unset($_SESSION['subpage']);
+  include_once __DIR__ . '/includes/config.php';
+  include_once __DIR__ . '/../includes/config.php';
+  unset($_SESSION['cid']);
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -29,6 +30,7 @@ if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
 
     <!-- Custom styles for this page -->
     <link href="../vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+    <script src="../includes/scripts.js"> </script>
 
 </head>
 
@@ -36,46 +38,38 @@ if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
 
     <!-- Page Wrapper -->
     <div id="wrapper">
-
-        <!-- Sidebar -->
         <!-- Sidebar -->
   <?php include_once('includes/sidebar.php');?>
         <!-- End of Sidebar -->
-
         <!-- Content Wrapper -->
         <div id="content-wrapper" class="d-flex flex-column">
-
             <!-- Main Content -->
             <div id="content">
-
                 <!-- Topbar -->
                   <?php include_once('includes/topbar.php');?>
                 <!-- End of Topbar -->
-
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
-
                     <!-- Page Heading -->
                     <h1 class="h3 mb-2 text-gray-800">СТ "РУЧЕЕК"</h1>
-            
-
                     <!-- DataTales Example -->
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
                             <h6 class="m-0 font-weight-bold text-primary">Дачные участки</h6>
                         </div>
                         <div class="card-body">
-                            <div class="table-responsive">
+                            <div class="table-responsive" style="overflow-x:auto;">
                                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                   <thead>
                                     <tr>
                                       <th style="width: 3%; text-align:center" rowspan="2">#</th>
                                       <th style="width: 3%; text-align:center" rowspan="2">№</th>
-                                      <th style="width: 9%; text-align:center" rowspan="2">Улица</th>
-                                      <th style="width: 22%; text-align:center" rowspan="2">Владелец</th>
-				                              <th style="width: 22%; text-align:center" rowspan="2">Примечание</th>
-                                      <th style="width: 23%; text-align:center" colspan="3">Баланс</th>
-                                      <th style="width: 13%; text-align:center" rowspan="2">Последний платеж</th>
+                                      <th style="width: 8%; text-align:center" rowspan="2">Улица</th>
+                                      <th style="width: 20%; text-align:center" rowspan="2">Владелец</th>
+                                      <th style="width: 8%; text-align:center" rowspan="2">Статус</th>
+				                              <th style="width: 20%; text-align:center" rowspan="2">Примечание</th>
+                                      <th style="width: 22%; text-align:center" colspan="3">Баланс</th>
+                                      <th style="width: 12%; text-align:center" rowspan="2">Последний платеж</th>
                                     </tr>
                                       <th style="text-align:center">Електр</th>
                                       <th style="text-align:center">Вода</th>
@@ -88,6 +82,7 @@ if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
                                       <th style="text-align:center">№</th>
                                       <th style="text-align:center">Улица</th>
                                       <th style="text-align:center">Владелец</th>
+                                      <th style="text-align:center">Статус</th>
 				                              <th style="text-align:center">Примечание</th>
                                       <th style="text-align:center">Електр</th>
                                       <th style="text-align:center">Вода</th>
@@ -97,9 +92,9 @@ if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
                                   </tfoot>
                                   <tbody>
 <?php
-  $query=mysqli_query($con,"call sp_allregisteredusers()");
   $cnt=1;
-  while ($result=mysqli_fetch_array($query)) {
+  $query = $userModel->call('sp_allregisteredusers', '');
+  foreach ($query as $result) {
 ?>
                                     <?php
                                       $phone="Номер телефона не указан";
@@ -111,28 +106,41 @@ if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
                                       }
                                     ?>
                                     <tr>
-                                      <td style="text-align:right"><?php echo $cnt;?></td>
+                                      <td style="text-align:right">
+                                          <?php echo $cnt?>
+                                      </td>
 
                                       <td style="text-align:center">
-                                        <a href="../user/info.php?uid=<?php echo $result['id'];?>">
-                                          <?php echo $result['id'];?>
-                                        </a>
+                                        <form class="user" id="<?php printf('%d', $result['id'])?>"
+                                          action="../user/" method="post"
+                                        >
+                                          <input type="hidden" name="uid" placeholder=""
+                                            value="<?php printf('%d', $result['id'])?>"/
+                                          >
+                                          <div class="mb-sm-0" style="color:blue;cursor:pointer"
+                                            onclick="submit(<?php printf('%d', $result['id'])?>)"
+                                          >
+                                            <?php printf('%s', $result['id'])?>
+                                          </div>
+                                        </form>
                                       </td>
-
                                       <td style="text-align:left">
-                                        <a href="../user/info.php?uid=<?php echo $result['id'];?>">
                                           <?php echo $result['street'];?>
-                                        </a>
                                       </td>
-
 				                              <td style="text-align:left">
-                                        <a href="../user/info.php?uid=<?php echo $result['id'];?>" title="<?php echo $phone?>">
-                                          <?php echo $result['Name'];?>
-                                        </a>
+                                        <?php formSubmit('uid', $result['id'], $result['Name'], '../user/')?>
 				                              </td>
-
+                                      <td style="text-align:left">
+                                      <?php
+                                        if($result['type'] == 1) {
+                                          echo "Проживают";
+                                        } elseif($result['type'] == 2) {
+                                          echo "Дачники";
+                                        }
+                                      ?>
+                                      </td>
 				                              <td style="text-align:right">
-                                        <?php echo $result['info'];?>
+                                        <?php echo $result['info']?>
                                       </td>
                                       <td style="text-align:right">
                                         <?php printf("%.2f", $result['el']);?>
@@ -174,7 +182,7 @@ if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
     </a>
 
     <!-- Logout Modal-->
-<?php include_once('includes/logout-modal.php');?>
+<?php include_once('../includes/logout-modal.php');?>
 
     <!-- Bootstrap core JavaScript-->
     <script src="../vendor/jquery/jquery.min.js"></script>
@@ -195,4 +203,3 @@ if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
 
 </body>
 </html>
-<?php } ?>

@@ -1,23 +1,14 @@
 <?php
-session_start();
-//error_reporting(0);
-include('../includes/config.php');
-if (strlen($_SESSION['adid'] == 0 || ($_SESSION['type'] != "cashier" && $_SESSION['type'] != "regularUser")) ) {
-  header('location:logout.php');
-} else {
-  $uid=$_GET['uid'];
-  if(isset($_GET['cid'])) {
-    $cid=$_GET['cid'];
-  } else {
-    $cid=0;
-  }
-}
+  namespace Phppot;
+  session_start();
+  $_SESSION['cType'] = 'fee';
+  include_once __DIR__ . '/includes/config.php';
+  include_once __DIR__ . '/../includes/config.php';
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -37,12 +28,13 @@ if (strlen($_SESSION['adid'] == 0 || ($_SESSION['type'] != "cashier" && $_SESSIO
 
     <!-- Custom styles for this page -->
     <link href="../vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+    <script src="../includes/scripts.js"> </script>
 
 </head>
 
 <?php
-  $query=mysqli_query($con,"call userInfo($uid, 'fee')");
-  while ($user=mysqli_fetch_assoc($query)) {
+  $query = $userModel->call('userInfo', "$uid, 'fee'");
+  $user = $query[0];
 ?>
 
 <body id="page-top">
@@ -72,11 +64,41 @@ if (strlen($_SESSION['adid'] == 0 || ($_SESSION['type'] != "cashier" && $_SESSIO
                   <div class="card-body">
                     <div class="row no-gutters align-items-center">
                       <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                          <?php echo "Участок № ".$user['uId'] ?>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800"
+                          style="display:flex; flex-direction:row; justify-content:center; align-items:center">
+                          <?php if(in_array($_SESSION['loginType'], $allowedUser)) {
+                            formSubmit('uid', $user['uId'], 'Участок № ', 'edit-user-profile.php')?>
+                          <form action="fee.php" method="post">
+                            <input type="text" name="uid" id="uid" value="<?php echo $uid?>"
+                              maxlength="3" size="3" pattern="[0-9]+"
+                            >
+                            <input type="submit"value="Перейти" class="btn btn-primary btn-user">
+                          </form>
+                          <?php
+                          } else {
+                            echo "Участок № ".$user['uId'];
+                          } ?>
+                        </div>
+                      </div>
+                      <div class="col-auto">
+                        <i class="fas fa-users fa-2x text-gray-300"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-primary shadow h-100 py-2">
+                  <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                      <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1"
+                          style="display:flex; flex-direction:row; justify-content:center; align-items:center; font-size:14">
+                          Владелец
                         </div>
                         <div class="h5 mb-0 font-weight-bold text-gray-800">
-                          <?php echo $user['uName'] ?>
+                          <!--<a href="edit-user-profile.php"><?php echo $user['uName']?></a>-->
+                          <?php formSubmit('rId', $user['rId'], $user['uName'], '../cashier/createResident.php')?>
                         </div>
                       </div>
                       <div class="col-auto">
@@ -95,7 +117,7 @@ if (strlen($_SESSION['adid'] == 0 || ($_SESSION['type'] != "cashier" && $_SESSIO
                           Баланс
                         </div>
                         <div class="h5 mb-0 font-weight-bold text-gray-800">
-                          <?php echo $user['balance']; $toPay=$user['balance'] ?> грн.
+                          <?php echo $user['balance']; $_SESSION['toPay'] = $user['balance'] ?> грн.
                         </div>
                       </div>
                       <div class="col-auto">
@@ -114,24 +136,21 @@ if (strlen($_SESSION['adid'] == 0 || ($_SESSION['type'] != "cashier" && $_SESSIO
                     <table width="100%">
                       <tr>
                         <td>
-                          <form action="user-payment.php">
-                            <input type="hidden" id="uid" name="uid" value="<?php echo $uid ?>">
-                            <input type="hidden" id="type" name="type" value="fee">
+                          <form action="user-payment.php" method="post">
+                            <input type="hidden" id="cType" name="cType" value="fee">
                             <input type="hidden" id="toPay" name="toPay" value="<?php echo $toPay ?>">
                             <input type="submit" value="Членские" class="btn btn-primary btn-user btn-block"/>
                           </form>
                         </td>
                         <td>
-                          <form action="user-payment.php">
-                            <input type="hidden" id="uid" name="uid" value="<?php echo $uid ?>">
-                            <input type="hidden" id="type" name="type" value="inc">
+                          <form action="user-payment.php" method="post">
+                            <input type="hidden" id="cType" name="cType" value="inc">
                             <input type="submit" value="Вступительные" class="btn btn-primary btn-user btn-block"/>
                           </form>
                         </td>
                         <td>
-                          <form action="user-payment.php">
-                            <input type="hidden" id="uid" name="uid" value="<?php echo $uid ?>">
-                            <input type="hidden" id="type" name="type" value="other">
+                          <form action="user-payment.php" method="post">
+                            <input type="hidden" id="cType" name="cType" value="other">
                             <input type="submit" value="Прочие" class="btn btn-primary btn-user btn-block" />
                           </form>
                         </td>
@@ -152,12 +171,10 @@ if (strlen($_SESSION['adid'] == 0 || ($_SESSION['type'] != "cashier" && $_SESSIO
 
                       <tbody>
 <?php
-  //$query->close();
-  $con->next_result();
-  $sql=mysqli_query($con,"call fee_history($uid)");
   $cnt=1;
-  while ($fee=mysqli_fetch_array($sql))
-{ ?>
+  $sql = $userModel->call('fee_history', $uid);
+  foreach ($sql as $fee) {
+?>
 
                               <tr>
                                 <td style="text-align:right"><?php echo $fee['date'] ?></td>
@@ -177,6 +194,24 @@ if (strlen($_SESSION['adid'] == 0 || ($_SESSION['type'] != "cashier" && $_SESSIO
         </div> <!-- content -->
       </div> <!-- content-wrapper -->
     </div> <!-- wraper -->
+
+  <!-- Logout Modal-->
+  <?php include_once('../includes/logout-modal.php');?>
+  <!-- Bootstrap core JavaScript-->
+  <script src="../vendor/jquery/jquery.min.js"></script>
+  <script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Core plugin JavaScript-->
+  <script src="../vendor/jquery-easing/jquery.easing.min.js"></script>
+
+  <!-- Custom scripts for all pages-->
+  <script src="../js/sb-admin-2.min.js"></script>
+
+  <!-- Page level plugins -->
+  <script src="../vendor/chart.js/Chart.min.js"></script>
+
+  <!-- Page level custom scripts -->
+  <script src="../js/demo/chart-area-demo.js"></script>
+  <script src="../js/demo/chart-pie-demo.js"></script>
 </body>
 </html>
-<?php } ?>

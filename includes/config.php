@@ -1,33 +1,102 @@
 <?php
-  
+  namespace Phppot;
   //setlocale(LC_ALL, 'uk_UA.utf8');
-  
-  //echo strftime("%A %e %B %Y", mktime(0, 0, 0, 12, 22, 1978));
 
   //define('DB_SERVER','3.65.146.44');
   define('DB_SERVER','localhost');
   define('DB_USER','web');
   define('DB_PASS' ,'webPassword12$');
   define('DB_NAME', 'fontanelle');
+  session_start();
+  //error_reporting(0);
+  require_once __DIR__ . '/../lib/UserModel.php';
+  $userModel = new UserModel();
 
-  mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
-  $con = mysqli_connect(DB_SERVER,DB_USER,DB_PASS,DB_NAME);
-  /*$mysqli = new mysqli(DB_SERVER,DB_USER,DB_PASS);
-  $mysqli->select_db(DB_NAME);*/
-
-  // Check connection
-  if (mysqli_connect_errno()) {
-    echo "Failed to connect to MySQL: " . mysqli_connect_error();
+  //print_r($_SESSION['sourcePage']);
+  //print('<br>');
+  if (strpos($_SERVER['HTTP_REFERER'], $_SERVER['REQUEST_URI']) == false) {
+    if ( $_SERVER['HTTP_REFERER'] != end($_SESSION['sourcePage']) ) {
+      if(isset($_SESSION['return'])) {
+        unset($_SESSION['return']);
+      } elseif (isset($_SESSION['subpage'])) {
+        $_SESSION['sourcePage'][] = $_SERVER['HTTP_REFERER'];
+        //print_r($_SESSION['sourcePage']);
+        //print('<br>');
+      }
+    }
   }
 
-  /* change character set to utf8
-  if (!$mysqli->set_charset("utf8")) {
-    printf("Error loading character set utf8: %s\n", $mysqli->error);
+  foreach ($_SESSION as $key => $value) {
+    ${$key} = $value;
+  }
+  foreach ($_GET as $key => $value) {
+    ${$key} = $value;
+  }
+  foreach ($_POST as $key => $value) {
+    ${$key} = $value;
+  }
+
+  if (isset($uid)) {
+    $_SESSION['uid'] = intval($uid);
+  }
+
+  if (isset($cid)) {
+    $_SESSION['cid'] = intval($cid);
+  }
+  if (isset($cType)) {
+    $_SESSION['cType'] = $cType;
+  }
+
+  if(!isset($_SESSION['allowedUser']) || empty($_SESSION['allowedUser'])) {
+    $_SESSION['allowedUser'] = array('admin');
+  }
+
+  // Check login
+  if(isset($_POST['login']) || isset($_SESSION['password'])) {
+    if(!isset($_SESSION['password'])) {
+      $password = md5($loginpassword);
+    }
+    $user = $userModel->call('userLogin', "'$username','$password'");
+
+    if(empty($user)) {
+      echo "<script>alert('Неверный ЛОГИН или ПАРОЛЬ');</script>";
+      header('location:logout.php');
+    } else {
+      if(isset($_SESSION['password'])) {
+        if (!in_array($_SESSION['loginType'], $_SESSION['allowedUser'])) {
+          header('location:logout.php');
+        }
+      } else {
+        session_unset();
+        session_destroy();
+        session_start();
+        $_SESSION['sourcePage'] = array();
+      }
+      // START NEW session
+      $_SESSION['id'] = intval($user[0]['id']);
+      $_SESSION['userName'] = $user[0]['userName'];
+      $_SESSION['Name'] = $user[0]['Name'];
+      $_SESSION['loginType'] = $user[0]['loginType'];
+      $_SESSION['startPage'] = $user[0]['url'];
+      if($_SESSION['loginType'] == 'regularUser') {
+        $_SESSION['uid'] = $_SESSION['id'];
+        $uid =  $_SESSION['id'];
+      }
+      if(!isset($_SESSION['password'])) {
+        $_SESSION['password'] = $password;
+        header('location:' . $_SESSION['startPage']);
+      }
+    }
   } else {
-    printf("Current character set: %s\n", $mysqli->character_set_name());
+    header('location:'.$_SERVER['HTTP_ORIGIN'].'/logout.php');
   }
-  //mysqli->close();
-  */
+
+  function destPage() {
+    $page = array_pop($_SESSION['sourcePage']);
+    $_SESSION['return'] = true;
+    if(empty($page)) { $page = '/'; }
+    return $page;
+  }
 
   function dateFormat(String $dat) {
     $monthes = array(
@@ -44,13 +113,23 @@
     return $curDate;
   }
 
-  function dateDiffInDays($date1, $date2) 
-  {
+  function dateDiffInDays($date1, $date2) {
     // Calculating the difference in timestamps
     $diff = strtotime($date2) - strtotime($date1);
   
     // 1 day = 24 hours
     // 24 * 60 * 60 = 86400 seconds
     return abs(round($diff / 86400));
+  }
+
+  function formSubmit($name, $value, $title, $action) {
+    echo "
+      <form class='user' name='im-$value' id='im-$value' action='$action' method='post'>
+        <input type='hidden' name='$name' placeholder='' value='$value'>
+        <a class='nav-link' style='cursor:pointer' onclick='submit(\"im-$value\")'>
+          <i class='fas fa-fw fa-user'></i>
+          <span>$title</span>
+        </a>
+      </form>";
   }
 ?>

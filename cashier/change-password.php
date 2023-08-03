@@ -1,13 +1,9 @@
 <?php
-session_start();
-//error_reporting(0);
-include('../includes/config.php');
-$cuid=$_SESSION['adid'];
-if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
-//if (false) {
-  header('location:logout.php');
-} else {
-//Change Password
+  namespace Phppot;
+  session_start();
+  include_once __DIR__ . '/includes/config.php';
+  include_once __DIR__ . '/../includes/config.php';
+
   if(isset($_POST['change'])) {
     $cpwd=md5($_POST['currentpwd']);
     $npwd=md5($_POST['newpwd']);  
@@ -16,7 +12,7 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
     $email=$_POST['email'];
     $phone=$_POST['phone'];
 
-//validate current password
+    //validate current password
     $ret=mysqli_query($con, "call sp_cashiercurrentpwdvalidate('$cpwd','$uid')");
     $result=mysqli_num_rows($ret);
     if($result==0) {
@@ -25,8 +21,9 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
       $ret->close();
       $con->next_result();
       $query=mysqli_query($con,"call sp_cashierchangepwd('$npwd','$uid','$name','$email','$phone')"); 
-      echo "<script>alert('Your password chnaged successfully');</script>";  
-      echo "<script>window.location.href='change-password.php'</script>";
+      echo "<script>alert('Your password changed successfully');</script>";  
+      //echo "<script>window.location.href='change-password.php'</script>";
+      header("Location: " . $_SESSION['sourcePage']);
     }
   }
 ?>
@@ -34,7 +31,6 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
 <html lang="en">
 
 <head>
-
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -100,8 +96,7 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
                               </div>
                               <div class="card-body">
 <?php
-  $cuid=$_SESSION['adid'];
-  $query=mysqli_query($con,"call sp_cashierprofile($cuid)");
+  $query=mysqli_query($con,"call sp_cashierprofile($id)");
   while ($result=mysqli_fetch_array($query)) {
 ?>
                                 <form method="post" name="changepwd" onsubmit="return checkpass();">
@@ -185,7 +180,7 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
     </a>
 
     <!-- Logout Modal-->
-     <?php include_once('includes/logout-modal.php');?>
+     <?php include_once('../includes/logout-modal.php');?>
     <!-- Bootstrap core JavaScript-->
     <script src="../vendor/jquery/jquery.min.js"></script>
     <script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>

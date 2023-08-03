@@ -1,17 +1,12 @@
 <?php
-session_start();
-//error_reporting(0);
-include('../includes/config.php');
-if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
-  header('location:logout.php');
-  } else {
-   
+  namespace Phppot;
+  session_start();
+  include_once __DIR__ . '/includes/config.php';
+  include_once __DIR__ . '/../includes/config.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -28,7 +23,6 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
 
     <!-- Custom styles for this template-->
     <link href="../css/sb-admin-2.min.css" rel="stylesheet">
-
 </head>
 
 <body id="page-top">
@@ -133,7 +127,7 @@ while ($result=mysqli_fetch_array($query)) {
     </a>
 
     <!-- Logout Modal-->
-     <?php include_once('includes/logout-modal.php');?>
+     <?php include_once('../includes/logout-modal.php');?>
     <!-- Bootstrap core JavaScript-->
     <script src="../vendor/jquery/jquery.min.js"></script>
     <script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
@@ -145,4 +139,3 @@ while ($result=mysqli_fetch_array($query)) {
     <script src="../js/sb-admin-2.min.js"></script>
 </body>
 </html>
-<?php } ?>

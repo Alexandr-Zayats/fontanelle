@@ -1,17 +1,21 @@
 <?php
-//db Connection file
-require_once __DIR__ . '/../includes/config.php';
+  namespace Phppot;
+  session_start();
+  $_SESSION['subpage'] = true;
 
-$userData = $_POST['userData'];
+  include_once __DIR__ . '/includes/config.php';
+  include_once __DIR__ . '/../includes/config.php';
 
 $target_folder = 'uploads/' . $userData['id'];
 $target_file = $target_folder . '/notice.pdf';
 
 if(isset($_POST['close'])) {
-  echo "<script>window.location.href='../cashier/debtors.php'</script>";
-}
-elseif(isset($_POST['print'])) {
-  echo "<script>window.location.href='registered-users.php'</script>";
+  // echo "<script>window.location.href='../cashier/debtors.php'</script>";
+  header('location:' . destPage());
+  
+} elseif(isset($_POST['print'])) {
+  // echo "<script>window.location.href='registered-users.php'</script>";
+  header("Location:registered-users.php");
 } else {
 
   $phone="";
@@ -30,7 +34,7 @@ elseif(isset($_POST['print'])) {
   require_once __DIR__ . '/../vendor/autoload.php';
   require_once __DIR__ . '/../lib/customPdfGenerator.php';
 
-  $pdf = new CustomPdfGenerator(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+  $pdf = new \CustomPdfGenerator(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
   $pdf->SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
   $pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP, PDF_MARGIN_RIGHT);
   $pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
@@ -61,7 +65,7 @@ elseif(isset($_POST['print'])) {
   $pdf->Write(0, "\n", '', 0, 'C', true, 0, false, false, 0);
 
   // main text
-  $pdf->writeHTML("Доводимо до Вашого відома, що станом на " . $curDate . " за Вашою ділянкою:", true, true, true, true, 'C');
+  $pdf->writeHTML("Доводимо до Вашого відома, що станом на " . $curDate . " за Вашою садовою ділянкою наявні наступні порушення:", true, true, true, true, 'C');
   $pdf->Write(0, "\n", '', 0, 'C', true, 0, false, false, 0);
   $cnt = 0;
   if($userData['fee'] < ($userData['Size'] * 100 * -2)) {
@@ -74,7 +78,7 @@ elseif(isset($_POST['print'])) {
   }
   if(isset($userData['verEl']) && $userData['verEl'] != "" && dateDiffInDays(date('Y-m-d'), $userData['verEl']) > 180) {
     $cnt++;
-    $pdf->writeHTML("\t" . $cnt .". Не надані фото показників лічильника електроенергії, остання звірка -  " . dateFormat($userData['verEl']) . ";\n");
+    $pdf->writeHTML("\t" . $cnt .". Не надані фото показників лічильника електроенергії, остання звірка відбулася до -  " . dateFormat($userData['verEl']) . ";\n");
   }
   if($userData['wat'] < -1000 ) {
     $cnt++;
@@ -84,16 +88,19 @@ elseif(isset($_POST['print'])) {
     $cnt++;
     $pdf->writeHTML("\t" . $cnt .". Не надано показники лічильника споживання води, остання звірка - " . dateFormat($userData['verWat']) . ";\n");
   }
+  /*
   if($userData['counterLocation'] == 'внутри') {
     $cnt++;
     $pdf->writeHTML("\t" . $cnt .". Наявні порушення п3.1 додатку №2 до Договору про обслуговування, а саме щодо місця встановлення приладів обліку споживання електроенергії.;\n");
   }
+  */
 
   $pdf->Write(0, "\n", '', 0, 'C', true, 0, false, false, 0);
 
-  $pdf->writeHTML("\tПросимо Вас усунути вказані порушеня в термін до " . $dueDate . "\n");
-  $pdf->writeHTML("\tУ випадку ігнорування даного попередження, Правління СТ 'Ручейок' вимушене буде діяти відповідно до умов Договору");
-  $pdf->writeHTML("на обслуговування та Статуту  СТ 'Ручейок', та припинити надання поcлуг з обслуговування Вашої ділянки.");
+  $pdf->writeHTML("Просимо Вас усунути вказані порушеня в термін до " . $dueDate . "\n\n");
+  $pdf->Write(0, "\n", '', 0, 'C', true, 0, false, false, 0);
+  $pdf->writeHTML("У випадку ігнорування даного попередження, відповідно до умов Договору на обслуговування та Статуту СТ 'Ручейок' п.2.10,", true, true, true, true, 'W');
+  $pdf->writeHTML("Правління Управляючого Кооперативу \"СТ 'Ручейок'\" буде вимушене припинити надання поcлуг з обслуговування Вашої садовоЇ ділянки.", true, true, true, true, 'W');
   $pdf->Write(0, "\n", '', 0, 'C', true, 0, false, false, 0);
 
   // invoice table starts here

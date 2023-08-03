@@ -1,11 +1,8 @@
 <?php
-session_start();
-//error_reporting(0);
-include('../includes/config.php');
-if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
-  header('location:logout.php');
-  } else {
-   
+  namespace Phppot;
+  session_start();
+  include_once __DIR__ . '/includes/config.php';
+  include_once __DIR__ . '/../includes/config.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -57,7 +54,7 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
 
                     <!-- Page Heading -->
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
- <h1 class="h3 mb-0 text-gray-800"><?php echo ucwords($_SESSION['name']);?> профайл</h1>
+ <h1 class="h3 mb-0 text-gray-800"><?php echo ucwords($_SESSION['Name']);?> профайл</h1>
                     </div>
 
                     <div class="row">
@@ -65,7 +62,7 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
                         <div class="col-lg-12">
 
 <?php 
-$adid=$_SESSION['adid'];
+$adid=$_SESSION['id'];
 $query=mysqli_query($con,"call sp_cashierprofile($adid)");
 while ($result=mysqli_fetch_array($query)) {
 
@@ -133,7 +130,7 @@ while ($result=mysqli_fetch_array($query)) {
     </a>
 
     <!-- Logout Modal-->
-     <?php include_once('includes/logout-modal.php');?>
+     <?php include_once('../includes/logout-modal.php');?>
     <!-- Bootstrap core JavaScript-->
     <script src="../vendor/jquery/jquery.min.js"></script>
     <script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
@@ -145,4 +142,3 @@ while ($result=mysqli_fetch_array($query)) {
     <script src="../js/sb-admin-2.min.js"></script>
 </body>
 </html>
-<?php } ?>

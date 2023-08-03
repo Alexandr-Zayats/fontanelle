@@ -43,86 +43,73 @@ BEGIN
 END$$
 
 DROP PROCEDURE IF EXISTS el_history;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `el_history` (`uid` INT(5), `cid` INT(5))
+CREATE DEFINER=`root`@`localhost` PROCEDURE `el_history` (`uid` INT(5), `cid` INT(5), `dNow` DATE)
 BEGIN
-  DECLARE dNow DATE;
-  DECLARE dEnd DATE;
-  SET dNow = DATE(NOW());
-  SET dEnd = DATE_SUB(NOW(), INTERVAL 60 MONTH);
-  WHILE DATE(dNow) >= DATE(dEnd) DO
-    SELECT
-      payment.sum as paid,
-      SUM(c.dPrev) as dPrev,
-      c.dCur as dCur,
-      c.dDelta as dDelta,
-      c.nPrev as nPrev,
-      c.nCur as nCur,
-      c.nDelta as nDelta,
-      c.sum as toPay,
-      COALESCE(payment.date, c.date, DATE_FORMAT(dNow, '%Y-%m-%d')) as date
-    FROM
-      ( SELECT
-        min(v.dPrevius) as dPrev,
-        max(v.dCurrent) as dCur,
-        max(v.dCurrent)-min(v.dPrevius) as dDelta,
-        min(v.nPrevius) as nPrev,
-        max(v.nCurrent) as nCur,
-        max(v.nCurrent)-min(v.nPrevius) as nDelta,
-        DATE_FORMAT(v.date, '%Y-%m-%d') as date,
-        (max(v.dCurrent)-min(v.dPrevius))*t.day+(max(v.nCurrent)-min(v.nPrevius))*t.night as sum
-      FROM countValues v INNER JOIN tariffs t ON (v.tariffId=t.id)
-      WHERE v.cId=cid
-        AND ( v.dCurrent!=v.dPrevius OR v.nCurrent!=v.nPrevius )
-        AND  DATE_FORMAT(v.date, '%Y-%m')=DATE_FORMAT(dNow, '%Y-%m')
-      GROUP BY t.id ) as c, 
-      ( SELECT
-        SUM(sum) as sum,
-        DATE_FORMAT(date, '%Y-%m-%d') as date
-      FROM payments
-      WHERE userId=uid
-        AND dst="el"
-        AND DATE_FORMAT(date, '%Y-%m')=DATE_FORMAT(dNow, '%Y-%m')
-      ) as payment;
-    SET dNow = DATE_SUB(dNow, INTERVAL 1 MONTH);
-  END WHILE;
+  SELECT
+    payment.sum as paid,
+    SUM(c.dPrev) as dPrev,
+    c.dCur as dCur,
+    c.dDelta as dDelta,
+    c.nPrev as nPrev,
+    c.nCur as nCur,
+    c.nDelta as nDelta,
+    c.sum as toPay,
+    COALESCE(payment.date, c.date, DATE_FORMAT(dNow, '%Y-%m-%d')) as date
+  FROM
+    ( SELECT
+      min(v.dPrevius) as dPrev,
+      max(v.dCurrent) as dCur,
+      max(v.dCurrent)-min(v.dPrevius) as dDelta,
+      min(v.nPrevius) as nPrev,
+      max(v.nCurrent) as nCur,
+      max(v.nCurrent)-min(v.nPrevius) as nDelta,
+      DATE_FORMAT(v.date, '%Y-%m-%d') as date,
+      (max(v.dCurrent)-min(v.dPrevius))*t.day+(max(v.nCurrent)-min(v.nPrevius))*t.night as sum
+    FROM countValues v INNER JOIN tariffs t ON (v.tariffId=t.id)
+    WHERE v.cId=cid
+      AND ( v.dCurrent!=v.dPrevius OR v.nCurrent!=v.nPrevius )
+      AND  DATE_FORMAT(v.date, '%Y-%m')=DATE_FORMAT(dNow, '%Y-%m')
+    GROUP BY t.id ) as c,
+    ( SELECT
+      SUM(sum) as sum,
+      DATE_FORMAT(date, '%Y-%m-%d') as date
+    FROM payments
+    WHERE userId=uid
+      AND dst="el"
+      AND DATE_FORMAT(date, '%Y-%m')=DATE_FORMAT(dNow, '%Y-%m')
+    ) as payment;
 END$$
 
 DROP PROCEDURE IF EXISTS wat_history;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `wat_history` (`uid` INT(5), `cid` INT(5))
+CREATE DEFINER=`root`@`localhost` PROCEDURE `wat_history` (`uid` INT(5), `cid` INT(5), `dNow` DATE)
 BEGIN
-  DECLARE dNow DATE;
-  DECLARE dEnd DATE;
-  SET dNow = DATE(NOW());
-  SET dEnd = DATE_SUB(NOW(), INTERVAL 60 MONTH);
-  WHILE DATE(dNow) >= DATE(dEnd) DO
-    SELECT
-      p.sum as paid,
-      SUM(c.dPrev) as dPrev,
-      SUM(c.dCur) as dCur,
-      SUM(c.dDelta) as dDelta,
-      SUM(c.sum) as toPay,
-      COALESCE(p.date, c.date, DATE_FORMAT(dNow, '%Y-%m-%d')) as date
-    FROM
-      ( SELECT
-        min(v.dPrevius) as dPrev,
-        max(v.dCurrent) as dCur,
-        max(v.dCurrent)-min(v.dPrevius) as dDelta,
-        DATE_FORMAT(v.date, '%Y-%m') as date,
-        (max(v.dCurrent)-min(v.dPrevius))*t.water as sum
-      FROM countValues v INNER JOIN tariffs t ON (v.tariffId=t.id)
-      WHERE v.cId=cid
-        AND v.dCurrent!=v.dPrevius
-        AND  DATE_FORMAT(v.date, '%Y-%m')=DATE_FORMAT(dNow, '%Y-%m')
-      GROUP BY t.id ) as c,
-      ( SELECT
-        SUM(SUM) as sum
-      FROM payments p
-      WHERE userId=uid
-        AND dst="wat"
-        AND DATE_FORMAT(p.date, '%Y-%m')=DATE_FORMAT(dNow, '%Y-%m')
-      ) as p;
-    SET dNow = DATE_SUB(dNow, INTERVAL 1 MONTH);
-  END WHILE;
+  SELECT
+    payment.sum as paid,
+    SUM(c.dPrev) as dPrev,
+    SUM(c.dCur) as dCur,
+    SUM(c.dDelta) as dDelta,
+    SUM(c.sum) as toPay,
+    COALESCE(payment.date, c.date, DATE_FORMAT(dNow, '%Y-%m-%d')) as date
+  FROM
+    ( SELECT
+      min(v.dPrevius) as dPrev,
+      max(v.dCurrent) as dCur,
+      max(v.dCurrent)-min(v.dPrevius) as dDelta,
+      DATE_FORMAT(v.date, '%Y-%m-%d') as date,
+      (max(v.dCurrent)-min(v.dPrevius))*t.water as sum
+    FROM countValues v INNER JOIN tariffs t ON (v.tariffId=t.id)
+    WHERE v.cId=cid
+      AND v.dCurrent!=v.dPrevius
+      AND  DATE_FORMAT(v.date, '%Y-%m')=DATE_FORMAT(dNow, '%Y-%m')
+    GROUP BY t.id ) as c,
+    ( SELECT
+      SUM(sum) as sum,
+      DATE_FORMAT(date, '%Y-%m-%d') as date
+    FROM payments
+    WHERE userId=uid
+      AND dst="wat"
+      AND DATE_FORMAT(date, '%Y-%m')=DATE_FORMAT(dNow, '%Y-%m')
+    ) as payment;
 END$$
 
 DROP PROCEDURE IF EXISTS counterInfo;
@@ -159,7 +146,9 @@ END$$
 DROP PROCEDURE IF EXISTS userInfo;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `userInfo` (`uid` INT(5), `type` VARCHAR(10))  BEGIN
 IF (type = 'el') THEN
-  SELECT u.id as uId,
+  SELECT
+    u.id as uId,
+    r.id as rId,
     concat(r.surName, " ", r.name, " ", r.middlName ) as uName,
     u.TariffId as tariff,
     u.BalanceEl as balance,
@@ -327,11 +316,13 @@ GROUP BY u.id ORDER BY u.id;
 END$$
 
 DROP PROCEDURE IF EXISTS sp_addMoney;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_addMoney` (`cashier` INT(3),  `uid` SMALLINT(3), `sum` decimal(8,2), `dst` VARCHAR(15), `dat` DATE, `bank` BOOLEAN )
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_addMoney` (`cashier` INT(3),  `uid` SMALLINT(3), `sum` decimal(8,2), `dst` VARCHAR(15), `dat` DATE, `bank` BOOLEAN, `chck` SMALLINT(7), `verified` BOOLEAN)
 BEGIN
   DECLARE payDate DATE;
   DECLARE firstPAY DATE;
   DECLARE YEAR_INT SMALLINT(100);
+
+  START TRANSACTION;
   IF ( dat = '2000-01-01' ) THEN
     SET payDate = DATE(NOW());
   ELSE
@@ -347,22 +338,25 @@ BEGIN
     SET YEAR_INT = (SELECT TIMESTAMPDIFF( YEAR, payDate, firstPAY ));
     IF ( payDate BETWEEN DATE("1970-01-01") AND firstPAY ) THEN
       IF ( dst = 'fee' ) THEN
-        update users set BalanceFee=(BalanceFee - YEAR_INT*SIZE*100) WHERE id=uid;
+        update users set BalanceFee=(BalanceFee - YEAR_INT*@SIZE*100) WHERE id=uid;
       END IF;
     END IF;
   END IF;
 
-  IF (dst = 'el') THEN
-    update users set BalanceEl=(BalanceEl + sum) WHERE id=uid;
-  END IF;
-  IF (dst = 'wat') THEN
-    update users set BalanceWat=(BalanceWat + sum) WHERE id=uid;
-  END IF;
-  IF (dst = 'fee') THEN
-    update users set BalanceFee=(BalanceFee + sum) WHERE id=uid;
+  IF(verified = 1) THEN
+    IF (dst = 'el') THEN
+      update users set BalanceEl=(BalanceEl + sum) WHERE id=uid;
+    END IF;
+    IF (dst = 'wat') THEN
+      update users set BalanceWat=(BalanceWat + sum) WHERE id=uid;
+    END IF;
+    IF (dst = 'fee') THEN
+      update users set BalanceFee=(BalanceFee + sum) WHERE id=uid;
+    END IF;
   END IF;
 
-  INSERT INTO payments (cashierId, userId, type, sum, dst, dstDate) VALUES (cashier, uid, bank, sum, dst, payDate);
+  INSERT INTO payments (cashierId, userId, type, sum, dst, dstDate, chck, verified) VALUES (cashier, uid, bank, sum, dst, payDate, chck, verified);
+  COMMIT;
 END$$
 
 DROP PROCEDURE IF EXISTS sp_addCounterValues;
@@ -433,9 +427,16 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_cashiercurrentpwdvalidate` (`cur
 select id from cashier where id=uid and UserPassword=currentpwd;
 END$$
 
-DROP PROCEDURE IF EXISTS sp_cashierlogin;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_cashierlogin` (IN `username` VARCHAR(200), IN `cashierpwd` VARCHAR(200))  BEGIN
-select Name,id,UserName from cashier where UserName=username and UserPassword=cashierpwd;
+DROP PROCEDURE IF EXISTS userLogin;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `userLogin` (IN `username` VARCHAR(200), IN `userPass` VARCHAR(200))
+BEGIN
+  SELECT
+    r.id,
+    concat(r.surName, " ", r.name, " ", r.middlName ) as Name,
+    userName, ut.loginType as loginType, ut.url as url 
+  FROM residents r
+    LEFT JOIN userType ut ON ut.id=r.userType
+  WHERE userName=username AND password=userPass;
 END$$
 
 DROP PROCEDURE IF EXISTS sp_cashierpasswordrecovery;
@@ -500,6 +501,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_allregisteredusers` ()  BEGIN
 SELECT u.id as id,
   concat(r.surName, " ", r.name, " ", r.middlName ) as Name,
   s.name as street,
+  u.isActive as type,
   u.info as info,
   u.BalanceEl as el,
   u.BalanceFee as fee,
@@ -519,13 +521,16 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `debtors` ()  BEGIN
 SELECT u.id as id,
   u.Size as Size,
   concat(r.surName, " ", r.name, " ", r.middlName ) as Name,
+  u.isActive as type,
   s.name as street,
   u.BalanceFee as fee,
   u.BalanceEl as el,
   u.BalanceWat as wat,
   r.phone1 as phone1,
   r.phone2 as phone2,
-  (SELECT location FROM counters WHERE userId=u.id AND type='el' LIMIT 1) as counterLocation, 
+  (SELECT location FROM counters WHERE userId=u.id AND type='el' LIMIT 1) as counterLocation,
+  DATE_FORMAT((SELECT max(date) FROM payments WHERE userId=u.id AND dst='el'  LIMIT 1), '%Y-%m-%d') as lastPayEl,
+  DATE_FORMAT((SELECT max(date) FROM payments WHERE userId=u.id AND dst='wat'  LIMIT 1), '%Y-%m-%d') as lastPayWat,
   DATE_FORMAT((SELECT max(verDate) FROM counters WHERE userId=u.id AND type='el'  LIMIT 1), '%Y-%m-%d') as verEl,
   DATE_FORMAT((SELECT max(verDate) FROM counters WHERE userId=u.id AND type='wat' LIMIT 1), '%Y-%m-%d') as verWat
 FROM users u
@@ -552,17 +557,19 @@ select * from users where id=uid;
 END$$
 
 DROP PROCEDURE IF EXISTS sp_recent30payments;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_recent30payments` ()  BEGIN
-SELECT 
-  p.sum, p.type,
-  u.id as id,
-  concat(r.surName, " ", r.name, " ", r.middlName ) as name,
-  p.date,
-  p.dst
-FROM payments p 
-LEFT JOIN users u ON p.userId=u.id
-LEFT JOIN residents r ON u.residentId=r.id
-ORDER BY p.date DESC LIMIT 50;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_recent30payments` ()
+BEGIN
+  SELECT 
+    p.id as pId, p.sum, p.type, p.chck, p.verified,
+    u.id as id,
+    r.id as rId,
+    concat(r.surName, " ", r.name, " ", r.middlName ) as name,
+    p.date,
+    p.dst
+  FROM payments p 
+    LEFT JOIN users u ON p.userId=u.id
+    LEFT JOIN residents r ON u.residentId=r.id
+  ORDER BY p.date DESC LIMIT 100;
 END$$
 
 DROP PROCEDURE IF EXISTS sp_addCounter;
@@ -654,6 +661,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_userprofile` (`uid` INT(5))  BEG
     u.LastUpdationDate as LastUpdationDate,
     r.id as residentId,
     r.isMember as isMember,
+    u.isActive as type,
     concat(r.surName, " ", r.name, " ", r.middlName ) as Name,
     u.Info as Info
   FROM users u
@@ -668,10 +676,31 @@ END$$
 
 DROP PROCEDURE IF EXISTS sp_userupdateprofile;
 CREATE DEFINER=`root`@`localhost` 
-PROCEDURE `sp_userupdateprofile` (`uid` INT(5), `street` INT(3), `resident` INT(5), size DECIMAL(15,2), `info` VARCHAR(250))  
+PROCEDURE `sp_userupdateprofile` (`uid` INT(5), `street` INT(3), `resident` INT(5), size DECIMAL(15,2), `info` VARCHAR(250), `status` INT(1))
 BEGIN
-  UPDATE users SET StreetId=street, LastUpdationDate=current_timestamp(), residentId=resident, Size=size, Info=info 
+  UPDATE users SET StreetId=street, LastUpdationDate=current_timestamp(), residentId=resident, Size=size, Info=info, IsActive=status
   WHERE id=uid;
+END$$
+
+DROP PROCEDURE IF EXISTS uprovePayment;
+CREATE DEFINER=`root`@`localhost`
+PROCEDURE `uprovePayment` (`rId` INT(11), `status` INT(1))
+BEGIN
+  START TRANSACTION;
+  SELECT userId, sum, dst, verified INTO @uid, @sum, @dst, @verified  FROM payments WHERE id=rId;
+  IF(status = 1 AND  @verified != 1) THEN
+    IF (@dst = 'el') THEN
+      update users set BalanceEl=(BalanceEl + @sum) WHERE id=@uid;
+    END IF;
+    IF (@dst = 'wat') THEN
+      update users set BalanceWat=(BalanceWat + @sum) WHERE id=@uid;
+    END IF;
+    IF (@dst = 'fee') THEN
+      update users set BalanceFee=(BalanceFee + @sum) WHERE id=@uid;
+    END IF;
+  END IF;
+  UPDATE payments SET verified=status WHERE id=rId;
+  COMMIT;
 END$$
 
 DROP PROCEDURE IF EXISTS updateResidentProfile;
@@ -682,7 +711,7 @@ PROCEDURE `updateResidentProfile` (
   `_name` VARCHAR(30),
   `_middlName` VARCHAR(50),
   `_userName` VARCHAR(15),
-  `_password` BINARY(16),
+  `_password` VARCHAR(32),
   `_email` VARCHAR(120),
   `_phone1` INT(10),
   `_phone2` INT(10), 

@@ -1,18 +1,18 @@
 <?php
-session_start();
-//error_reporting(0);
-include('../includes/config.php');
-if (strlen($_SESSION['adid'] == 0 || ($_SESSION['type'] != "cashier" && $_SESSION['type'] != "regularUser")) ) {
-//if (false) {
-  header('location:logout.php');
-} else {
-  $uid=$_GET['uid'];
+  namespace Phppot;
+  session_start();
+  $_SESSION['cType'] = 'wat';
+  include_once __DIR__ . '/includes/config.php';
+  include_once __DIR__ . '/../includes/config.php';
+
+  unset($cid);
   if(isset($_GET['cid'])) {
-    $cid=$_GET['cid'];
-  } else {
-    $cid=0;
+    $cid = $_GET['cid'];
   }
-}
+  $_SESSION['cType'] = 'wat';
+
+  $query = $userModel->call('userInfo', $uid . ", 'wat'");
+  $user = $query[0];
 ?>
 
 <!DOCTYPE html>
@@ -38,15 +38,9 @@ if (strlen($_SESSION['adid'] == 0 || ($_SESSION['type'] != "cashier" && $_SESSIO
 
     <!-- Custom styles for this page -->
     <link href="../vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+    <script src="../includes/scripts.js"> </script>
 
 </head>
-
-<?php
-  // $uid=397;
-  $con->next_result();
-  $query=mysqli_query($con,"call userInfo($uid, 'wat')");
-  while ($user=mysqli_fetch_assoc($query)) {
-?>
 
 <body id="page-top">
     <!-- Page Wrapper -->
@@ -66,22 +60,76 @@ if (strlen($_SESSION['adid'] == 0 || ($_SESSION['type'] != "cashier" && $_SESSIO
           <div class="container-fluid">
             <!-- Page Heading -->
             <div class="d-sm-flex align-items-center justify-content-between mb-4">
-              <h1 class="h3 mb-0 text-gray-800">Вода</h1>
+              <h1 class="h3 mb-0 font-weight-bold text-primary">Абонентская книжка: вода</h1>
+              <div class="flex-row align-items-left justify-content-between">
+                <?php if ($_SESSION['loginType'] == 'admin') { ?>
+                  <a href="add-counter.php?cType=wat">
+                    Cчетчики (добавить):
+                  </a>
+                <?php } else { ?>
+                  <a class="btn btn-primary btn-user">Cчетчики:</a>
+                <?php }?>
+                <select id="cid" name="cid"
+                  onchange="window.location = this.options[this.selectedIndex].value"
+                  class="btn btn-primary btn-user"
+                >
+                  <?php foreach ( explode(";", $user['cId']) as &$c ) {
+                    $sql = $userModel->call('counterInfo', "$c");
+                    foreach ($sql as $counter) {
+                      if (!isset($cid)) { $cid=$counter['id']; }
+                        if ($counter['id'] == $cid) {
+                          echo "<option value=index.php?cid=".$counter['id']." selected>".$counter['name']."</option>";
+                          $_SESSION['cid'] = $cid;
+                        } else {
+                          echo "<option value=index.php?cid=".$counter['id'].">".$counter['name']."</option>";
+                        }
+                      }
+                    }
+                  ?>
+                </select>
+              </div>
             </div>
-
             <div class="row">
               <div class="col-xl-3 col-md-6 mb-4">
                 <div class="card border-left-primary shadow h-100 py-2">
                   <div class="card-body">
                     <div class="row no-gutters align-items-center">
                       <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                          <?php echo "Участок № ".$user['uId'] ?>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800"
+                          style="display:flex; flex-direction:row; justify-content:center; align-items:center">
+                          <?php if(in_array($_SESSION['loginType'], $allowedUser)) {
+                            formSubmit('uid', $user['uId'], 'Участок № ', 'edit-user-profile.php')?>
+                          <form action="water.php" method="post">
+                            <input type="text" name="uid" id="uid" value="<?php echo $uid?>"
+                              maxlength="3" size="3" pattern="[0-9]+"
+                            >
+                            <input type="submit"value="Перейти" class="btn btn-primary btn-user">
+                          </form>
+                          <?php
+                          } else {
+                            echo "Участок № ".$user['uId'];
+                          } ?>
+                        </div>
+                      </div>
+                      <div class="col-auto">
+                        <i class="fas fa-users fa-2x text-gray-300"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-primary shadow h-100 py-2">
+                  <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                      <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1"
+                          style="display:flex; flex-direction:row; justify-content:center; align-items:center; font-size:14">
+                          Владелец
                         </div>
                         <div class="h5 mb-0 font-weight-bold text-gray-800">
-                          <a href="edit-user-profile.php?uid=<?php echo $uid;?>">
-                            <?php echo $user['uName'] ?>
-                          </a>
+                          <!--<a href="edit-user-profile.php"><?php echo $user['uName']?></a>-->
+                          <?php formSubmit('rId', $user['rId'], $user['uName'], '../cashier/createResident.php')?>
                         </div>
                       </div>
                       <div class="col-auto">
@@ -100,7 +148,7 @@ if (strlen($_SESSION['adid'] == 0 || ($_SESSION['type'] != "cashier" && $_SESSIO
                           Баланс
                         </div>
                         <div class="h5 mb-0 font-weight-bold text-gray-800">
-                          <?php echo $user['balance']; $toPay=$user['balance'] ?> грн.
+                          <?php echo $user['balance']; $_SESSION['toPay'] = $user['balance'] ?> грн.
                         </div>
                       </div>
                       <div class="col-auto">
@@ -115,55 +163,6 @@ if (strlen($_SESSION['adid'] == 0 || ($_SESSION['type'] != "cashier" && $_SESSIO
             <div class="row">
               <div class="col-xl-12 col-lg-7">
                 <div class="card shadow mb-4">
-                  <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                    <table width="100%">
-                      <tr>
-                        <td><h6 class="m-0 font-weight-bold text-primary">Оплата воды. </h6></td>
-                        <td style="text-align:right">
-                          <a href="add-counter.php?uid=<?php echo $uid;?>&type=wat" class="btn btn-primary btn-user btn-block">Cчетчики (добавить):</a>
-                        </td>
-                        <td style="text-align:left">
-                          <!--<h6 class="m-0 font-weight-bold text-primary"> -->
-                          <!-- <div class="form-group row"> -->
-                            <!-- <div class="col-sm-6 mb-3 mb-sm-0"> -->
-                              <!-- <label for="counter">Счетчики: </label> -->
-                              <select id="counter" name="counter" onchange="window.location = this.options[this.selectedIndex].value" class="btn btn-primary btn-user btn-block">
-                                <?php foreach ( explode(";", $user['cId']) as &$cId ) {
-                                  $con->next_result();
-                                  $sql=mysqli_query($con,"call counterInfo($cId)");
-                                  while ($counter=mysqli_fetch_array($sql)) {
-                                    if ($cid==0) { $cid=$counter['id']; }
-                                    if ($counter['id'] == $cid) {
-                                      echo "<option value=water.php?cid=".$cId."&uid=".$uid." selected>".$counter['name']."</option>";
-                                    } else {
-                                      echo "<option value=water.php?cid=".$cId."&uid=".$uid.">".$counter['name']."</option>";
-                                    }
-                                  }
-                                }?>
-                              </select>
-                            <!-- </div> -->
-                          <!-- </h6> -->
-                        </td>
-                        <td style="text-align:right">
-                          <form action="user-counter.php">
-                            <input type="hidden" id="uid" name="uid" value="<?php echo $uid ?>">
-                            <input type="hidden" id="cid" name="cid" value="<?php echo $cid ?>">
-                            <input type="hidden" id="type" name="type" value="wat">
-                            <input type="submit" value="Внести показания" class="btn btn-primary btn-user btn-block"/>
-                          </form>
-                        </td>
-                        <td style="text-align:right">
-                          <form action="user-payment.php">
-                            <input type="hidden" id="uid" name="uid" value="<?php echo $uid ?>">
-                            <input type="hidden" id="type" name="type" value="wat">
-                            <input type="hidden" id="toPay" name="toPay" value="<?php echo $toPay ?>">
-                            <input type="submit" value="Оплата" class="btn btn-primary btn-user btn-block"/>
-                          </form>
-                        </td>
-                      </tr>
-                    </table>
-                  </div>
-
                   <div class="table-responsive">
                     <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                       <thead>
@@ -179,13 +178,15 @@ if (strlen($_SESSION['adid'] == 0 || ($_SESSION['type'] != "cashier" && $_SESSIO
 
                       <tbody>
 <?php
-  $con->next_result();
   $cnt=1;
-  if (mysqli_multi_query($con, "call wat_history($uid, $cid)")) {
-    do {
-      if ($result = mysqli_store_result($con)) {
-        while ($countValues = mysqli_fetch_array($result)) {
-          if ( ! is_null($countValues['date']) ) { ?>
+  $date_of_start = date('Y-m-d');
+  $date_of_end = date("Y-m-d", strtotime("-60 month", strtotime(date('Y-m-d'))));
+  if($cid > 0) {
+    while (strtotime($date_of_start) >= strtotime($date_of_end)) {
+      $query = $userModel->call('wat_history', $uid . ", " . $cid . ", " . "'$date_of_start'");
+      foreach  ($query as $countValues ) {
+        if ( ! is_null($countValues['dCur']) || ! is_null($countValues['paid']) ) {
+?>
                         <tr>
                           <td style="text-align:right"><?php echo $countValues['date'] ?></td>
                           <td style="text-align:right"><?php echo $countValues['dPrev'];?></td>
@@ -194,13 +195,14 @@ if (strlen($_SESSION['adid'] == 0 || ($_SESSION['type'] != "cashier" && $_SESSIO
                           <td style="text-align:right"><?php printf("%.2f", $countValues['toPay']);?></td>
                           <td style="text-align:right"><?php echo $countValues['paid'];?></td>
                         </tr>
- <?php    }
+ <?php
         }
-        mysqli_free_result($result);
-        $cnt++;
       }
-    } while (mysqli_next_result($con));
-  } ?>
+      $cnt++;
+      $date_of_start = date ("Y-m-d", strtotime("-1 month", strtotime($date_of_start)));
+    }
+  }
+?>
                       </tbody>
                     </table>
                   </div>
@@ -211,6 +213,24 @@ if (strlen($_SESSION['adid'] == 0 || ($_SESSION['type'] != "cashier" && $_SESSIO
         </div> <!-- content -->
       </div> <!-- content-wrapper -->
     </div> <!-- wraper -->
+  <!-- Logout Modal-->
+  <?php include_once('../includes/logout-modal.php')?>
+  <!-- Bootstrap core JavaScript-->
+  <script src="../vendor/jquery/jquery.min.js"></script>
+  <script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Core plugin JavaScript-->
+  <script src="../vendor/jquery-easing/jquery.easing.min.js"></script>
+
+  <!-- Custom scripts for all pages-->
+  <script src="../js/sb-admin-2.min.js"></script>
+
+  <!-- Page level plugins -->
+  <script src="../vendor/chart.js/Chart.min.js"></script>
+
+  <!-- Page level custom scripts -->
+  <script src="../js/demo/chart-area-demo.js"></script>
+  <script src="../js/demo/chart-pie-demo.js"></script>
+    
 </body>
 </html>
-<?php } ?>

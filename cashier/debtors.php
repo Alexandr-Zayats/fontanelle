@@ -1,10 +1,9 @@
 <?php
-session_start();
-//error_reporting(0);
-include('../includes/config.php');
-if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
-  header('location:logout.php');
-} else {
+  namespace Phppot;
+  session_start();
+  unset($_SESSION['subpage']);
+  include_once __DIR__ . '/includes/config.php';
+  include_once __DIR__ . '/../includes/config.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -29,36 +28,27 @@ if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
 
     <!-- Custom styles for this page -->
     <link href="../vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+    <script src="../includes/scripts.js"> </script>
 
 </head>
 
 <body id="page-top">
-
     <!-- Page Wrapper -->
     <div id="wrapper">
-
-        <!-- Sidebar -->
         <!-- Sidebar -->
   <?php include_once('includes/sidebar.php');?>
         <!-- End of Sidebar -->
-
         <!-- Content Wrapper -->
         <div id="content-wrapper" class="d-flex flex-column">
-
             <!-- Main Content -->
             <div id="content">
-
                 <!-- Topbar -->
                   <?php include_once('includes/topbar.php');?>
                 <!-- End of Topbar -->
-
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
-
                     <!-- Page Heading -->
                     <h1 class="h3 mb-2 text-gray-800">СТ "РУЧЕЕК"</h1>
-            
-
                     <!-- DataTales Example -->
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
@@ -72,8 +62,9 @@ if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
                                     <tr>
                                       <th style="width: 3%; text-align:center" rowspan="2">#</th>
                                       <th style="width: 3%; text-align:center" rowspan="2">№</th>
-                                      <th style="width: 14%; text-align:center" rowspan="2">Улица</th>
-                                      <th style="width: 30%; text-align:center" rowspan="2">Владелец</th>
+                                      <th style="width: 9%; text-align:center" rowspan="2">Улица</th>
+                                      <th style="width: 27%; text-align:center" rowspan="2">Владелец</th>
+                                      <th style="width: 8%; text-align:center" rowspan="2">Статус</th>
                                       <th style="width: 24%; text-align:center" colspan="3">Задолженность</th>
                                       <th style="width: 26%; text-align:center" colspan="2">Проверка счетчика</th>
                                     </tr>
@@ -90,6 +81,7 @@ if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
                                       <th style="text-align:center">№</th>
                                       <th style="text-align:center">Улица</th>
                                       <th style="text-align:center">Владелец</th>
+                                      <th style="text-align:center">Статус</th>
                                       <th style="text-align:center">Елект</th>
                                       <th style="text-align:center">Вода</th>
                                       <th style="text-align:center">Членские</th>
@@ -99,9 +91,10 @@ if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
                                   </tfoot>
                                   <tbody>
 <?php
-  $query=mysqli_query($con,"call debtors()");
+  $query = $userModel->call('debtors', '');
   $cnt=1;
-  while ($result=mysqli_fetch_array($query)) {
+  foreach ( $query as $result) {
+    if( dateDiffInDays(date('Y-m-d'), $result['verWat']) > 180 || dateDiffInDays(date('Y-m-d'), $result['verEl']) > 180 || $result['fee'] < $result['Size'] * 100 * -2 ) {
 ?>
                                     <?php
                                       $phone="Номер телефона не указан";
@@ -116,9 +109,7 @@ if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
                                       <td style="text-align:right" class="user"><?php printf('%d', $cnt);?></td>
 
                                       <td style="text-align:center" class="user">
-                                        <a href="../user/info.php?uid=<?php echo $result['id'];?>">
-                                          <?php printf('%d', $result['id']);?>
-                                        </a>
+                                        <?php printf('%d', $result['id']);?>
                                       </td>
 
                                       <td style="text-align:left" class="user">
@@ -126,21 +117,26 @@ if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
                                       </td>
 
 				                              <td style="text-align:left">
-                                        <form method="post" action="../user/notice.php" class="user">
+                                        <form class="user" id="<?php printf('%d', $result['id'])?>" action="../user/notice.php" method="post">
                                           <?php
                                           foreach ($result as $key => $value) { ?>
                                             <input type="hidden" name="userData[<?php echo $key; ?>]" value="<?php echo $value; ?>">
                                           <?php } ?>
-                                          <button class="btn btn-primary btn-user btn-block">
-                                            <?php printf('%s', $result['Name']);?>
-                                          </button>
+                                          <a class="nav-link" style="cursor:pointer" onclick="submit(<?php printf('%d', $result['id'])?>)">
+                                            <i class="fas fa-fw fa-user"></i>
+                                            <span><?php printf('%s', $result['Name'])?></span>
+                                          </a>
                                         </form>
 				                              </td>
-                                      <!--
 				                              <td style="text-align:right">
-                                        <?php //echo $result['info'];?>
+                                        <?php
+                                        if($result['type'] == 1) {
+                                          echo "Проживают";
+                                        } elseif($result['type'] == 2) {
+                                          echo "Дачники";
+                                        }
+                                        ?>
                                       </td>
-                                      -->
                                       <td style="text-align:right" class="user">
                                         <?php printf("%s", $result['el']);?>
                                       </td>
@@ -157,7 +153,7 @@ if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
                                         <?php if(isset($result['verWat'])) { printf("%s", dateFormat($result['verWat'])); }?>
                                       </td>
                                     </tr>
-<?php $cnt++; } ?>
+<?php $cnt++; } }?>
                                     </tbody>
                                 </table>
                             </div>
@@ -184,7 +180,7 @@ if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
     </a>
 
     <!-- Logout Modal-->
-<?php include_once('includes/logout-modal.php');?>
+<?php include_once('../includes/logout-modal.php');?>
 
     <!-- Bootstrap core JavaScript-->
     <script src="../vendor/jquery/jquery.min.js"></script>
@@ -205,4 +201,3 @@ if (strlen($_SESSION['adid']==0 || $_SESSION['type']!="cashier") ) {
 
 </body>
 </html>
-<?php } ?>

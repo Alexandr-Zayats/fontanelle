@@ -1,30 +1,23 @@
 <?php
-session_start();
-//error_reporting(0);
-include('../includes/config.php');
-if (strlen($_SESSION['adid']==0)) {
-  header('location:logout.php');
-  } else{
+  namespace Phppot;
+  session_start();
+  include_once __DIR__ . '/includes/config.php';
+  include_once __DIR__ . '/../includes/config.php';
 
-if(isset($_POST['update']))
-{
-$nemailid=$_POST['newemailid'];
-  $ret=mysqli_query($con, "call sp_checkemailavailabilty('$nemailid')");
+  if(isset($_POST['update'])) {
+    $ret=mysqli_query($con, "call sp_checkemailavailabilty('$nemailid')");
     $result=mysqli_num_rows($ret);
-    if($result>0){
-
-echo "<script>alert('This email id already associated with another account');</script>";
-echo "<script>window.location.href='change-emailid.php'</script>";
-    }else{
-         $ret->close();
-         $con->next_result();
-$uid=$_GET['uid'];
-$updatetTime = date( 'd-m-Y h:i:s A', time () );
-$query=mysqli_query($con,"call sp_useremailupdation('$nemailid','$updatetTime','$uid')"); 
-echo "<script>alert('Your Email id udated successfully');</script>";  
-echo "<script>window.location.href='registered-users.php'</script>";
-}
-}
+    if($result>0) {
+      echo "<script>alert('This email id already associated with another account');</script>";
+      echo "<script>window.location.href='change-emailid.php'</script>";
+    } else {
+      $updatetTime = date( 'd-m-Y h:i:s A', time () );
+      $query=mysqli_query($con,"call sp_useremailupdation('$nemailid','$updatetTime','$uid')"); 
+      echo "<script>alert('Your Email id udated successfully');</script>";  
+      //echo "<script>window.location.href='registered-users.php'</script>";
+      header("Location: " . $_SESSION['sourcePage']);
+    }
+  }
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -64,7 +57,6 @@ echo "<script>window.location.href='registered-users.php'</script>";
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
 <?php 
-$uid=$_GET['uid'];
 $query=mysqli_query($con,"call sp_userprofile($uid)");
 while ($result=mysqli_fetch_array($query)) {
 
@@ -143,7 +135,7 @@ while ($result=mysqli_fetch_array($query)) {
     </a>
 
     <!-- Logout Modal-->
-     <?php include_once('includes/logout-modal.php');?>
+     <?php include_once('../includes/logout-modal.php');?>
     <!-- Bootstrap core JavaScript-->
     <script src="../vendor/jquery/jquery.min.js"></script>
     <script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>

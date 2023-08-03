@@ -1,108 +1,249 @@
 <?php
-session_unset();
-session_destroy();
-session_start();
-include('../includes/config.php');
-if(isset($_POST['login'])) {
-  $name=$_POST['username'];
-  $password=md5($_POST['loginpassword']);
-  $query=mysqli_query($con,"call sp_cashierlogin('$name','$password')");
-  $num=mysqli_fetch_array($query);
-  if($num>0) {
-    $_SESSION['adid']=$num['id'];
-    $_SESSION['name']=$num['Name'];
-    $_SESSION['type']="cashier";
-    header("location:dashboard.php");
+  namespace Phppot;
+  session_start();
+  unset($_SESSION['subpage']);
+  $_SESSION['cType'] = 'el';
+
+  include_once __DIR__ . '/includes/config.php';
+  include_once __DIR__ . '/../includes/config.php';
+  unset($cid);
+  if(isset($_GET['cid'])) {
+    $cid = $_GET['cid'];
   }
-  else {
-    echo "<script>alert('Неверный ЛОГИН или ПАРОЛЬ');</script>";
-  }
-}
+  $_SESSION['cType'] = 'el';
+
+  $query = $userModel->call('userInfo', $uid . ", 'el'");
+  $user = $query[0];
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
 
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="">
-    <meta name="author" content="">
+  <title>РУЧЕЕК</title>
 
-    <title>РУЧЕЕК (кассир)</title>
+  <!-- Custom fonts for this template -->
+  <link href="../vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+  <link
+    href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+    rel="stylesheet">
 
-    <!-- Custom fonts for this template-->
-    <link href="../vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
-    <link
-        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
-        rel="stylesheet">
+  <!-- Custom styles for this template -->
+  <link href="../css/sb-admin-2.min.css" rel="stylesheet">
 
-    <!-- Custom styles for this template-->
-    <link href="../css/sb-admin-2.min.css" rel="stylesheet">
+  <!-- Custom styles for this page -->
+  <link href="../vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+  <script src="../includes/scripts.js"> </script> 
 
 </head>
 
-<body class="bg-gradient-primary">
+<body id="page-top">
+    <!-- Page Wrapper -->
+    <div id="wrapper">
 
-    <div class="container">
+      <!-- Sidebar -->
+      <?php include_once('includes/sidebar.php');?>
+      <!-- End of Sidebar -->
 
-        <!-- Outer Row -->
-        <div class="row justify-content-center">
-
-            <div class="col-xl-10 col-lg-12 col-md-9">
-
-                <div class="card o-hidden border-0 shadow-lg my-5">
-                    <div class="card-body p-0">
-                        <!-- Nested Row within Card Body -->
-                        <div class="row">
-                            <div class="col-lg-6 d-none d-lg-block bg-login-image"></div>
-                            <div class="col-lg-6">
-                                <div class="p-5">
-                                    <div class="text-center">
-                                        <h1 class="h4 text-gray-900 mb-4">Кассир!</h1>
-                                    </div>
-                                    <form class="user" method="post">
-                                        <div class="form-group">
-                                            <input type="text" class="form-control form-control-user"
-                                                id="exampleInputEmail" aria-describedby="emailHelp"
-                                                placeholder="Логин" name="username" required="true">
-                                        </div>
-                                        <div class="form-group">
-                                            <input type="password" class="form-control form-control-user"
-                                                id="exampleInputPassword" placeholder="Пароль" name="loginpassword" required="true">
-                                        </div>
-                                 
-                                        <button type="submit" name="login" class="btn btn-primary btn-user btn-block">
-                                            Войти
-                                        </button>
-                                    </form>
-                                    <hr>
-                                    <div class="text-center">
-                                        <a class="small" href="password-recovery.php">Восстановить пароль?</a>
-                                    </div>
-                              
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
+      <!-- Content Wrapper -->
+      <div id="content-wrapper" class="d-flex flex-column">
+        <!-- Main Content -->
+        <div id="content">
+          <!-- Topbar -->
+          <?php include_once('includes/topbar.php');?>
+          <!-- End of Topbar -->
+          <div class="container-fluid">
+            <!-- Page Heading -->
+            <div class="d-sm-flex align-items-center justify-content-between mb-4">
+              <h1 class="h3 mb-0 font-weight-bold text-primary">Абонентская книжка: электричество</h1>
+              <div class="flex-row align-items-left justify-content-between">
+                <?php if ($_SESSION['loginType'] == 'admin') { ?>
+                  <a href="add-counter.php?cType=el">
+                    Cчетчики (добавить):  
+                  </a>
+                <?php } else { ?>
+                  <a class="btn btn-primary btn-user">Cчетчики:</a>
+                <?php }?>
+                <select id="cid" name="cid"
+                  onchange="window.location = this.options[this.selectedIndex].value"
+                  class="btn btn-primary btn-user"
+                >
+                  <?php foreach ( explode(";", $user['cId']) as &$c ) {
+                    $sql = $userModel->call('counterInfo', "$c");
+                    foreach ($sql as $counter) {
+                      if (!isset($cid)) { $cid=$counter['id']; }
+                        if ($counter['id'] == $cid) {
+                          echo "<option value=index.php?cid=".$counter['id']." selected>".$counter['name']."</option>";
+                          $_SESSION['cid'] = $cid;
+                        } else {
+                          echo "<option value=index.php?cid=".$counter['id'].">".$counter['name']."</option>";
+                        }
+                      }
+                    }
+                  ?>
+                </select>
+              </div>
             </div>
 
-        </div>
+            <div class="row">
+              <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-primary shadow h-100 py-2">
+                  <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                      <div class="col mr-2">
+                        <div class="h5 mb-0 font-weight-bold text-gray-800"
+                          style="display:flex; flex-direction:row; justify-content:center; align-items:center">
+                          <?php if(in_array($_SESSION['loginType'], $allowedUser)) {
+                            formSubmit('uid', $user['uId'], 'Участок № ', 'edit-user-profile.php')?>
+                          <form action="index.php" method="post">
+                            <input type="text" name="uid" id="uid" value="<?php echo $uid?>"
+                              maxlength="3" size="3" pattern="[0-9]+"
+                            >
+                            <input type="submit" value="Перейти" class="btn btn-primary btn-user">
+                          </form>
+                          <?php
+                          } else {
+                            echo "Участок № ".$user['uId'];
+                          } ?>
+                        </div>
+                      </div>
+                      <div class="col-auto">
+                        <i class="fas fa-users fa-2x text-gray-300"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-primary shadow h-100 py-2">
+                  <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                      <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1"
+                          style="display:flex; flex-direction:row; justify-content:center; align-items:center; font-size:14">
+                          Владелец
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                          <!--<a href="edit-user-profile.php"><?php echo $user['uName']?></a>-->
+                          <?php formSubmit('rId', $user['rId'], $user['uName'], '../cashier/createResident.php')?>
+                        </div>
+                      </div>
+                      <div class="col-auto">
+                        <i class="fas fa-users fa-2x text-gray-300"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-success shadow h-100 py-2">
+                  <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                      <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                          Баланс
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                          <?php echo $user['balance']; $_SESSION['toPay']=$user['balance'] ?> грн.
+                        </div>
+                      </div>
+                      <div class="col-auto">
+                        <i class="fas fa-users fa-2x text-gray-300"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>  
 
-    </div>
+            <!-- row -->
+            <div class="row">
+              <div class="col-xl-12 col-lg-7">
+                <div class="card shadow mb-4">
+                  <div class="table-responsive">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                      <thead>
+                        <tr>
+                          <th rowspan="2" style="text-align:center">Дата</th>
+                          <th colspan="3" style="text-align:center">День</th>
+                          <th colspan="3" style="text-align:center">Ночь</th>
+                          <th rowspan="2" style="text-align:center">К оплате</th>
+                          <th rowspan="2" style="text-align:center">Оплочено</th>
+                        </tr>
+                        <tr>
+                          <th style="text-align:center">Предыдущие</th>
+                          <th style="text-align:center">Текущие</th>
+                          <th style="text-align:center">Разница</th>
+                          <th style="text-align:center">Предыдущие</th>
+                          <th style="text-align:center">Текущие</th>
+                          <th style="text-align:center">Разница</th>
+                        </tr>
+                      </thead>
 
-    <!-- Bootstrap core JavaScript-->
-    <script src="../vendor/jquery/jquery.min.js"></script>
-    <script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+                      <tbody>
+<?php
+  $cnt=1;
+  $date_of_start = date('Y-m-d');
+  $date_of_end = date("Y-m-d", strtotime("-60 month", strtotime(date('Y-m-d'))));
+ 
+  while (strtotime($date_of_start) >= strtotime($date_of_end)) {
+    $query = $userModel->call('el_history', $uid . ", " . $cid . ", " . "'$date_of_start'");
+    foreach  ($query as $countValues ) {
+      if ( ! is_null($countValues['dCur']) || ! is_null($countValues['nCur']) || ! is_null($countValues['paid']) ) {
+?>
+                        <tr>
+                          <td style="text-align:right"><?php echo $countValues['date'] ?></td>
+                          <td style="text-align:right"><?php echo $countValues['dPrev'] ?: '--';?></td>
+                          <td style="text-align:right"><?php echo $countValues['dCur'] ?: '--';?></td>
+                          <td style="text-align:right"><?php echo $countValues['dDelta'] ?: '0.00';?></td>
+                          <td style="text-align:right"><?php echo $countValues['nPrev'] ?: '--';?></td>
+                          <td style="text-align:right"><?php echo $countValues['nCur'] ?: '--';?></td>
+                          <td style="text-align:right"><?php echo $countValues['nDelta'] ?: '0.00';?></td>
+                          <td style="text-align:right"><?php printf("%.2f", $countValues['toPay']) ?: '0.00';?></td>
+                          <td style="text-align:right"><?php echo $countValues['paid'];?></td>
+                        </tr>
+<?php
+        }
+      }
+      $cnt++;
+      $date_of_start = date ("Y-m-d", strtotime("-1 month", strtotime($date_of_start)));
+    }
+?>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div> <!-- container-fluid -->
+        </div> <!-- content -->
+      </div> <!-- content-wrapper -->
+    </div> <!-- wraper -->
+    <a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+  </a>
+  <!-- Logout Modal-->
+  <?php include_once('../includes/logout-modal.php');?>
+  <!-- Bootstrap core JavaScript-->
+  <script src="../vendor/jquery/jquery.min.js"></script>
+  <script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
-    <!-- Core plugin JavaScript-->
-    <script src="../vendor/jquery-easing/jquery.easing.min.js"></script>
+  <!-- Core plugin JavaScript-->
+  <script src="../vendor/jquery-easing/jquery.easing.min.js"></script>
 
-    <!-- Custom scripts for all pages-->
-    <script src="../js/sb-admin-2.min.js"></script>
+  <!-- Custom scripts for all pages-->
+  <script src="../js/sb-admin-2.min.js"></script>
 
+  <!-- Page level plugins -->
+  <script src="../vendor/chart.js/Chart.min.js"></script>
+
+  <!-- Page level custom scripts -->
+  <script src="../js/demo/chart-area-demo.js"></script>
+  <script src="../js/demo/chart-pie-demo.js"></script>
 </body>
-
 </html>

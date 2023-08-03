@@ -1,27 +1,19 @@
 <?php
-session_start();
-//error_reporting(0);
-include('../includes/config.php');
+  namespace Phppot;
+  session_start();
+  $_SESSION['subpage'] = true;
+  include_once __DIR__ . '/includes/config.php';
+  include_once __DIR__ . '/../includes/config.php';
+  include_once __DIR__ . '/../lib/ImageModel.php';
+  $imageModel = new ImageModel();
 
-$uid=$_GET['uid'];
-$type=$_GET['type'];
-$toPay=$_GET['toPay'];
+  if ($_SESSION['toPay'] < 0) {
+    $toPay = $_SESSION['toPay']*(0-1);
+  } else {
+    $toPay="0.00";
+  }
 
-if ($toPay < 0) {
-  $toPay = $toPay*(0-1);
-} else {
-  $toPay="0.00";
-}
-
-$cashier=$_SESSION['adid'];
-if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
-  header('location:logout.php');
-} else {
   if(isset($_POST['payment'])) {
-    $sum = $_POST['sum'];
-    $fee = $_POST['type'];
-    $type = $_POST['type'];
-
     if (isset($_POST['year'])) {
       $year = $_POST['year']."-01-01";
     } else {
@@ -29,29 +21,22 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
     }
     if (isset($_POST['bank'])) {
       $bank = "TRUE";
+      $verf = "FALSE";
     } else {
       $bank = "FALSE";
+      $verf = "TRUE";
     }
-
-    mysqli_close($con);
-    $con = mysqli_connect(DB_SERVER,DB_USER,DB_PASS,DB_NAME);
-    // echo "<script>alert('$cashier $uid $sum $fee $bank');</script>";
-    $query=mysqli_query($con,"call sp_addMoney($cashier, $uid, '$sum', '$fee', '$year', $bank)");
-
-    if ($query) {
-      echo "<script>alert('Счет успешно пополнен');</script>";
-      if ( $type == "el" ) {
-        echo "<script>window.location.href='info.php?uid=$uid'</script>";
-      } elseif ( $type == "wat" )  {
-        echo "<script>window.location.href='water.php?uid=$uid'</script>";
-      } else {
-        echo "<script>window.location.href='fee.php?uid=$uid'</script>";
-      }
+    if(isset( $_SESSION['imageUploadedId'])) {
+      $chck = $_SESSION['imageUploadedId'];
+      unset($_SESSION['imageUploadedId']);
     } else {
-      echo "<script>alert('Что-то пошло не так!. Попробуйте еще раз.');</script>";
+      $chck = 0;
     }
+    //print($_SESSION['id'] . ", $uid, '$sum', '$cType', '$year', $bank, $chck, $verf");
+    //exit;
+    $userModel->call('sp_addMoney', $_SESSION['id'] . ", $uid, '$sum', '$cType', '$year', $bank, $chck, $verf");
+    header('location:' . destPage());
   }
-}
 
 ?>
 <!DOCTYPE html>
@@ -74,6 +59,9 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
 
     <!-- Custom styles for this template-->
     <link href="../css/sb-admin-2.min.css" rel="stylesheet">
+    <script src="../includes/scripts-img.js"></script>
+    <script src="../includes/scripts.js"></script>
+    <script src="../includes/scripts-img.js"></script>
 </head>
 
 <body class="bg-gradient-primary">
@@ -90,12 +78,16 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
                             <div class="text-center">
                                 <h5 style="color:blue">СТ "РУЧЕЕК"</h5>
                                 <h1 class="h4 text-gray-900 mb-4"><?php
-                                  if ( $type == "el" ) {
+                                  if ( $cType == "el" ) {
                                     echo "Оплата электроенергии";
-                                  } elseif ( $type == "wat" )  {
+                                  } elseif ( $cType == "wat" ) {
                                     echo "Оплата за воду";
-                                  } else {
+                                  } elseif ( $cType == "inc" ) {
+                                    echo "Вступительный взнос";
+                                  } elseif ( $cType == "fee" ) {
                                     echo "Членские взносы";
+                                  } elseif ( $cType == "other" )  {
+                                    echo "Целевой збор";
                                   }
                                 ?></h1>
                             </div>
@@ -106,7 +98,7 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
                                       <input type="number" class="form-control form-control-user" id="uid" name="uid" value="<?php echo $uid ?>" readonly>
                                     </div>
                                 </div>
-                                <?php if ( $type == "fee" ) { ?>
+                                <?php if ( $cType == "fee" ) { ?>
                                 <div class="form-group row">
                                     <div class="col-sm-6 mb-3 mb-sm-0">
                                       <select id="year" name="year" class="btn btn-primary btn-user btn-block">
@@ -127,35 +119,53 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
                                 </div>
                                 <?php } ?>
                                 <div class="form-group row">
-                                    <div class="col-sm-6 mb-3 mb-sm-0">
-                                        <input type="number" min="0.10" max="50000.00" step="0.01"
-                                          class="form-control form-control-user" id="sum" name="sum" required="true"
-					  value="<?php echo $toPay ?>">
-				    </div>
-				    <div class="col-sm-6 mb-3 mb-sm-0">
-					<input type="checkbox" id="bank" name="bank">
-      					  <label for="bank">  На счет</label>
+                                  <div class="col-sm-6 mb-3 mb-sm-0">
+                                    <input type="number" min="0.10" max="50000.00" step="0.01"
+                                      class="form-control form-control-user" id="sum" name="sum" required="true"
+					                            value="<?php echo $toPay ?>">
+				                          </div>
+				                          <div class="col-sm-6 mb-3 mb-sm-0">
+					                          <input type="checkbox" id="bank" name="bank">
+      					                      <label for="bank">  На счет</label>
                                     </div>
                                 </div>
-                                <input type="hidden" id="type" name="type" value="<?php echo $type ?>">
-                                <!-- 
-                                <div class="form-group row">
-                                  <div class="col-sm-6 mb-3 mb-sm-0">
-                                    <input type="radio" id="type" name="type" value="el" required>
-                                    <label for="fee">электричество</label><br>
-                                    <input type="radio" id="type" name="type" value="wat">
-                                    <label for="wat">вода</label><br>
-                                    <input type="radio" id="type" name="type" value="fee">
-                                    <label for="fee">членские взносы</label><br>
-                                    <input type="radio" id="type" name="type" value="inc">
-                                    <label for="income">вступительный взнос</label>
-                                  </div>
-                                </div>
-                                -->
                                 <button type="submit" name="payment" class="btn btn-primary btn-user btn-block">
                                   Оплатить
                                 </button>
                             </form>
+                                <div class="form-group row">
+                                  <div class="col-sm-6 mb-3 mb-sm-0">
+                                    <?php
+                                    $_SESSION['iType'] = 'check';
+                                    $_SESSION['imageOwner'] = $uid;
+                                    if(isset($_SESSION['imageUploadedId'])) {
+                                      $result = $imageModel->getImageById($_SESSION['imageUploadedId']);
+                                      unset($_SESSION['imageUploadedId']);
+                                      if (! empty($result)) {
+                                        foreach ($result as $row) {
+                                    ?>
+                                    <table>
+                                    <tr>
+                                      <td>
+                                        <a href=""
+                                          onClick="myWindow('../<?php echo $row["image"]?>', '<?php echo $row["image"]?>', 600, 600); return false;"
+                                        > <img src="../<?php echo $row['image']?>" width="100" border="0"/> </a>
+                                      </td>
+                                      <td>
+                                        <?php formSubmit('imageId', $row['id'], 'Удалить', $_SERVER['HTTP_ORIGIN'] .'/image_delete.php')?>
+                                      </td>
+                                    </tr>
+                                    </table>
+                                    <?php
+                                        }
+                                      }
+                                    }?>
+                                  </div>
+                                </div>
+                                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#imageModal">
+                                  <!--<i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>-->
+                                  <i class="btn btn-primary btn-user">Прикрепить чек</i>
+                                </a>
                             <hr>
                         </div>
                     </div>
@@ -164,6 +174,8 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
         </div>
     </div>
 
+    <!-- image Modal-->
+    <?php include_once('../includes/image-modal.php')?>
     <!-- Bootstrap core JavaScript-->
     <script src="../vendor/jquery/jquery.min.js"></script>
     <script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
@@ -175,5 +187,4 @@ if (strlen($_SESSION['adid']==0) || $_SESSION['type']!="cashier") {
     <script src="../js/sb-admin-2.min.js"></script>
 
 </body>
-
 </html>
