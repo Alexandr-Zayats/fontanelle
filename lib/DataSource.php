@@ -11,7 +11,7 @@
 
   define('DB_SERVER','localhost');
   define('DB_USER','web');
-  define('DB_PASS' ,'webPassword');
+  define('DB_PASS' ,'webPassword12$');
   define('DB_NAME', 'fontanelle');
 
   /**

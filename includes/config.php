@@ -2,26 +2,24 @@
   namespace Phppot;
   //setlocale(LC_ALL, 'uk_UA.utf8');
 
-  //define('DB_SERVER','3.65.146.44');
-  define('DB_SERVER','localhost');
-  define('DB_USER','web');
-  define('DB_PASS' ,'webPassword12$');
-  define('DB_NAME', 'fontanelle');
   session_start();
-  //error_reporting(0);
+  # error_reporting(0);
   require_once __DIR__ . '/../lib/UserModel.php';
   $userModel = new UserModel();
 
   //print_r($_SESSION['sourcePage']);
   //print('<br>');
-  if (strpos($_SERVER['HTTP_REFERER'], $_SERVER['REQUEST_URI']) == false) {
-    if ( $_SERVER['HTTP_REFERER'] != end($_SESSION['sourcePage']) ) {
-      if(isset($_SESSION['return'])) {
-        unset($_SESSION['return']);
-      } elseif (isset($_SESSION['subpage'])) {
-        $_SESSION['sourcePage'][] = $_SERVER['HTTP_REFERER'];
-        //print_r($_SESSION['sourcePage']);
-        //print('<br>');
+  //
+  if (! empty($_SERVER)) {
+    if (isset($_SERVER['HTTP_REFERER']) && strpos($_SERVER['HTTP_REFERER'], $_SERVER['REQUEST_URI']) == false) {
+      if ( $_SERVER['HTTP_REFERER'] != end($_SESSION['sourcePage']) ) {
+        if(isset($_SESSION['return'])) {
+          unset($_SESSION['return']);
+        } elseif (isset($_SESSION['subpage'])) {
+          $_SESSION['sourcePage'][] = $_SERVER['HTTP_REFERER'];
+          //print_r($_SESSION['sourcePage']);
+         //print('<br>');
+  	}
       }
     }
   }
@@ -50,6 +48,7 @@
   if(!isset($_SESSION['allowedUser']) || empty($_SESSION['allowedUser'])) {
     $_SESSION['allowedUser'] = array('admin');
   }
+
 
   // Check login
   if(isset($_POST['login']) || isset($_SESSION['password'])) {
@@ -90,7 +89,7 @@
   } else {
     header('location:'.$_SERVER['HTTP_ORIGIN'].'/logout.php');
   }
-
+  
   function destPage() {
     $page = array_pop($_SESSION['sourcePage']);
     $_SESSION['return'] = true;
