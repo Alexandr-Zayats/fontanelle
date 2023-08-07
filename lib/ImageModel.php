@@ -37,7 +37,7 @@
       if ($imageInfo['mime'] == 'image/gif') {
         $imageLayer = imagecreatefromgif($sourceFile);
       } else if ($imageInfo['mime'] == 'image/jpeg') {
-        $imageLayer = imagecreatefromjpeg($sourceFile);
+	$imageLayer = imagecreatefromjpeg($sourceFile);
       } else if ($imageInfo['mime'] == 'image/png') {
         $imageLayer = imagecreatefrompng($sourceFile);
       }

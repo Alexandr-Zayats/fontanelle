@@ -17,6 +17,7 @@
   }
     
   $target_dir = "user/uploads/";
+  // $target_dir = "/tmp/";
   if (!file_exists($target_dir)) {
     mkdir($target_dir, 0777, true);
   }
@@ -29,25 +30,26 @@
       $imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
       if (in_array($imageFileType, array('jpg', 'png', 'jpeg', 'gif'))) {
         $source = $file['tmp_name'];
-        $response = $imageModel->compressImage($source, $target_file, 50);
+	$response = $imageModel->compressImage($source, $target_file, 50);
         if (!empty($response)) {
           //print($file["name"] . ", $target_file, $imageOwner, $iType");
-          //exit;
+	  //exit;
           $_SESSION['imageUploadedId'] = $imageModel->insertImage($file["name"], $target_file, $imageOwner, $iType);
           if (!empty($response)) {
-            $response["type"] = "success";
-            $response["message"] = "Upload Successfully";
+            //$response["type"] = "success";
+            //$response["message"] = "Upload Successfully";
             $result = $imageModel->getImageById($_SESSION['imageUploadedId']);
           }
         } else {
-          $response["type"] = "error";
-          $response["message"] = "Unable to Upload:$response";
-          echo "<script>alert('Произошла ошибка при сохранении файла.');</script>";
+          //$response["type"] = "error";
+          //$response["message"] = "Unable to Upload";
+	  echo "<script>alert('Произошла ошибка при сохранении файла.');</script>";
         }
       } else {
         echo "<script>alert('Допустимы только JPG, JPEG, PNG, GIF файлы.');</script>";
       }
     }
+    // exit;
   }
   header('location:' . destPage());
   // ------- END of FILES upload

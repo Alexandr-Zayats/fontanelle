@@ -14,7 +14,7 @@
                   </button>
                 </div>
                 <form class="user" name="image" id="image" method="post" enctype="multipart/form-data"
-                    action="<?php echo $_SERVER['HTTP_ORIGIN'] .'/image_upload.php'?>">
+                    action="/image_upload.php">
                   <div class="modal-body">
                     <input type="file" name="fileToUpload[]" id="fileUpload"
                       multiple="multiple" accept=".jpg, .jpeg, .png, .gif">

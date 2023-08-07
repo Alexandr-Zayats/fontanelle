@@ -2,7 +2,7 @@
   namespace Phppot;
   //setlocale(LC_ALL, 'uk_UA.utf8');
 
-  session_start();
+  // session_start();
   # error_reporting(0);
   require_once __DIR__ . '/../lib/UserModel.php';
   $userModel = new UserModel();
@@ -55,7 +55,9 @@
     if(!isset($_SESSION['password'])) {
       $password = md5($loginpassword);
     }
-    $user = $userModel->call('userLogin', "'$username','$password'");
+    if(isset($userName)) {
+      $user = $userModel->call('userLogin', "'$userName','$password'");
+    }
 
     if(empty($user)) {
       echo "<script>alert('Неверный ЛОГИН или ПАРОЛЬ');</script>";

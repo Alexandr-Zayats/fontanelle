@@ -50,9 +50,9 @@
                   <form class="user" method="post" action="">
                     <div class="form-group">
                       <input type="text" class="form-control form-control-user"
-                        id="username" aria-describedby="emailHelp"
+                        id="userName" aria-describedby="emailHelp"
                         placeholder="Логин"
-                        name="username" required="true"
+                        name="userName" required="true"
                       >
                     </div>
                     <div class="form-group">
