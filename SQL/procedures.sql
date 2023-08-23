@@ -749,7 +749,7 @@ PROCEDURE `updateResidentProfile` (
   `_name` VARCHAR(30) CHARSET utf8,
   `_middlName` VARCHAR(50) CHARSET utf8,
   `_userName` VARCHAR(15) CHARSET utf8,
-  `_password` VARCHAR(32),
+  `_password` VARCHAR(32) CHARSET utf8,
   `_email` VARCHAR(120),
   `_phone1` INT(10),
   `_phone2` INT(10), 

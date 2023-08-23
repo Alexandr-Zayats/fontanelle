@@ -248,7 +248,7 @@
                                       > <img src="../<?php echo $row['image']?>" width="100" border="0"/> </a>
                                     </td>
                                     <td>
-                                      <?php formSubmit('imageId', $row['id'], 'Удалить', $_SERVER['HTTP_ORIGIN'] .'/image_delete.php')?>
+                                      <?php formSubmit('imageId', $row['id'], 'Удалить', '/image_delete.php')?>
                                     </td>
                                   </tr>
                                   <?php

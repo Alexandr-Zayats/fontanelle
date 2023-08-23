@@ -9,7 +9,7 @@
   $latest = $query[0];
 
   if(isset($_POST['addvalues'])) {
-    if($latest[nightLast] > $nCurrent || $latest[dayLast] > $dCurrent) {
+    if($latest['nightLast'] > $nCurrent || $latest['dayLast'] > $dCurrent) {
       echo "<script>alert('Введеные показания ниже предыдущих!');</script>";
     } else {
         //echo "<script>alert('uid=$uid cid=$cid latesD=$latest[dayLast] currentD=$dCurrent latestN=$latest[nightLast] currentN=$nCurrent');</script>";
