@@ -359,7 +359,8 @@ BEGIN
     END IF;
   END IF;
 
-  INSERT INTO payments (cashierId, userId, type, sum, dst, dstDate, chck, verified) VALUES (cashier, uid, bank, sum, dst, payDate, chck, verified);
+  SELECT TariffId INTO @TID FROM users WHERE id=uid;
+  INSERT INTO payments (cashierId, userId, type, sum, tid, dst, dstDate, chck, verified) VALUES (cashier, uid, bank, sum, @TID, dst, payDate, chck, verified);
   COMMIT;
 END$$
 
