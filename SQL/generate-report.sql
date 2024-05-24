@@ -12,3 +12,10 @@ INTO OUTFILE '/var/lib/mysql-files//users.csv'
 FIELDS TERMINATED BY ','
 ENCLOSED BY '"'
 LINES TERMINATED BY '\n';
+
+
+# Не подали показания
+SELECT u.id, r.surName, r.name, r.middlName, c.verDate FROM users u LEFT JOIN residents r ON r.id=u.residentId LEFT JOIN counters c ON u.id=c.userId WHERE c.type='el' AND c.verDate < '2024-01-01' ORDER BY u.id INTO OUTFILE '/var/lib/mysql-files//provereny_05-24.csv';
+
+# Долги по членскиы
+SELECT u.id, r.surName, r.name, r.middlName, u.BalanceFee FROM users u LEFT JOIN residents r ON r.id=u.residentId WHERE u.BalanceFee < Size*100*-2 INTO OUTFILE '/var/lib/mysql-files//fee_dolg_05-24.csv';

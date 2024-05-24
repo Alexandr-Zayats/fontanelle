@@ -614,9 +614,14 @@ PROCEDURE `sp_updateCounter` (
   `info` VARCHAR(250) CHARSET utf8,
   `location` VARCHAR(20) CHARSET utf8)
 BEGIN
-UPDATE counters
-SET number = serial, name = name, info = info, verDate = NOW(), location = location
-WHERE id = cuid;
+  SELECT userId, type INTO @usId, @cType FROM counters WHERE id=cuid;
+  UPDATE counters
+  SET verDate = NOW() - 1000
+  WHERE userId = @usId AND type = @cType;
+
+  UPDATE counters
+  SET number = serial, name = name, info = info, verDate = NOW(), location = location
+  WHERE id = cuid;
 END$$
 
 DROP PROCEDURE IF EXISTS sp_registration;
