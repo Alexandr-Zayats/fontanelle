@@ -796,4 +796,13 @@ ELSE
 END IF;
 END$$
 
+DROP PROCEDURE IF EXISTS vedomost;
+CREATE DEFINER=`root`@`localhost`
+PROCEDURE `vedomost` (
+  `year` INT(4),
+  `num` INT(2)
+BEGIN
+  SELECT * FROM payments WHERE WEEK(date) = num AND YEAR(date) = year;
+END$$
+
 DELIMITER ;
