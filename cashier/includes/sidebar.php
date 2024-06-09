@@ -31,6 +31,18 @@
                 <a class="nav-link" href="registered-users.php">
                     <i class="fas fa-fw fa-user"></i>
                     <span>Участки</span></a>
+	    </li>
+
+	    <li class="nav-item">
+                <a class="nav-link" href="members.php">
+                    <i class="fas fa-fw fa-user"></i>
+                    <span>Члены Кооператива</span></a>
+	    </li>
+	
+	    <li class="nav-item">
+                <a class="nav-link" href="individual.php">
+                    <i class="fas fa-fw fa-user"></i>
+                    <span>Индивидуальные</span></a>
             </li>
 
             <!-- Nav Item - Charts -->

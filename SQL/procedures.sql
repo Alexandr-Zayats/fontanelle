@@ -24,6 +24,24 @@ SET time_zone = "+00:00";
 
 DELIMITER $$
 --
+-- EVENTS
+--
+
+DROP EVENT IF EXISTS rentMonthly;
+CREATE EVENT rentMonthly
+ON SCHEDULE EVERY '1' MONTH
+STARTS '2024-07-01 02:00:00'
+DO
+BEGIN
+  IF (MONTH(date) > 3 AND MONTH(date) < 11) THEN
+    update users set BalanceFee=BalanceFee-Size*(select fee from tariffs where id=users.TariffId);
+  ELSE
+    update users set BalanceFee=BalanceFee-Size*(select fee from tariffs where id=users.TariffId) WHERE IsActive=1;
+  END IF;
+END$$
+
+
+--
 -- Procedures
 --
 
@@ -509,23 +527,24 @@ select id from admin where UserName=uname and AdminEmail=adminemail;
 END$$
 
 DROP PROCEDURE IF EXISTS sp_allregisteredusers;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_allregisteredusers` ()  BEGIN
-SELECT u.id as id,
-  concat(r.surName, " ", r.name, " ", r.middlName ) as Name,
-  s.name as street,
-  u.isActive as type,
-  u.info as info,
-  u.BalanceEl as el,
-  u.BalanceFee as fee,
-  u.BalanceWat as wat,
-  r.phone1 as phone1,
-  r.phone2 as phone2,
-  (SELECT DATE_FORMAT(max(date), '%Y-%m-%d') FROM payments WHERE userId = u.id) as lastPay
-FROM users u
-LEFT JOIN residents r ON u.residentId=r.id
-LEFT JOIN streets s ON u.StreetId=s.id
-WHERE u.id > 0
-GROUP BY u.id;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_allregisteredusers` (IN `filter` VARCHAR(6))
+BEGIN
+  SELECT u.id as id,
+    concat(r.surName, " ", r.name, " ", r.middlName ) as Name,
+    s.name as street,
+    u.isActive as type,
+    u.info as info,
+    u.BalanceEl as el,
+    u.BalanceFee as fee,
+    u.BalanceWat as wat,
+    r.phone1 as phone1,
+    r.phone2 as phone2,
+    (SELECT DATE_FORMAT(max(date), '%Y-%m-%d') FROM payments WHERE userId = u.id) as lastPay
+  FROM users u
+  LEFT JOIN residents r ON u.residentId=r.id
+  LEFT JOIN streets s ON u.StreetId=s.id
+  WHERE u.id > 0 AND FIND_IN_SET(u.isMem, filter)
+  GROUP BY u.id;
 END$$
 
 DROP PROCEDURE IF EXISTS debtors;
@@ -550,10 +569,10 @@ FROM users u
   LEFT JOIN streets s ON u.StreetId=s.id
   LEFT JOIN counters c ON u.id=c.userId
 WHERE ( u.id > 0 ) AND ( 
-  BalanceFee < u.Size * 100 * -2 OR
+  BalanceFee < u.Size * 180 * -2 OR
   BalanceEl < -1000 OR
   BalanceWat < -1000 OR
-  DATEDIFF(NOW(), c.verDate) > 180
+  DATEDIFF(NOW(), c.verDate) > 90
 )
 GROUP BY u.id;
 END$$
@@ -698,7 +717,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_userprofile` (`uid` INT(5))  BEG
     u.Size as Size,
     u.LastUpdationDate as LastUpdationDate,
     r.id as residentId,
-    r.isMember as isMember,
+    u.isMem as isMem,
     u.isActive as type,
     concat(r.surName, " ", r.name, " ", r.middlName ) as Name,
     u.Info as Info
@@ -720,9 +739,10 @@ PROCEDURE `sp_userupdateprofile` (
   `resident` INT(5),
   size DECIMAL(15,2),
   `info` VARCHAR(250) CHARSET utf8,
-  `status` INT(1))
+  `status` INT(1),
+  `member` INT(1))
 BEGIN
-  UPDATE users SET StreetId=street, LastUpdationDate=current_timestamp(), residentId=resident, Size=size, Info=info, IsActive=status
+  UPDATE users SET StreetId=street, LastUpdationDate=current_timestamp(), residentId=resident, Size=size, Info=info, IsActive=status, isMem=member
   WHERE id=uid;
 END$$
 
@@ -800,9 +820,20 @@ DROP PROCEDURE IF EXISTS vedomost;
 CREATE DEFINER=`root`@`localhost`
 PROCEDURE `vedomost` (
   `year` INT(4),
-  `num` INT(2)
+  `num` INT(2))
 BEGIN
-  SELECT * FROM payments WHERE WEEK(date) = num AND YEAR(date) = year;
+  SELECT
+    p.id as pId, p.sum, p.type, p.chck, p.verified,
+    u.id as id,
+    r.id as rId,
+    concat(r.surName, " ", r.name, " ", r.middlName ) as name,
+    p.date,
+    p.dst
+  FROM payments p
+    LEFT JOIN users u ON p.userId=u.id
+    LEFT JOIN residents r ON u.residentId=r.id
+  WHERE WEEK(date) = num AND YEAR(date) = year
+  ORDER BY p.date DESC;
 END$$
 
 DELIMITER ;

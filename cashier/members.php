@@ -4,7 +4,9 @@
   unset($_SESSION['subpage']);
   include_once __DIR__ . '/includes/config.php';
   include_once __DIR__ . '/../includes/config.php';
+  unset($_SESSION['cid']);
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -33,6 +35,7 @@
 </head>
 
 <body id="page-top">
+
     <!-- Page Wrapper -->
     <div id="wrapper">
         <!-- Sidebar -->
@@ -52,27 +55,25 @@
                     <!-- DataTales Example -->
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary">Должники</h6>
+                            <h6 class="m-0 font-weight-bold text-primary">Дачные участки</h6>
                         </div>
-
                         <div class="card-body">
-                            <div class="table-responsive">
+                            <div class="table-responsive" style="overflow-x:auto;">
                                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                   <thead>
                                     <tr>
                                       <th style="width: 3%; text-align:center" rowspan="2">#</th>
                                       <th style="width: 3%; text-align:center" rowspan="2">№</th>
-                                      <th style="width: 9%; text-align:center" rowspan="2">Улица</th>
-                                      <th style="width: 27%; text-align:center" rowspan="2">Владелец</th>
+                                      <th style="width: 8%; text-align:center" rowspan="2">Улица</th>
+                                      <th style="width: 20%; text-align:center" rowspan="2">Владелец</th>
                                       <th style="width: 8%; text-align:center" rowspan="2">Статус</th>
-                                      <th style="width: 24%; text-align:center" colspan="3">Задолженность</th>
-                                      <th style="width: 26%; text-align:center" colspan="2">Проверка счетчика</th>
+				                              <th style="width: 20%; text-align:center" rowspan="2">Примечание</th>
+                                      <th style="width: 22%; text-align:center" colspan="3">Баланс</th>
+                                      <th style="width: 12%; text-align:center" rowspan="2">Последний платеж</th>
                                     </tr>
-                                      <th style="text-align:center">Елект</th>
+                                      <th style="text-align:center">Електр</th>
                                       <th style="text-align:center">Вода</th>
                                       <th style="text-align:center">Членские</th>
-                                      <th style="text-align:center">Елект</th>
-                                      <th style="text-align:center">Вода</th>
                                     </tr>
                                   </thead>
                                   <tfoot>
@@ -82,19 +83,18 @@
                                       <th style="text-align:center">Улица</th>
                                       <th style="text-align:center">Владелец</th>
                                       <th style="text-align:center">Статус</th>
-                                      <th style="text-align:center">Елект</th>
+				                              <th style="text-align:center">Примечание</th>
+                                      <th style="text-align:center">Електр</th>
                                       <th style="text-align:center">Вода</th>
                                       <th style="text-align:center">Членские</th>
-                                      <th style="text-align:center">Елект</th>
-                                      <th style="text-align:center">Вода</th>
+                                      <th style="text-align:center">Последний платеж</th>
                                     </tr>
                                   </tfoot>
                                   <tbody>
 <?php
-  $query = $userModel->call('debtors', '');
   $cnt=1;
-  foreach ( $query as $result) {
-    if( dateDiffInDays(date('Y-m-d'), $result['verWat']) > 180 || dateDiffInDays(date('Y-m-d'), $result['verEl']) > 180 || $result['fee'] < $result['Size'] * 100 * -2 ) {
+  $query = $userModel->call('sp_allregisteredusers', '"1"');
+  foreach ($query as $result) {
 ?>
                                     <?php
                                       $phone="Номер телефона не указан";
@@ -106,56 +106,56 @@
                                       }
                                     ?>
                                     <tr>
-                                      <td style="text-align:right" class="user"><?php printf('%d', $cnt);?></td>
-
-                                      <td style="text-align:center" class="user">
-                                        <?php printf('%d', $result['id']);?>
+                                      <td style="text-align:right">
+                                          <?php echo $cnt?>
                                       </td>
 
-                                      <td style="text-align:left" class="user">
-                                        <?php printf('%s',$result['street']);?>
-                                      </td>
-
-				                              <td style="text-align:left">
-                                        <form class="user" id="<?php printf('%d', $result['id'])?>" action="../user/notice.php" method="post">
-                                          <?php
-                                          foreach ($result as $key => $value) { ?>
-                                            <input type="hidden" name="userData[<?php echo $key; ?>]" value="<?php echo $value; ?>">
-                                          <?php } ?>
-                                          <a class="nav-link" style="cursor:pointer" onclick="submit(<?php printf('%d', $result['id'])?>)">
-                                            <i class="fas fa-fw fa-user"></i>
-                                            <span><?php printf('%s', $result['Name'])?></span>
-                                          </a>
+                                      <td style="text-align:center">
+                                        <form class="user" id="<?php printf('%d', $result['id'])?>"
+                                          action="../user/" method="post"
+                                        >
+                                          <input type="hidden" name="uid" placeholder=""
+                                            value="<?php printf('%d', $result['id'])?>"/
+                                          >
+                                          <div class="mb-sm-0" style="color:blue;cursor:pointer"
+                                            onclick="submit(<?php printf('%d', $result['id'])?>)"
+                                          >
+                                            <?php printf('%s', $result['id'])?>
+                                          </div>
                                         </form>
-				      </td>
-				      <td style="text-align:right">
-                                        <?php
+                                      </td>
+                                      <td style="text-align:left">
+                                          <?php echo $result['street'];?>
+                                      </td>
+				                              <td style="text-align:left">
+                                        <?php formSubmit('uid', $result['id'], $result['Name'], '../user/')?>
+				                              </td>
+                                      <td style="text-align:left">
+                                      <?php
                                         if($result['type'] == 1) {
                                           echo "Проживают";
                                         } elseif($result['type'] == 2) {
                                           echo "Дачники";
                                         }
-                                        ?>
+                                      ?>
                                       </td>
-                                      <td style="text-align:right" class="user">
-                                        <?php printf("%s", $result['el']);?>
+				                              <td style="text-align:right">
+                                        <?php echo $result['info']?>
                                       </td>
-                                      <td style="text-align:right" class="user">
-                                        <?php printf("%s", $result['wat']);?>
+                                      <td style="text-align:right">
+                                        <?php printf("%.2f", $result['el']);?>
                                       </td>
-                                      <td style="text-align:right" class="user">
-                                        <?php printf("%s", $result['fee']);?>
+                                      <td style="text-align:right">
+                                        <?php printf("%.2f", $result['wat']);?>
                                       </td>
-                                      <td style="text-align:right" class="user">
-					<!-- <?php if(isset($result['verEl'])) { printf("%s", dateFormat($result['verEl'])); }?> -->
-					<?php if(isset($result['verEl'])) { printf("%s", $result['verEl']); }?>
+                                      <td style="text-align:right">
+                                        <?php printf("%.2f", $result['fee']);?>
                                       </td>
-                                      <td style="text-align:right" class="user">
-					<!-- <?php if(isset($result['verWat'])) { printf("%s", dateFormat($result['verWat'])); }?> -->
-					<?php if(isset($result['verWat'])) { printf("%s", $result['verWat']); }?>
+                                      <td style="text-align:right">
+                                        <?php if(isset($result['lastPay']) && $result['lastPay'] != "") { echo dateFormat($result['lastPay']);}?>
                                       </td>
                                     </tr>
-<?php $cnt++; } }?>
+<?php $cnt++; } ?>
                                     </tbody>
                                 </table>
                             </div>

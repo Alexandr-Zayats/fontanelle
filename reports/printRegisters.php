@@ -68,7 +68,7 @@ if(isset($_POST['close'])) {
   $pdf->writeHTML("Доводимо до Вашого відома, що станом на " . $curDate . " за Вашою садовою ділянкою наявні наступні порушення:", true, true, true, true, 'C');
   $pdf->Write(0, "\n", '', 0, 'C', true, 0, false, false, 0);
   $cnt = 0;
-  if($userData['fee'] < ($userData['Size'] * 180 * -2)) {
+  if($userData['fee'] < ($userData['Size'] * 100 * -2)) {
     $cnt++;
     $pdf->writeHTML("\t" . $cnt .". Iснує заборгованість по оплаті членських внесків в сумі " . $userData['fee'] . " грн.;\n");
   }
@@ -78,7 +78,7 @@ if(isset($_POST['close'])) {
   }
   if(isset($userData['verEl']) && $userData['verEl'] != "" && dateDiffInDays(date('Y-m-d'), $userData['verEl']) > 180) {
     $cnt++;
-    $pdf->writeHTML("\t" . $cnt .". Не надані фото показників лічильника електроенергії, остання дата звірки:  " . dateFormat($userData['verEl']) . ";\n");
+    $pdf->writeHTML("\t" . $cnt .". Не надані фото показників лічильника електроенергії, остання звірка відбулася до -  " . dateFormat($userData['verEl']) . ";\n");
   }
   if($userData['wat'] < -1000 ) {
     $cnt++;

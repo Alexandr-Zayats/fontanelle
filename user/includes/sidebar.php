@@ -12,7 +12,8 @@
             <hr class="sidebar-divider my-0">
 
             <!-- Nav Item - Dashboard -->
-            <li class="nav-item">
+	    <li class="nav-item">
+
             <?php if ($_SESSION['loginType'] != "regularUser") { ?>
               <a class="nav-link" href="../cashier/registered-users.php">
                 <i class="fas fa-fw fa-user"></i>
@@ -29,7 +30,8 @@
                 Interface
             </div>
                     
-            <!-- Nav Item - Charts -->
+	    <!-- Nav Item - Charts -->
+	    <?php if ($_SESSION['cType'] != "el") { ?>
             <li class="nav-item">
               <form class="user" id="elUid" action="index.php" method="post">
                 <a class="nav-link" onclick="submit('elUid')" style="cursor:pointer">
@@ -37,19 +39,22 @@
                   <span>Электричество</span>
                 </a>
               </form>
-            </li>
+	    </li>
+	    <?php } ?>
 
-            <!-- Nav Item - Charts -->
-            <li class="nav-item">
+	    <?php if ($_SESSION['cType'] != "wat") { ?>
+	    <li class="nav-item">
               <form class="user" id="watUid" action="water.php" method="post">
                 <a class="nav-link" onclick="submit('watUid')" style="cursor:pointer">
                   <i class="fas fa-fw fa-user"></i>
                   <span>Вода</span>
                 </a>
               </form>
-            </li>
+	    </li>
+	    <?php } ?>
 
-            <!-- Nav Item - Charts -->
+	    <!-- Nav Item - Charts -->
+	    <?php if ($_SESSION['cType'] != "fee") { ?>
             <li class="nav-item">
               <form class="user" id="feeUid" action="fee.php" method="post">
                 <a class="nav-link" onclick="submit('feeUid')" style="cursor:pointer">
@@ -63,17 +68,16 @@
               <form class="user" id="pay" action="user-payment.php" method="post">
                 <a class="nav-link" onclick="submit('pay')" style="cursor:pointer">
                   <i class="fas fa-fw fa-user"></i>
-                  <span>Платежи</span>
+                  <span>Оплата</span>
                 </a>
               </form>
 	    </li>
 
-            <?php if ($_SESSION['cType'] != "fee") { ?>  
             <li class="nav-item">
               <form class="user" id="cValue" action="user-counter.php" method="post">
                 <a class="nav-link" onclick="submit('cValue')" style="cursor:pointer">
                   <i class="fas fa-fw fa-user"></i>
-                  <span>Показания счетчика</span>
+                  <span>Показания</span>
                 </a>
               </form>
             </li>
@@ -86,7 +90,7 @@
                 </a>
               </form>
             </li>
-             <?php } ?>
+            <?php } ?>
             <hr class="sidebar-divider d-none d-md-block">
 
             <!-- Sidebar Toggler (Sidebar) -->

@@ -11,7 +11,7 @@
     //$updatetTime = date( 'd-m-Y h:i:s A', time () );
     //echo "<script>alert('$uid $name $email $phone $size $info');</script>";
     // print "sp_userupdateprofile ($uid,'$street','$resident','$size','$info', $status)";
-    $userModel->call('sp_userupdateprofile', "$uid,'$street','$resident','$size','$info', $status");
+    $userModel->call('sp_userupdateprofile', "$uid,'$street','$resident','$size','$info', $status, $member");
     //echo "<script>alert('Профайл участка успешно обновлен');</script>";
     header('location:' . destPage());
   }
@@ -137,6 +137,15 @@
                                   <tr>
                                     <th>Последние изменения </th>
                                     <td><?php echo $result['LastUpdationDate'];?></td>
+				  </tr>
+				  <tr>
+                                    <th>Член кооператива</th>
+                                    <td>
+                                      <select id="member" name="member" class="btn btn-primary btn-user btn-block">
+                                        <option value=1 <?php if($result['isMem'] == 1) {echo "selected";}?>>Да</option>";
+                                        <option value=0 <?php if($result['isMem'] == 0) {echo "selected";}?>>Нет</option>";
+                                      </select>
+                                    </td>
                                   </tr>
                                   <tr>
                                     <th>Статус</th>

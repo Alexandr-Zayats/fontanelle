@@ -93,7 +93,7 @@
                                   <tbody>
 <?php
   $cnt=1;
-  $query = $userModel->call('sp_allregisteredusers', '');
+  $query = $userModel->call('sp_allregisteredusers', '"0,1"');
   foreach ($query as $result) {
 ?>
                                     <?php

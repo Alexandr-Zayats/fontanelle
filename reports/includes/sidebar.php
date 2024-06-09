@@ -31,9 +31,14 @@
                 <a class="nav-link" href="../cashier/registered-users.php">
                     <i class="fas fa-fw fa-user"></i>
                     <span>Участки</span></a>
+	    </li>
+
+	    <li class="nav-item">
+                <a class="nav-link" href="registers.php">
+                    <i class="fas fa-fw fa-user"></i>
+                    <span>Ведомости</span></a>
             </li>
 
-            <!-- Nav Item - Charts -->
             <li class="nav-item">
                 <a class="nav-link" href="reports.php">
                     <i class="fas fa-fw fa-user"></i>
