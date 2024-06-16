@@ -6,8 +6,8 @@
   include_once __DIR__ . '/includes/config.php';
   include_once __DIR__ . '/../includes/config.php';
 
-$target_folder = 'uploads/' . $userData['id'];
-$target_file = $target_folder . '/notice.pdf';
+  $target_folder = 'uploads/' . $userData['id'];
+  $target_file = $target_folder . '/notice.pdf';
 
 if(isset($_POST['close'])) {
   // echo "<script>window.location.href='../cashier/debtors.php'</script>";

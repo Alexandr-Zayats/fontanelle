@@ -33,6 +33,9 @@
   foreach ($_POST as $key => $value) {
     ${$key} = $value;
   }
+  foreach ($_REQUEST as $key => $value) {
+    ${$key} = $value;
+  }
 
   if (isset($uid)) {
     $_SESSION['uid'] = intval($uid);

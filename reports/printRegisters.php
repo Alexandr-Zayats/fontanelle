@@ -6,29 +6,22 @@
   include_once __DIR__ . '/includes/config.php';
   include_once __DIR__ . '/../includes/config.php';
 
-$target_folder = 'uploads/' . $userData['id'];
-$target_file = $target_folder . '/notice.pdf';
+  $target_folder = 'print/';
+  $target_file = $target_folder .'registers.pdf';
 
-if(isset($_POST['close'])) {
-  // echo "<script>window.location.href='../cashier/debtors.php'</script>";
-  header('location:' . destPage());
+  /*
+  $pYear=date('Y');
+  $pWeek='22';
+  */
+
+  if(isset($_POST['close'])) {
+    header('location:' . destPage());
   
-} elseif(isset($_POST['print'])) {
-  // echo "<script>window.location.href='registered-users.php'</script>";
-  header("Location:registered-users.php");
-} else {
-
-  $phone="";
-  if (preg_match('/.*(\d{2})(\d{3})(\d{2})(\d{2})$/', $userData['phone1'],  $matches )) {
-    $phone="+380 ($matches[1]) $matches[2]-$matches[3]-$matches[4]";
-  }
-  if (preg_match( '/.*(\d{2})(\d{3})(\d{2})(\d{2})$/', $result['phone2'],  $matches)) {
-    $phone=$phone."; "."+380 ($matches[1]) $matches[2]-$matches[3]-$matches[4]";
-  }
+  } elseif(isset($_POST['print'])) {
+    header("Location:registered-users.php");
+  } else {
 
   $time = strtotime(date('Y-m-d'));
-  $final = date("Y-m-d", strtotime("+1 month", $time));
-  $dueDate = dateFormat($final);
   $curDate = dateFormat(date('Y-m-d'));
   
   require_once __DIR__ . '/../vendor/autoload.php';
@@ -40,7 +33,7 @@ if(isset($_POST['close'])) {
   $pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
   $pdf->setImageScale(PDF_IMAGE_SCALE_RATIO);
   $pdf->setFontSubsetting(true);
-  $pdf->SetFont('dejavusans', '', 12, '', true);
+  $pdf->SetFont('dejavusans', '', 10, '', true);
   // start a new page
   $pdf->AddPage();
 
@@ -48,7 +41,7 @@ if(isset($_POST['close'])) {
   $pdf->Write(0, "\n", '', 0, 'C', true, 0, false, false, 0);
   $pdf->writeHTML("<b>Дата: </b>" . $curDate);
   $pdf->Write(0, "\n", '', 0, 'C', true, 0, false, false, 0);
-  $pdf->writeHTML("<b>-- ПОПЕРЕДЖЕННЯ -- </b>");
+  $pdf->writeHTML("<b>-- ВІДОМІСТЬ № " . $pYear . "/" . $pWeek . " -- </b>");
   $pdf->Write(0, "\n", '', 0, 'C', true, 0, false, false, 0);
   // address
   $pdf->writeHTML("Кооперативна 1а,");
@@ -56,75 +49,29 @@ if(isset($_POST['close'])) {
   $pdf->writeHTML("Бучанський р-н,");
   $pdf->writeHTML("Київська область, 07832");
   $pdf->Write(0, "\n", '', 0, 'C', true, 0, false, false, 0);
-  // bill to
-  $pdf->writeHTML("<b>Попередження до:</b>", true, false, false, false, 'R');
-  $pdf->writeHTML("вулиця " . $userData['street'] . ", ділянка №" . $userData['id'] . ",", true, false, false, false, 'R');
-  $pdf->writeHTML($userData['Name'] . ",", true, false, false, false, 'R');
-  $pdf->writeHTML("смт Бабинці, СМ Джерела, 07832", true, false, false, false, 'R');
-  $pdf->writeHTML("тел.: " . $phone, true, false, false, false, 'R');
-  $pdf->Write(0, "\n", '', 0, 'C', true, 0, false, false, 0);
 
   // main text
-  $pdf->writeHTML("Доводимо до Вашого відома, що станом на " . $curDate . " за Вашою садовою ділянкою наявні наступні порушення:", true, true, true, true, 'C');
-  $pdf->Write(0, "\n", '', 0, 'C', true, 0, false, false, 0);
-  $cnt = 0;
-  if($userData['fee'] < ($userData['Size'] * 100 * -2)) {
-    $cnt++;
-    $pdf->writeHTML("\t" . $cnt .". Iснує заборгованість по оплаті членських внесків в сумі " . $userData['fee'] . " грн.;\n");
-  }
-  if($userData['el'] < - 1000) {
-    $cnt++;
-    $pdf->writeHTML("\t" . $cnt .". Iснує заборгованість " . $userData['el'] . "грн. по оплаті за спожиту електроенергію (остання оплата від " . dateFormat($userData['verEl']) . ");\n");
-  }
-  if(isset($userData['verEl']) && $userData['verEl'] != "" && dateDiffInDays(date('Y-m-d'), $userData['verEl']) > 180) {
-    $cnt++;
-    $pdf->writeHTML("\t" . $cnt .". Не надані фото показників лічильника електроенергії, остання звірка відбулася до -  " . dateFormat($userData['verEl']) . ";\n");
-  }
-  if($userData['wat'] < -1000 ) {
-    $cnt++;
-    $pdf->writeHTML("\t" . $cnt .". Існує заборгованість " . $userData['wat'] . "грн.  по оплаті за спожиту воду (остання оплата від " . dateFormat($userData['verWat']) . ";\n");
-  }
-  if(isset($userData['verWat']) && $userData['verWat'] != "" && dateDiffInDays(date('Y-m-d'), $userData['verWat']) > 180) {
-    $cnt++;
-    $pdf->writeHTML("\t" . $cnt .". Не надано показники лічильника споживання води, остання звірка - " . dateFormat($userData['verWat']) . ";\n");
-  }
-  /*
-  if($userData['counterLocation'] == 'внутри') {
-    $cnt++;
-    $pdf->writeHTML("\t" . $cnt .". Наявні порушення п3.1 додатку №2 до Договору про обслуговування, а саме щодо місця встановлення приладів обліку споживання електроенергії.;\n");
-  }
-  */
+  $query = $userModel->call('vedomost', "$pYear, $pWeek");
+  $cnt=1; $sumTotal=0; $sumEl=0; $sumWat=0; $sumFee=0; $sumInc=0; $sumOthers=0; $data=array();
+  $header = array('№', 'Ділянка', 'ПІБ', 'Призначення', 'Сума', 'Дата та час');
+  foreach ($query as $result) {
+    if ($result['dst'] == 'el') { $sumEl+=$result['sum']; $type='Електроенергія';}
+    elseif ($result['dst'] == "wat") { $sumWat+=$result['sum']; $type='Вода';}
+    elseif ($result['dst'] == "fee") { $sumFee+=$result['sum']; $type='Членські';}
+    elseif ($result['dst'] == "inc") { $sumInc+=$result['sum']; $type='Вступні';}
+    else { $sumOthers+=$result['sum']; $type='Інше';}
 
-  $pdf->Write(0, "\n", '', 0, 'C', true, 0, false, false, 0);
+    array_push($data, array($cnt, $result['id'], $result['name'], $type, floatval($result['sum']), $result['date'])); 
+    $sumTotal+=$result['sum'];
+    $cnt++;
+  }
 
-  $pdf->writeHTML("Просимо Вас усунути вказані порушеня в термін до " . $dueDate . "\n\n");
-  $pdf->Write(0, "\n", '', 0, 'C', true, 0, false, false, 0);
-  $pdf->writeHTML("У випадку ігнорування даного попередження, відповідно до умов Договору на обслуговування та Статуту СТ 'Ручейок' п.2.10,", true, true, true, true, 'W');
-  $pdf->writeHTML("Правління Управляючого Кооперативу \"СТ 'Ручейок'\" буде вимушене припинити надання поcлуг з обслуговування Вашої садовоЇ ділянки.", true, true, true, true, 'W');
-  $pdf->Write(0, "\n", '', 0, 'C', true, 0, false, false, 0);
+  // array_push($data, array('', '', '', '', '', 'ВСЬОГО: '.$sumTotal));
 
-  // invoice table starts here
-  /*
-  $header = array('ПОСЛУГА', 'ЗАБОРГОВАНІТЬ', 'РЕКОМЕНДАЦІЇ');
-  $data = array(
-    array('Сплата членьских внесків','-3242344','сплатити в місячний термін'),
-    array('Показники лічильника елекстроенргії', 'останій раз подані','подати до')
-  );
+  //print_r($data);
+
   $pdf->printTable($header, $data);
   $pdf->Ln();
-  */
-
-  // comments
-  $pdf->SetFont('', '', 12);
-  $pdf->Write(0, "\n\n", '', 0, 'C', true, 0, false, false, 0);
-  $pdf->writeHTML("Повідомлення вручив: Член Правління _____________ /____________/");
-  $pdf->Write(0, "\n\n", '', 0, 'C', true, 0, false, false, 0);
-  $pdf->writeHTML("<b>Контакти:</b>");
-  $pdf->writeHTML("Viber: <i>0960906226</i>");
-  $pdf->writeHTML("Email: <i>info@rucheyok.org.ua</i>");
-  $pdf->Write(0, "\n\n\n", '', 0, 'C', true, 0, false, false, 0);
-  $pdf->writeHTML("Якщо у Вас залишилися питання, будь-ласка звертайтесь:", true, false, false, false, 'C');
-  $pdf->writeHTML("СТ Ручейок, +380 (96) 090 62 26, info@rucheyok.org.ua", true, false, false, false, 'C');
 
   // save pdf file
   if (!file_exists($target_folder)) {

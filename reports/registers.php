@@ -4,11 +4,19 @@
   include_once __DIR__ . '/includes/config.php';
   include_once __DIR__ . '/../includes/config.php';
 
-  if(!isset($_POST['report'])) {
-    $year=date('Y');
-    $week=date('W');
+  /*
+  if(isset($_GET['week'])) {
+    $week = $_GET['week'];
+    $year = $_GET['year'];
   }
-  // echo "<script>alert('$year  $week');</script>";
+  */
+  if(!isset($week)) {
+    $week=date('W')-1;
+  }
+  if(!isset($year)) {
+    $year=date('Y');
+  }
+  //echo "<script>alert('$year  $week');</script>";
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -64,65 +72,61 @@
             
                     <!-- DataTales Example -->
                     <div class="card shadow mb-4">
-		      <div class="card-header py-3">
-			<table width="100%">
-			  <tr>
-			  <form class="date" name="report" method="post">
-			  <h6 class="m-0 font-weight-bold text-primary">
-			   <td align=center>
-			      <label for="year"> Год </label>
-			   </td><td>
-                              <select id="year" name="year" class="btn btn-primary btn-user btn-block">
-                              <?php
-                                $curYear = $year;
-                                $startYear = date('Y');
-                                $lastYear = '2021';
-                                for ( $i = $startYear; $i >= $lastYear; $i-- ) {
-                                  if ( $i == $curYear ) {
-                                    echo "<option value=".$i." selected>".$i."</option>";
-                                  } else {
-                                    echo "<option value=".$i.">".$i."</option>";
+		                  <div class="card-header py-3">
+			                  <table width="100%">
+			                    <tr>
+			                        <h6 class="m-0 font-weight-bold text-primary">
+			                        <td align=center>
+			                          <label for="year"> Год </label>
+			                        </td>
+                              <td>
+                                <select id="year" name="year" class="btn btn-primary btn-user btn-block"
+                                  onchange="window.location = this.options[this.selectedIndex].value">
+                                <?php
+                                  $curYear = $year;
+                                  $startYear = date('Y');
+                                  $lastYear = '2021';
+                                  for ( $i = $startYear; $i >= $lastYear; $i-- ) {
+                                    if ( $i == $curYear ) {
+                                      echo "<option value=registers.php?week=".$week."&year=".$i." selected>".$i."</option>";
+                                    } else {
+                                      echo "<option value=registers.php?week=".$week.".&year=".$i.">".$i."</option>";
+                                    }
                                   }
-                                }
-                              ?>
-			      </select>
-			    </td>
-			    <td align=center>
-			      <label for="year"> № ведомости </label>
-			    </td><td>
-                              <select id="week" name="week" class="btn btn-primary btn-user btn-block">
-			      <?php
-				$curWeek = $week;
-                                $startWeek = 53;
-                                $lastWeek = 1;
-                                for ( $i = $startWeek; $i >= $lastWeek; $i-- ) {
-                                  if ( $i == $curWeek ) {
-                                    echo "<option value=".$i." selected>".$i."</option>";
-                                  } else {
-                                    echo "<option value=".$i.">".$i."</option>";
+                                ?>
+			                          </select>
+			                        </td>
+			                        <td align=center>
+			                          <label for="week">Ведомость №: </label>
+                              </td>
+                              <td>
+                                <select id="week" name="week" class="btn btn-primary btn-user btn-block"
+                                  onchange="window.location = this.options[this.selectedIndex].value">
+			                          <?php
+				                          $curWeek = $week;
+                                  $startWeek = 53;
+                                  $lastWeek = 1;
+                                  for ( $i = $startWeek; $i >= $lastWeek; $i-- ) {
+                                    if ( $i == $curWeek ) { 
+                                      echo "<option value=registers.php?year=".$year."&week=".$i." selected>".$i."</option>";
+                                    } else {
+                                      echo "<option value=registers.php?year=".$year."&week=".$i.">".$i."</option>";
+                                    }
                                   }
-                                }
-                              ?>
-			      </select>
-			    </td>
-			    <td>
-                              <button type="submit" name="report" class="btn btn-primary btn-user btn-block">
-                                Получить
-			      </button>
-			    <td>
-			    </h6>
-                            </form>
-
-                            <td>
-                              <form action="printRegisters.php" method="post">
-                                <input type="hidden" id="pYear" name="pYear" value="<?php echo $year ?>">
-                                <input type="hidden" id="pWeek" name="pWeek" value="<?php echo $week ?>">
-                                <input type="submit" value="Печать" class="btn btn-primary btn-user btn-block"/>
-                              </form>
-			   </td>
-			</tr>
-		      </table>
-		    </div>
+                                ?>
+			                          </select>
+                              </td>
+                              <td>
+                                <form action="printRegisters.php" method="post">
+                                  <input type="hidden" id="pYear" name="pYear" value="<?php echo $year ?>">
+                                  <input type="hidden" id="pWeek" name="pWeek" value="<?php echo $week ?>">
+                                  <input type="submit" value="Печать" class="btn btn-primary btn-user btn-block"/>
+                                </form>
+                              </td>
+                            </h6>
+			                    </tr>
+		                    </table>
+		                  </div>
 
 	  <div class="row">
             <!-- Area Chart -->
@@ -144,12 +148,12 @@
                     <?php
                       $_SESSION['iType'] = 'check';
                       $_SESSION['imageOwner'] = -1;
-		      $query = $userModel->call('vedomost', "$year, $week");
-		      $sumEl=0; $sumWat=0; $sumFee=0; $sumInc=0;
+		                  $query = $userModel->call('vedomost', "$year, $week");
+		                  $sumEl=0; $sumWat=0; $sumFee=0; $sumInc=0; $sumOthers;
                       $cnt=1;
-		      foreach ($query as $result) {
-		    ?>
-		       <tr>
+		                  foreach ($query as $result) {
+		                ?>
+		                  <tr>
                         <td style="text-align:center"><?php echo $cnt;?></td>
                         <td style="text-align:right">
                           <form action="../user/" method="post">
@@ -168,14 +172,14 @@
                           elseif ($result['dst'] == "wat") { echo "Вода";  $sumWat+=$result['sum'];}
                           elseif ($result['dst'] == "fee") { echo "Членские"; $sumFee+=$result['sum'];}
                           elseif ($result['dst'] == "inc") { echo "Вступительный"; $sumInc+=$result['sum'];}
-                          else { echo "Прочее"; }
+                          else { echo "Прочее"; $sumOthers+=$result['sum'];}
                         ?></td>
                         <?php if($result['type']): ?>
                         <td style="text-align:right; background-color:powderblue;"><?php echo $result['sum']; ?></td>
                         <?php else: ?>
                         <td style="text-align:right"><?php echo $result['sum']; ?></td>
                         <?php endif ?>
-			<td style="text-align:right"><?php echo $result['date']; ?></td>
+			                  <td style="text-align:right"><?php echo $result['date']; ?></td>
                       </tr>
                     <?php $cnt++; }?>
 		    </tbody>
@@ -183,12 +187,13 @@
 		  <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
 		    <tfoot>
 		      <tr>
-			<td style="text-align:right"><b><?php echo "Итого:";?></b></td>
-                        <td style="text-align:right"><b><?php echo "Електричество: " . number_format($sumEl, 2, '.', ' ');?></b></td>
-                        <td style="text-align:right"><b><?php echo "Вода: " . number_format($sumWat, 2, '.', ' ');?></b></td>
-                        <td style="text-align:right"><b><?php echo "Членские: " . number_format($sumFee, 2, '.', ' ');?></b></td>
-			<td style="text-align:right"><b><?php echo "Вступительный: " . number_format($sumInc, 2, '.', ' ');?></b></td>
-			<td style="text-align:right"><b><?php echo "Сумма: " . number_format($sumEl+$sumWat+$sumFee+$sumInc, 2, '.', ' ');?></b></td>
+			      <td style="text-align:right"><b><?php echo "Итого:";?></b></td>
+            <td style="text-align:right"><b><?php echo "Електричество: " . number_format($sumEl, 2, '.', ' ');?></b></td>
+            <td style="text-align:right"><b><?php echo "Вода: " . number_format($sumWat, 2, '.', ' ');?></b></td>
+            <td style="text-align:right"><b><?php echo "Членские: " . number_format($sumFee, 2, '.', ' ');?></b></td>
+            <td style="text-align:right"><b><?php echo "Вступительный: " . number_format($sumInc, 2, '.', ' ');?></b></td>
+            <td style="text-align:right"><b><?php echo "Прочие: " . number_format($sumOthers, 2, '.', ' ');?></b></td>
+			      <td style="text-align:right"><b><?php echo "Сумма: " . number_format($sumEl+$sumWat+$sumFee+$sumInc+$sumOthers, 2, '.', ' ');?></b></td>
 		      </tr>
                     </tfoot>
                   </table>
