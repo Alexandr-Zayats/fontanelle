@@ -33,17 +33,28 @@ ON SCHEDULE EVERY '1' MONTH
 STARTS '2024-07-01 02:00:00'
 DO
 BEGIN
+  DECLARE date DATE DEFAULT DATE(NOW());
   IF (MONTH(date) > 3 AND MONTH(date) < 11) THEN
-    update users set BalanceFee=BalanceFee-Size*(select fee from tariffs where id=users.TariffId);
+    update users set BalanceFee=BalanceFee-Size*(select fee from tariffs where id=users.TariffId) WHERE isMem=1;
   ELSE
-    update users set BalanceFee=BalanceFee-Size*(select fee from tariffs where id=users.TariffId) WHERE IsActive=1;
+    update users set BalanceFee=BalanceFee-Size*(select fee from tariffs where id=users.TariffId) WHERE isMem=1 AND IsActive=1;
   END IF;
 END$$
-
 
 --
 -- Procedures
 --
+
+DROP PROCEDURE IF EXISTS rentMonthly;
+CREATE PROCEDURE rentMonthly ()
+BEGIN
+  DECLARE date DATE DEFAULT DATE(NOW());
+  IF (MONTH(date) > 3 AND MONTH(date) < 11) THEN
+    update users set BalanceFee=BalanceFee-Size*(select fee from tariffs where id=users.TariffId) WHERE isMem=1;
+  ELSE
+    update users set BalanceFee=BalanceFee-Size*(select fee from tariffs where id=users.TariffId) WHERE isMem=1 AND IsActive=1;
+  END IF;
+END$$
 
 DROP PROCEDURE IF EXISTS fee_history;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `fee_history` (`uid` INT(5))

@@ -22,3 +22,5 @@ SELECT u.id, r.surName, r.name, r.middlName,  r.phone1, r.email, u.BalanceFee FR
 
 # Члены кооператыва
 SELECT u.id, r.surName, r.name, r.middlName, r.phone1, r.email, max(p.date) AS lastPayment FROM users u LEFT JOIN residents r ON r.id=u.residentId  LEFT JOIN payments p ON p.userId=u.id WHERE u.id > 0 AND p.date > '2022-01-01' GROUP BY u.id ORDER BY u.id INTO OUTFILE '/var/lib/mysql-files//users-list.csv';
+
+SELECT u.id, concat(r.surName, " ", r.name, " ", r.middlName) as NAME  FROM users u LEFT JOIN residents r ON r.id=u.residentId  LEFT JOIN payments p ON p.userId=u.id WHERE isMem=1 AND u.id>0 GROUP BY u.id ORDER BY u.id INTO OUTFILE '/var/lib/mysql-files//isMembers.csv';
