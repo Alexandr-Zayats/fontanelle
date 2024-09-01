@@ -1,0 +1,1000 @@
+    8  sed 's/\/includes\/logout-modal.php/\.\.\/includes\/logout-modal.php/g' user/edit-resident.php
+    9  sed s/\/includes\/logout-modal.php/\.\.\/includes\/logout-modal.php/g user/edit-resident.php
+   10  sed 's/\/includes\/logout-modal.php/\.\.\/includes\/logout-modal.php/g' user/edit-resident.php
+   11  sed "s/\/includes\/logout-modal.php/\.\.\/includes\/logout-modal.php/g" user/edit-resident.php
+   12  sed  s/logout-modal.php/FFFFFF--modal.php/g user/edit-resident.php
+   13  sed  s/includes\/logout-modal.php/FFFFFF--modal.php/g user/edit-resident.php
+   14  sed  s/includes\\/logout-modal.php/FFFFFF--modal.php/g user/edit-resident.php
+   15  sed  s/includes\\/logout-modal.php/..\\/includes\\/logout-modal.php/g user/edit-resident.php
+   16  sed -i  s/includes\\/logout-modal.php/..\\/includes\\/logout-modal.php/g user/*.php
+   17  egrep -r "'includes/logout-modal.php" *
+   18  egrep -r "../includes/logout-modal.php" *
+   19  sed -i  s/includes\\/logout-modal.php/..\\/includes\\/logout-modal.php/g cashier/*.php
+   20  sed -i  s/includes\\/logout-modal.php/..\\/includes\\/logout-modal.php/g reports/*.php
+   21  egrep -r "../includes/logout-modal.php" *
+   22  vim cashier/index.php 
+   23  vim cashier/includes/sidebar.php 
+   24  cd /var/www/fontanelle/
+   25  ll
+   26  cd includes/
+   27  ll
+   28  cp logout-modal.php image-modal.php
+   29  vim image-modal.php 
+   30  cd ..
+   31  vim cashier/index.php 
+   32  vim cashier/includes/topbar.php 
+   33  vim cashier/index.php 
+   34  vim cashier/includes/topbar.php 
+   35  vim cashier/registered-users.php 
+   36  vim cashier/includes/topbar.php 
+   37  vim cashier/index.php 
+   38  vim includes/image-modal.php 
+   39  vim user/counter-check.php 
+   40  cd /var/www/fontanelle/
+   41  vim user/counter-check.php 
+   42  vim user/index.php 
+   43  vim user/includes/topbar.php x
+   44  vim user/includes/topbar.php 
+   45  vim user/index.php 
+   46  vim user/includes/topbar.php 
+   47  egrep -r 'Добро пожаловать' *
+   48  vim user/index.php 
+   49  vim user/counter-check.php 
+   50  vim image_upload.php 
+   51  vim includes/logout-modal.php 
+   52  vim image_upload.php 
+   53  vim includes/logout-modal.php 
+   54  vim image_upload.php 
+   55  vim user/user-payment.php 
+   56  vim includes/logout-modal.php 
+   57  vim image_upload.php 
+   58  ll
+   59  vim user/user-payment.php 
+   60  history | grep mysql
+   61  mysql -uroot -p -D fontanelle
+   62  vim user/edit-user-profile.php 
+   63  vim user/user-payment.php 
+   64  vim user/edit-user-profile.php 
+   65  ls -la user/uploads/150/
+   66  mysql -uroot -p -D fontanelle
+   67  vim user/edit-user-profile.php 
+   68  vim image_upload.php 
+   69  vim user/edit-user-profile.php 
+   70  cd /var/www/fontanelle/
+   71  vim user/index.php 
+   72  vim user/water.php 
+   73  vim user/fee.php 
+   74  "d-sm-flex" 
+   75  card-header py-3 d-flex flex-row align-items-left justify-content-between
+   76  vim user/index.php 
+   77  cd /var/www/fontanelle/
+   78  vim user/includes/sidebar.php 
+   79  vim user/index.php 
+   80  vim user/includes/sidebar.php 
+   81  vim user/index.php 
+   82  vim user/water.php 
+   83  vim user/fee.php 
+   84  vim user/water.php 
+   85  vim user/index.php 
+   86  php user/index.php 
+   87  vim user/index.php 
+   88  vim user/user-counter.php 
+   89  vim user/includes/sidebar.php 
+   90  vim user/water.php 
+   91  vim user/fee.php 
+   92  vim user/water.php 
+   93  vim user/fee.php 
+   94  history | grep mysql
+   95  mysql -uroot -p -D fontanelle
+   96  cd /var/www/fontanelle/
+   97  vin user/user-payment.php 
+   98  vim user/user-payment.php 
+   99  vim user/counter-check.php 
+  100  vim includes/image-modal.php 
+  101  vim user/water.php 
+  102  vim user/edit-user-profile.php 
+  103  vim includes/scripts-img.js 
+  104  vim user/edit-user-profile.php 
+  105  vim includes/scripts-img.js 
+  106  vim image_upload.php 
+  107  vim user/includes/sidebar.php 
+  108  vim user/edit-user-profile.php 
+  109  vim image_delete.php 
+  110  vim user/edit-user-profile.php 
+  111  cd /var/www/fontanelle/
+  112  vim includes/config.php 
+  113  cd /var/www/fontanelle/
+  114  vim image_upload.php 
+  115  vim image_delete.php 
+  116  vim cashier/createResident.php 
+  117  history | grep git
+  118  git add . && git commit -m '- photo upload' && git push
+  119  vim cashier/createResident.php 
+  120  vim cashier/residents.php 
+  121  vim cashier/createResident.php 
+  122  vim lib/ImageModel.php 
+  123  vim image_upload.php 
+  124  vim cashier/createResident.php 
+  125  vim cashier/createResident.php 
+  126  vim image_upload.php 
+  127  ll user/uploads/
+  128  ll user/uploads/2/
+  129  vim image_upload.php 
+  130  vim cashier/createResident.php 
+  131  vim user/user-payment.php 
+  132  vim user/counter-check.php 
+  133  vim image_upload.php 
+  134  vim user/edit-user-profile.php 
+  135  vim user/counter-check.php 
+  136  vim user/edit-user-profile.php 
+  137  vim user/user-payment.php 
+  138  vim user/counter-check.php 
+  139  vim cashier/createResident.php 
+  140  vim user/counter-check.php 
+  141  egrep -r 'data-target="#imageModal' *
+  142  vim cashier/createResident.php
+  143  vim user/edit-user-profile.php 
+  144  vim cashier/createResident.php
+  145  vim user/counter-check.php 
+  146  vim user/user-payment.php 
+  147  php image_upload.php 
+  148  vim image_upload.php 
+  149  vim cashier/createResident.php
+  150  vim image_upload.php 
+  151  php user/edit-user-profile.php 
+  152  vim user/edit-user-profile.php
+  153  exit
+  154  history | grep mysql 
+  155   mysql -uroot -p -D fontanelle
+  156  cd /var/www/fontanelle/
+  157  vim user/counter-check.php 
+  158   mysql -uroot -p -D fontanelle
+  159   mysql -uroot -p -D fontanelle < /tmp/2023-04-13-\(09\:25\).sql 
+  160   mysql -uroot -p -D fontanelle
+  161   mysql -uroot -p -D fontanelle < /tmp/2023-04-13-\(09\:25\).sql 
+  162  ll /tmp/2023-04-13-\(09\:25\).sql 
+  163  cd /var/www/fontanelle/
+  164  vim image_upload.php 
+  165  vim cashier/createResident.php 
+  166  cd /var/www/fontanelle/
+  167  vim cashier/createResident.php 
+  168  php cashier/createResident.php 
+  169  vim cashier/createResident.php 
+  170  vim SQL/procedures.sql 
+  171  vim cashier/createuser.php 
+  172  vim cashier/createResident.php 
+  173  vim includes/config.php 
+  174  vim cashier/createResident.php 
+  175  vim cashier/registered-users.php 
+  176  vim cashier/createResident.php 
+  177  vim cashier/residents.php 
+  178  vim cashier/createuser.php 
+  179  vim cashier/createResident.php 
+  180  vim cashier/registered-users.php 
+  181  vim SQL/procedures.sql 
+  182  vim user/index.php 
+  183  cd user/
+  184  ls -la
+  185  rm -rf .index.php.swp
+  186  cd ..
+  187  vim user/index.php 
+  188  vim cashier/residents.php 
+  189  vim user/index.php 
+  190  vim user/edit-user-profile.php 
+  191  vim user/index.php 
+  192  vim user/edit-user-profile.php 
+  193  vim user/index.php 
+  194  egrep -r 'userInfo'  *
+  195  vim user/fee.php 
+  196  vim user/water.php 
+  197  vim user/fee.php 
+  198  history | git
+  199  mysql -uroot -p -D fontanelle
+  200  cd /var/www/fontanelle/
+  201  vim SQL/procedures.sql 
+  202  mysql -uroot -p -D fontanelle < SQL/procedures.sql 
+  203  vim SQL/procedures.sql 
+  204  vim user/index.php 
+  205  exit
+  206  mysql -uroot -p -D fontanelle
+  207  mysql -uroot -p -D fontanelle < SQL/procedures.sql 
+  208  cd /var/www/fontanelle/
+  209  mysql -uroot -p -D fontanelle < SQL/procedures.sql 
+  210  mysql -uroot -p -D fontanelle
+  211  mysql -uroot -p -D fontanelle < SQL/procedures.sql 
+  212  mysql -uroot -p -D fontanelle
+  213  cd /var/www/fontanelle/
+  214  vim cashier/createResident.php 
+  215  php cashier/createResident.php 
+  216  vim cashier/createResident.php 
+  217  vim SQL/procedures.sql 
+  218  vim cashier/createuser.php 
+  219  vim cashier/createResident.php 
+  220  vim includes/config.php 
+  221  vim cashier/createResident.php 
+  222  vim cashier/registered-users.php 
+  223  vim cashier/createResident.php 
+  224  vim cashier/residents.php 
+  225  vim cashier/createuser.php 
+  226  vim cashier/createResident.php 
+  227  vim cashier/registered-users.php 
+  228  vim SQL/procedures.sql 
+  229  vim user/index.php 
+  230  cd user/
+  231  ls -la
+  232  rm -rf .index.php.swp
+  233  cd ..
+  234  vim user/index.php 
+  235  vim cashier/residents.php 
+  236  vim user/index.php 
+  237  vim user/edit-user-profile.php 
+  238  vim user/index.php 
+  239  vim user/edit-user-profile.php 
+  240  vim user/index.php 
+  241  egrep -r 'userInfo'  *
+  242  vim user/fee.php 
+  243  vim user/water.php 
+  244  vim user/fee.php 
+  245  history | git
+  246  history | grep git
+  247  git add . && git commit -m '- photo upload' && git push
+  248  vim user/notice.php 
+  249  vim cashier/debtors.php 
+  250  vim SQL/procedures.sql 
+  251  vim user/notice.php 
+  252  vim user/index.php 
+  253  vim user/counter-check.php 
+  254  vim user/notice.php 
+  255  vim user/counter-check.php 
+  256  vim user/notice.php 
+  257  vim includes/config.php 
+  258  vim user/notice.php 
+  259  vim user/user-payment.php 
+  260  vim SQL/procedures.sql 
+  261  vim user/user-counter.php 
+  262  vim SQL/procedures.sql 
+  263  vim user/counter-check.php 
+  264  vim SQL/procedures.sql 
+  265  vim cashier/debtors.php 
+  266  vim SQL/procedures.sql 
+  267  vim cashier/debtors.php 
+  268  vim includes/config.php 
+  269  egrep -r 'dateDiffInDays' *
+  270  vim cashier/debtors.php 
+  271  vim SQL/procedures.sql 
+  272  vim cashier/debtors.php 
+  273  vim SQL/procedures.sql 
+  274  vim cashier/debtors.php 
+  275  php cashier/debtors.php 
+  276  vim cashier/debtors.php 
+  277  php cashier/debtors.php 
+  278  vim cashier/debtors.php 
+  279  php cashier/debtors.php 
+  280  vim cashier/debtors.php 
+  281  php cashier/debtors.php 
+  282  vim cashier/debtors.php 
+  283  vim includes/config.php 
+  284  vim cashier/debtors.php 
+  285  vim SQL/procedures.sql 
+  286  vim cashier/debtors.php 
+  287  vim SQL/procedures.sql 
+  288  vim cashier/debtors.php 
+  289  historu | grep mysql
+  290  history | grep mysql
+  291  mysql -uroot -p -D fontanelle
+  292  exit
+  293  vim /tmp/tmp 
+  294  exit
+  295  cd /var/www/fontanelle/
+  296  vim user/counter-check.php 
+  297  vim includes/scripts-img.js 
+  298  vim user/counter-check.php 
+  299  vim includes/scripts-img.js 
+  300  find ./ -name 'scripts-img.js' -a -mtime +1
+  301  find ./ -name 'scripts-img.js'
+  302  pwd
+  303  ll
+  304  vim user/counter-check.php 
+  305  mysql -uroot -p -D fontanelle
+  306  vim SQL/procedures.sql 
+  307  mysql -uroot -p -D fontanelle < SQL/procedures.sql 
+  308  select * from payments where userId=47;
+  309  vim SQL/procedures.sql 
+  310  mysql -uroot -p -D fontanelle < SQL/procedures
+  311  vim SQL/procedures.sql 
+  312  mysql -uroot -p -D fontanelle < SQL/procedures.sql 
+  313  vim cashier/includes/sidebar.php 
+  314  history | grep git
+  315   git add . && git commit -m "- file uploads" && git push
+  316  exit
+  317  cd /var/www/fontanelle/
+  318  vim cashier/registered-users.php 
+  319  exit
+  320  cd /var/www/fontanelle/
+  321  ll
+  322  ls -l
+  323  rm 1
+  324  exit
+  325  cd /var/lib/letsencrypt/.well-known/
+  326  ll
+  327  crontab -e
+  328  cd /etc/nginx/conf.d/
+  329  cd ../custom.d/
+  330  ll
+  331  vim fontanelle.conf 
+  332  nginx -t
+  333  crontab -e
+  334  exit
+  335  cd /etc/nginx/
+  336  ll
+  337  cd conf.d/
+  338  ll
+  339  vim php-fpm.conf 
+  340  cd ../custom.d/
+  341  ll
+  342  vim fontanelle.conf 
+  343  yum install certbot
+  344  cd /etc/letsencrypt/
+  345  ll
+  346  vim cli.ini
+  347  mkdir -pv /var/www/fontanelle/.well-known/acme-challenge
+  348  echo Success > /var/www/fontanelle/.well-known/acme-challenge/example.html
+  349  certbot register --email alexandr@zayats.org
+  350  cd /etc/nginx/
+  351  ll
+  352  cd custom.d/
+  353  vim fontanelle.conf 
+  354  service nginx reload
+  355  curl -L http://rucheyok.org.ua/.well-known/acme-challenge/example.html
+  356  "GroupName": "newwork-gateway",
+  357        "GroupId": "sg-05aa6aa7a1f99b197"
+  358  vim fontanelle.conf 
+  359  service nginx reload
+  360  vim fontanelle.conf 
+  361  service nginx reload
+  362  ls -la /var/www/fontanelle/.well-known/
+  363  ls -la /var/www/fontanelle/.well-known/acme-challenge/
+  364  cat /var/www/fontanelle/.well-known/acme-challenge/example.html 
+  365  ls -l /var/www/fontanelle/.well-known/acme-challenge/example.html 
+  366  certbot certonly --dry-run -d rucheyok.org.ua -d www.rucheyok.org.ua
+  367  certbot certonly --dry-run -d rucheyok.org.ua
+  368  echo Success > /var/www/fontanelle/.well-known/acme-challenge/rucheyok.org.ua
+  369  certbot certonly --dry-run -d rucheyok.org.ua
+  370  cat /var/log/letsencrypt/letsencrypt.log
+  371  systemctl status nginx.service
+  372  journalctl -xe
+  373  ll /var/www/fontanelle/
+  374  vim fontanelle.conf 
+  375  systemctl status nginx.service
+  376  certbot certonly --dry-run -d rucheyok.org.ua
+  377  service nginx reload
+  378  systemctl status nginx.service
+  379  journalctl -xe
+  380  ps ax | grep nginx
+  381  certbot certonly --dry-run -d rucheyok.org.ua
+  382  ll
+  383  vim fontanelle.conf 
+  384  service nginx reload
+  385  journalctl -xe
+  386  vim fontanelle.conf 
+  387  service nginx reload
+  388  vim fontanelle.conf 
+  389  service nginx reload
+  390  ll /var/www/fontanelle/.well-known/acme-challenge/
+  391  cat /var/www/fontanelle/.well-known/acme-challenge/rucheyok.org.ua 
+  392  cd /var/www/fontanelle/
+  393  ll .well-known/
+  394  ls -l
+  395  ll cashier/
+  396  ls -la
+  397  cd /etc/nginx/
+  398  vim acme
+  399  vim custom.d/
+  400  vim custom.d/fontanelle.conf 
+  401  service nginx reload
+  402  vim custom.d/fontanelle.conf 
+  403  service nginx restart
+  404  ps ax | grep nginx
+  405  vim custom.d/fontanelle.conf 
+  406  cd /var/www/fontanelle/.well-known/acme-challenge/
+  407  ll
+  408  mv rucheyok.org.ua rucheyok.html
+  409  ll
+  410  ll /var/www/fontanelle/user/uploads/
+  411  cd ..
+  412  ll
+  413  cd ..
+  414  ll
+  415  chown -R apache .well-known
+  416  ls -la
+  417  vim /etc/nginx/nginx.conf
+  418  vim /etc/nginx/custom.d/fontanelle.conf 
+  419  cp /etc/nginx/custom.d/fontanelle.conf /tmp/
+  420  vim /etc/nginx/custom.d/fontanelle.conf 
+  421  vim /etc/nginx/acme 
+  422  vim /etc/nginx/custom.d/fontanelle.conf 
+  423  service nginx restart
+  424  vim /etc/nginx/conf.d/default.conf
+  425  vim /etc/nginx/custom.d/fontanelle.conf 
+  426  service nginx restart
+  427  ps ax | grep nginx
+  428  certbot certonly --dry-run -d rucheyok.org.ua
+  429  rm -rf /var/www/fontanelle/.well-known/acme-challenge/*
+  430  certbot certonly --dry-run -d rucheyok.org.ua
+  431  vim /etc/nginx/conf.d/default.conf 
+  432  vim /etc/nginx/custom.d/fontanelle.conf 
+  433  service nginx restart
+  434  certbot certonly --dry-run -d rucheyok.org.ua
+  435  cat /var/log/letsencrypt/letsencrypt.log
+  436  ll .well-known/acme-challenge/
+  437  yum install certbot-nginx
+  438  vim /etc/nginx/nginx.conf
+  439  certbot --nginx -d rucheyok.org.ua
+  440  certbot certonly --dry-run --nginx -d rucheyok.org.ua
+  441  vim /etc/nginx/conf.d/default.conf 
+  442  vim /etc/nginx/custom.d/fontanelle.conf 
+  443  service nginx restart
+  444  certbot certonly --dry-run --nginx -d rucheyok.org.ua
+  445  vim /etc/nginx/
+  446  vim /etc/nginx/nginx.conf
+  447  vim /etc/nginx/conf.d/default.conf 
+  448  vim /etc/letsencrypt/cli.ini 
+  449  certbot certonly --dry-run --nginx -d rucheyok.org.ua
+  450  vim /etc/nginx/nginx.conf
+  451  nginx -t
+  452  service nginx reload
+  453  systemctl reload nginx
+  454  certbot --dry-run --nginx -d rucheyok.org.ua
+  455  certbot certonly --dry-run --nginx -d rucheyok.org.ua
+  456  vim /etc/letsencrypt/cli.ini 
+  457  vim /etc/nginx/conf.d/default.conf 
+  458  systemctl reload nginx
+  459  certbot certonly --dry-run --nginx -d rucheyok.org.ua
+  460  cat /var/log/letsencrypt/letsencrypt.log
+  461  touch /var/log/letsencrypt/letsencrypt.log
+  462  cat /var/log/letsencrypt/letsencrypt.log
+  463  rm /var/log/letsencrypt/letsencrypt.log
+  464  touch /var/log/letsencrypt/letsencrypt.log
+  465  certbot certonly --dry-run --nginx -d rucheyok.org.ua
+  466  ll .well-known/acme-challenge/
+  467  mv /etc/nginx/conf.d/default.conf /tmp/
+  468  systemctl reload nginx
+  469  certbot certonly --dry-run --nginx -d rucheyok.org.ua
+  470  vim /tmp/fontanelle.conf 
+  471  rm /etc/nginx/custom.d/fontanelle.conf 
+  472  systemctl reload nginx
+  473  certbot certonly --dry-run --nginx -d rucheyok.org.ua
+  474  rm -rf .well-known
+  475  certbot certonly --dry-run --nginx -d rucheyok.org.ua
+  476  ls -la
+  477  nginx -t
+  478  vim /etc/nginx/nginx.conf
+  479  ll /etc/nginx/
+  480  ll /etc/nginx/conf.d/
+  481  vim /etc/nginx/conf.d/php-fpm.conf 
+  482  vim /etc/nginx/custom.d/
+  483  ll /etc/nginx/custom.d/
+  484  yum uninstall certbot
+  485  yum remove certbot
+  486  yum install certbot-nginx
+  487  vim /etc/nginx/nginx.conf
+  488  systemctl reload nginx
+  489  ps ax | grep nginx
+  490  nginx -t
+  491  certbot certonly --dry-run --nginx -d rucheyok.org.ua
+  492  vim /etc/nginx/nginx.conf
+  493  ll /etc/nginx/default.d/
+  494  vim /etc/nginx/nginx.conf
+  495  ll /usr/share/nginx/html
+  496  ll -la /usr/share/nginx/html
+  497  mkdir -pv /usr/share/nginx/html/.well-known/acme-challenge
+  498  certbot certonly --dry-run --nginx -d rucheyok.org.ua
+  499  cat /var/log/nginx/error.log
+  500  certbot certonly --dry-run --nginx -d rucheyok.org.ua
+  501  cat /var/log/nginx/error.log
+  502  cat /var/log/nginx/access.log
+  503  cd /etc/nginx/
+  504  ll
+  505  vim nginx.conf
+  506  cp /tmp/fontanelle.conf /etc/nginx/custom.d/
+  507  vim /etc/nginx/custom.d/fontanelle.conf 
+  508  nginx -t
+  509  systemctl reload nginx
+  510  certbot certonly --dry-run --nginx -d rucheyok.org.ua
+  511  vim /etc/nginx/custom.d/fontanelle.conf 
+  512  systemctl restart nginx
+  513  ps ax | grep nginx
+  514  systemctl restart nginx
+  515  ps ax | grep nginx
+  516  certbot certonly --dry-run --nginx -d rucheyok.org.ua
+  517  vim /etc/nginx/custom.d/fontanelle.conf 
+  518  systemctl restart nginx
+  519  nginx -t
+  520  systemctl restart nginx
+  521  certbot certonly --dry-run --nginx -d rucheyok.org.ua
+  522  certbot certonly --dry-run --nginx -d www.rucheyok.org.ua
+  523  certbot --nginx -d www.rucheyok.org.ua -d rucheyok.org.ua
+  524  ll /var/lib/letsencrypt/
+  525  ll -la  /var/lib/letsencrypt/
+  526  mkdir -p /var/lib/letsencrypt/.well-known
+  527  ps ax | grep nginx
+  528  ps -o user= -p PIDHERE
+  529  ps -o user=nginx -p PIDHERE
+  530  ps -o user= -p 19189
+  531  chmod g+s /var/lib/letsencrypt
+  532  chgrp nginx /var/lib/letsencrypt
+  533  cat /etc/passwd
+  534  vim /etc/nginx/nginx.conf
+  535  ll
+  536  rm acme 
+  537  cd snippets/
+  538  ll
+  539  vim letsencrypt.conf
+  540  vim ssl.conf
+  541  openssl dhparam -out /etc/ssl/certs/dhparam.pem 2048
+  542  vim /etc/nginx/custom.d/fontanelle.conf 
+  543  systemctl reload nginx
+  544  nginx -t
+  545  certbot certonly --agree-tos --email alexandr@zayats.org --webroot -w /var/lib/letsencrypt/ -d rucheyok.org.ua -d www.rucheyok.org.ua
+  546  systemctl restart nginx
+  547  certbot certonly --dry-run --agree-tos --email alexandr@zayats.org --webroot -w /var/lib/letsencrypt/ -d rucheyok.org.ua -d www.rucheyok.org.ua
+  548  certbot certonly --dry-run --agree-tos --email alexandr@zayats.org --webroot -w /var/lib/letsencrypt/ -d rucheyok.org.ua -d www.rucheyok.org.ua --manual --preferred-challenges dns
+  549  certbot certonly --dry-run --agree-tos --email alexandr@zayats.org --webroot -w /var/lib/letsencrypt/ -d rucheyok.org.ua -d www.rucheyok.org.ua --preferred-challenges dns
+  550  certbot certonly --dry-run --agree-tos --email alexandr@zayats.org --manual -w /var/lib/letsencrypt/ -d rucheyok.org.ua -d www.rucheyok.org.ua --preferred-challenges dns
+  551  certbot certonly --agree-tos --email alexandr@zayats.org --manual -w /var/lib/letsencrypt/ -d rucheyok.org.ua -d www.rucheyok.org.ua --preferred-challenges dns
+  552  ls -la /etc/letsencrypt/live/rucheyok.org.ua/
+  553  systemctl restart nginx
+  554  df
+  555  cd ..
+  556  ll
+  557  git remote add origin https://gitlab.com/alexandrzayats/nginx-config.git
+  558  mkdir .git
+  559  git remote add origin https://gitlab.com/alexandrzayats/nginx-config.git
+  560  ll
+  561  mkdir .git
+  562  ls -la
+  563  git remote add origin https://gitlab.com/alexandrzayats/nginx-config.git
+  564  rm -rf .git
+  565  cd /tmp/
+  566  git clone git@gitlab.com:alexandrzayats/nginx-config.git
+  567  cat ~/.ssh/id_rsa.pub 
+  568  git clone git@gitlab.com:alexandrzayats/nginx-config.git
+  569  cd nginx-config/
+  570  ll
+  571  ls -la
+  572  cp -r .git /etc/nginx/
+  573  cp README.md /etc/nginx/
+  574  cd /etc/nginx/
+  575  ls -l
+  576  ls -la
+  577  git add .
+  578  git commit
+  579  git push
+  580  ll
+  581  cd /var/www/fontanelle/
+  582  vim user/user-payment.php 
+  583  hostory | grep mysql
+  584  history | grep mysql
+  585  mysql -uroot -p -D fontanelle
+  586  vim SQL/procedures.sql 
+  587  vim user/user-payment.php 
+  588  cd SQL
+  589  wget https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/common-schema/common_schema-2.2.sql
+  590  ll
+  591  vim common_schema-2.2.sql 
+  592  mysql -uroot -p -D fontanelle < ./common_schema-2.2.sql
+  593  vim common_schema-2.1.sql 
+  594  wget https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/common-schema/common_schema-2.1.sql
+  595  mysql -uroot -p -D fontanelle < ./common_schema-2.1.sql
+  596  vim common_schema-2.2.sql 
+  597  mysql -uroot -p -D fontanelle < ./common_schema-2.2.sql
+  598  vim common_schema-2.2.sql 
+  599  mysql -uroot -p -D fontanelle < ./common_schema-2.2.sql
+  600  vim common_schema-2.2.sql 
+  601  mysql -uroot -p -D fontanelle < ./common_schema-2.2.sql
+  602  vim common_schema-2.2.sql 
+  603  mysql -uroot -p -D fontanelle < ./common_schema-2.2.sql
+  604  cd ../reports/
+  605  ll
+  606  vim balance.php 
+  607  php balance.php 
+  608  vim balance.php 
+  609  php balance.php 
+  610  cd ..
+  611  vim lib/DataSource.php 
+  612  vim reports/balance.php 
+  613  php reports/balance.php 
+  614  vim reports/balance.php 
+  615  php reports/balance.php 
+  616  vim reports/balance.php 
+  617  vim user/user-payment.php 
+  618  vim reports/balance.php 
+  619  php reports/balance.php 
+  620  vim user/notice.php 
+  621  vim cashier/debtors.php 
+  622  vim reports/balance.php 
+  623  exit
+  624  cd /var/www/fontanelle/
+  625  history | grep mysql
+  626  mysql -uroot -p -D fontanelle
+  627  exit
+  628  cd /var/www/fontanelle/
+  629  mysql -uroot -p -D fontanelle
+  630  vim user/fee.php 
+  631  vim user/water.php 
+  632  history | grep git
+  633  git add . && git commit -m '- photo upload' && git push
+  634  exit
+  635  mysql -uroot -p -D fontanelle
+  636  cd /var/www/fontanelle/
+  637  vim cashier/debtors.php 
+  638  vim cashier/index.php 
+  639  vim SQL/procedures.sql 
+  640  vim cashier/index.php 
+  641  vim SQL/procedures.sql 
+  642  mysql -uroot -p -D fontanelle < SQL/procedures.sql 
+  643  vim cashier/index.php 
+  644  vim SQL/procedures.sql 
+  645  mysql -uroot -p -D fontanelle < SQL/procedures.sql 
+  646  vim SQL/procedures.sql 
+  647  vim cashier/index.php 
+  648  ph cashier/index.php 
+  649  php cashier/index.php 
+  650  vim cashier/index.php 
+  651  php cashier/index.php 
+  652  vim cashier/index.php 
+  653  vim includes/drag_upload.js
+  654  vim css/images.css 
+  655  vim cashier/index.php 
+  656  vim includes/drag_upload.js
+  657  vim includes/image-modal.php 
+  658  vim includes/drag_upload.js
+  659  vim includes/image-modal.php 
+  660  vim includes/drag_upload.js
+  661  vim cashier/index.php 
+  662  vim includes/image-modal.php 
+  663  vim css/images.css 
+  664  vim includes/drag_upload.js 
+  665  vim css/images.css 
+  666  vim includes/drag_upload.js 
+  667  co image_upload.php drag_image_upload.php
+  668  cp image_upload.php drag_image_upload.php
+  669  vim drag_image_upload.php 
+  670  cd /var/www/fontanelle/
+  671  mysql -uroot -p -D fontanelle
+  672  vim user/user-payment.php 
+  673  mysql -uroot -p -D fontanelle
+  674  vim user/user-payment.php 
+  675  mysql -uroot -p -D fontanelle
+  676  vim includes/image-modal.php 
+  677  vim image_upload.php 
+  678  vim includes/image-modal.php 
+  679  vim image_upload.php 
+  680  egrep -r 'imageOwner' *
+  681  vim user/user-payment.php 
+  682  vim includes/image-modal.php 
+  683  mysql -uroot -p -D fontanelle
+  684  cd /var/www/fontanelle/
+  685  vim includes/drag_upload.js 
+  686  cd cashier/
+  687  ll ../drag_image_upload.php
+  688  cd ..
+  689  ll includes/
+  690  vim includes/drag_upload.js 
+  691  find ./ -name 'rt.min.js:7:86074)'
+  692  find ./ -name 'Chart.min.js'
+  693  vim vendor/chart.js/Chart.min.js 
+  694  vim cashier/index.php 
+  695  vim drag_image_upload.php 
+  696  vim
+  697  vim image_upload.php 
+  698  vim drag_image_upload.php 
+  699  vim cashier/index.php 
+  700  vim css/images.css 
+  701  vim includes/drag_upload.js 
+  702  vim cashier/index.php 
+  703  vim includes/drag_upload.js 
+  704  vim cashier/index.php 
+  705  vim image_upload.php 
+  706  vim cashier/index.php 
+  707  vim css/images.css 
+  708  vim includes/drag_upload.js 
+  709  vim includes/drag_upload_image.js 
+  710  vim cashier/index.php 
+  711  ll includes/drag_upload_image.js
+  712  ll drag_image_upload.php 
+  713  vim cashier/index.php 
+  714  vim css/images.css 
+  715  vim cashier/index.php 
+  716  vim css/images.css 
+  717  vim cashier/index.php 
+  718  vim css/images.css 
+  719  vim cashier/index.php 
+  720  vim drag_image_upload.php 
+  721  vim includes/image-modal.php 
+  722  vim css/images.css 
+  723  vim cashier/index.php 
+  724  vim css/images.css 
+  725  vim includes/drag_upload_image.js 
+  726  exit
+  727  exit
+  728  cd /var/www/fontanelle/
+  729  vim cashier/index.php 
+  730  ph cashier/index.php 
+  731  php cashier/index.php 
+  732  vim cashier/index.php 
+  733  php cashier/index.php 
+  734  mysql -uroot -p -D fontanelle
+  735  exit
+  736  mysql -uroot -p -D fontanelle
+  737  exit
+  738  mysql -uroot -p -D fontanelle
+  739  desc counters;
+  740  desc counter;
+  741  mysql -uroot -p -D fontanelle
+  742  exit
+  743  mysql -uroot -p -D fontanelle
+  744  exoit
+  745  exit
+  746  mysql -uroot -p -D fontanelle
+  747  exit
+  748  cd /var/www/fontanelle/
+  749  vim user/index.php 
+  750  vim user/water.php 
+  751  vim user/add-counter.php 
+  752  vim reports/transformator.php 
+  753  history | grep git
+  754  git add . && git commit -m '- photo upload' && git push
+  755  mysql -uroot -p -D fontanelle
+  756  df
+  757  cat /etc/fstab 
+  758  cd Dropbox/Rucheyok/
+  759  ll
+  760  mkdir back-ups
+  761  mysqldump --column-statistics=0 -uroot -pcomcbidz -h 10.161.168.43 --events --databases fontanelle > /root/Dropbox/Rucheyok/back-ups/$(date +"%Y-%m-%d-(%H:%M)").sql
+  762  mysqldump -uroot -pcomcbidz -h 10.161.168.43 --events --databases fontanelle > /root/Dropbox/Rucheyok/back-ups/$(date +"%Y-%m-%d-(%H:%M)").sql
+  763  ll back-ups/
+  764  cd back-ups/
+  765  ll
+  766  rm 2023-05-29-(09:44).sql
+  767  rm '2023-05-29-(09:44).sql'
+  768  vim 2023-05-29-\(09\:45\).sql 
+  769  crontab -e
+  770  time
+  771  date
+  772  crontab -e
+  773  ll
+  774  ls -l
+  775  date
+  776  crontab -e
+  777  mysqldump -uroot -pcomcbidz -h localhost --events --databases fontanelle > /root/Dropbox/Rucheyok/back-ups/$(date +"%Y-%m-%d-(%H:%M)").sql
+  778  ls -l
+  779  crontab -e
+  780  apt
+  781  yum
+  782  crontab -e
+  783  ls -l
+  784  ll
+  785  ls -l
+  786  cat /var/log/cron
+  787  ls -l
+  788  crontab -e
+  789  date
+  790  crontab -e
+  791  ls -l
+  792  crontab -e
+  793  cat /var/log/cron
+  794  crontab -e
+  795  date
+  796  ls -l
+  797  cat /var/log/cron
+  798  crontab -e
+  799  ls -l
+  800  crontab -e
+  801  ls
+  802  ll
+  803  crontab -e
+  804  exit
+  805  cd /var/www/fontanelle/
+  806  vim user/index.php 
+  807  vim user/user-payment.php 
+  808  vim user/index.php 
+  809  vim user/user-payment.php 
+  810  vim user/index.php 
+  811  vim user/water.php 
+  812  vim user/fee.php 
+  813  history | grep git
+  814   git add . && git commit -m '- photo upload' && git push
+  815  exit
+  816  mysql -uroot -p -D fontanelle
+  817  exit
+  818  mysql -uroot -p -D fontanelle
+  819  exiut
+  820  exit
+  821  mysql -uroot -p -D fontanelle
+  822  cd /var/www/fontanelle/
+  823  ll
+  824  vim user/user-payment.php 
+  825  vim SQL/procedures.sql 
+  826  vim user/user-payment.php 
+  827  vim SQL/procedures.sql 
+  828  mysql -uroot -p -D fontanelle < SQL/procedures.sql 
+  829  vim SQL/procedures.sql 
+  830  mysql -uroot -p -D fontanelle < SQL/procedures.sql 
+  831  vim cashier/index.php 
+  832  vim SQL/procedures.sql 
+  833  vim user/user-payment.php 
+  834  mysql -uroot -p -D fontanelle < SQL/procedures.sql 
+  835  vim user/fee.php
+  836  vim user/user-payment.php 
+  837  vim includes/config.php 
+  838  vim user/user-payment.php 
+  839  vim user/fee.php
+  840  vim user/user-payment.php 
+  841  php user/user-payment.php 
+  842  vim user/user-payment.php 
+  843  php user/user-payment.php 
+  844  vim user/user-payment.php 
+  845  php user/user-payment.php 
+  846  cd /var/www/fontanelle/
+  847  vim SQL/procedures.sql 
+  848  mysql -uroot -p -D fontanelle < SQL/procedures.sql 
+  849  mysql -uroot -p -D fontanelle
+  850  history | grep git
+  851  git add . && git commit -m '- photo upload' && git push
+  852  mysql -uroot -p -D fontanelle
+  853  mysql -uroot -p -D fontanelle
+  854  exit
+  855  df
+  856  cd /varwww/
+  857  cd /var/www/fontanelle/
+  858  ls -l
+  859  cd ~
+  860  ls -l
+  861  cd Dropbox/
+  862  ls -l
+  863  cd Rucheyok/
+  864  ls -l
+  865  cd back-ups/
+  866  ls -l
+  867  ps ax | grep dropbox
+  868  cd Dropbox/Rucheyok/back-ups/
+  869  ll
+  870  history
+  871  exit
+  872  history
+  873  history | grep yaml
+  874  history | grep apt
+  875  history | grep wget
+  876  history | grep dropb
+  877  ps ax | grep dropb
+  878  apt
+  879  yum
+  880  ps ax | grep yum
+  881  df
+  882  cd /var/www/fontanelle/
+  883  ll
+  884  cd user/
+  885  ll
+  886  ll uploads/
+  887  history | less
+  888  crontab -e
+  889  cd /opt/dropbox-client/
+  890  ls -l
+  891  /opt/dropbox-client/dropboxd
+  892  ps ax | grep dropb
+  893  ll /etc/systemd/system/dropbox.service
+  894  vim /etc/systemd/system/dropbox.service
+  895  systemctl status dropbox
+  896  ll /opt/dropbox/dropboxd
+  897  cd /opt/
+  898  ll
+  899  ln -sf dropbox-client dropbox
+  900  ll /opt/dropbox/dropboxd
+  901  ps ax | grep drop
+  902  mysql -uroot -p -D fontanelle
+  903  exit
+  904  mysql -uroot -p -D fontanelle
+  905  exit
+  906  mysql -uroot -p -D fontanelle
+  907  free -m
+  908  exit
+  909  mysql -uroot -p -D fontanelle
+  910  exit
+  911  mysql -uroot -p -D fontanelle
+  912  top
+  913  ps ax | grep nginx
+  914  netstat -an | egrep 'tcp.*LISTEN'
+  915  exit
+  916  cromtab -e
+  917  crontab -e
+  918  certbot renew
+  919  crontab -e
+  920  certbot certonly --agree-tos --email alexandr@zayats.org --manual -w /var/lib/letsencrypt/ -d rucheyok.org.ua -d www.rucheyok.org.ua --preferred-challenges dns
+  921  /bin/systemctl reload nginx.service
+  922  ps ax | grep nginx
+  923  mysql -uroot -p -D fontanelle
+  924  exit
+  925  cd /etc/nginx/
+  926  ll
+  927  cd custom.d/
+  928  ll
+  929  vim fontanelle.conf 
+  930  cd ..
+  931  ll
+  932  vim nginx.conf
+  933  ls -l /usr/share/nginx/html/
+  934  vim nginx.conf
+  935  nginx -V
+  936  vim nginx.conf
+  937  nginx -t
+  938  nginx reload
+  939  nginx -s reload
+  940  cd /tmp/
+  941  curl -sSL https://s3-us-west-2.amazonaws.com/www.lacework.net/download/4.2.0.218_2021-08-27_release-v4.2_918a6d2e7e45c361fce5e46d6f43134203be86ff/install.sh > /tmp/install.sh
+  942  sh /tmp/install.sh 52ee386c83af288a83218093f03dd4eb6a598174fb62894db2542d87
+  943  vim /tmp/install.sh 
+  944  sh /tmp/install.sh 52ee386c83af288a83218093f03dd4eb6a598174fb62894db2542d87
+  945  vim /tmp/install.sh 
+  946  vim /var/lib/lacework/config/config.json
+  947  vim /tmp/install.sh 
+  948  systemctl restart datacollector.service
+  949  ps ax | grep data
+  950  cd /var/log/
+  951  ls -l
+  952  cd lacework/
+  953  ls- l
+  954  ls -l
+  955  tail -f datacollector.log 
+  956  top
+  957  tail -f datacollector.log 
+  958  exit
+  959  mysql -uroot -p -D fontanelle
+  960  exit
+  961  cd /etc/wireguard/
+  962  ll
+  963  vf clients/
+  964  ll
+  965  cd clients/
+  966  ll
+  967  vim pavel@platonov/pavel@platonov.conf 
+  968  ll
+  969  cd ..
+  970  ls -l
+  971  vim wg0.conf
+  972  cd clients/
+  973  ll
+  974  vim pavel@platonov/pavel@platonov.conf 
+  975  ll
+  976  vim k.zavg/k.zavg.conf 
+  977  ll
+  978  cd ..
+  979  ll
+  980  vim wg0.conf
+  981  vim clients/pavel@platonov/pavel@platonov.conf 
+  982  vim wg0.conf
+  983  vim clients/pavel@platonov/pavel@platonov.conf 
+  984  egrep -r '5Fl84NAIJ/U2DbRvhSSihlP/DLHigt9lGiCXqN1UHrA=' *
+  985  vim wg0.conf
+  986  cd /var/www/fontanelle/
+  987  ll
+  988  git add . 
+  989  git commit
+  990  git push
+  991  git branch
+  992  git checkout main
+  993  git merge refactoring
+  994  mysql -uroot -p -D fontanelle
+  995  history
+  996  exit
+  997  ps ax | grep dropb
+  998  top
+  999  exit
+ 1000  df
+ 1001  cd /
+ 1002  ls -l
+ 1003  cp -r /etc/nginx /tmp/
+ 1004  ps ax | grep mysql
+ 1005  mysqld -v
+ 1006  mysql -v
+ 1007  history >/tmp/nginx/history.txt
