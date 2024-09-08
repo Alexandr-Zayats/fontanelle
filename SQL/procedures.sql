@@ -33,12 +33,15 @@ ON SCHEDULE EVERY '1' MONTH
 STARTS '2024-07-01 02:00:00'
 DO
 BEGIN
+  call rentMonthly();
+  /*
   DECLARE date DATE DEFAULT DATE(NOW());
   IF (MONTH(date) > 3 AND MONTH(date) < 11) THEN
     update users set BalanceFee=BalanceFee-Size*(select fee from tariffs where id=users.TariffId) WHERE isMem=1;
   ELSE
     update users set BalanceFee=BalanceFee-Size*(select fee from tariffs where id=users.TariffId) WHERE isMem=1 AND IsActive=1;
   END IF;
+  */
 END$$
 
 --
@@ -211,7 +214,7 @@ IF (type = 'fee') THEN
   FROM users u
   LEFT JOIN counters c ON c.userId=u.id
   LEFT JOIN residents r ON u.residentId=r.id
-  WHERE c.type=type AND u.id=uid;
+  WHERE u.id=uid;
 END IF;
 END$$
 

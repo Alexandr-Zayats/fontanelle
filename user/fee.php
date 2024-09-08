@@ -1,9 +1,26 @@
 <?php
   namespace Phppot;
   session_start();
+
   $_SESSION['cType'] = 'fee';
+
   include_once __DIR__ . '/includes/config.php';
   include_once __DIR__ . '/../includes/config.php';
+
+  /*
+  unset($cid);
+  if(isset($_GET['cid'])) {
+    $cid = $_GET['cid'];
+  }
+   */
+
+  $query = $userModel->call('userInfo', $uid . ", 'fee'");
+  $user = $query[0];
+/*
+  echo $uid;
+  print_r($user);
+  exit;
+*/
 ?>
 
 <!DOCTYPE html>
@@ -31,11 +48,6 @@
     <script src="../includes/scripts.js"> </script>
 
 </head>
-
-<?php
-  $query = $userModel->call('userInfo', "$uid, 'fee'");
-  $user = $query[0];
-?>
 
 <body id="page-top">
     <!-- Page Wrapper -->
