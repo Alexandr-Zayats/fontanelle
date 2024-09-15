@@ -53,9 +53,9 @@ CREATE PROCEDURE rentMonthly ()
 BEGIN
   DECLARE date DATE DEFAULT DATE(NOW());
   IF (MONTH(date) > 3 AND MONTH(date) < 11) THEN
-    update users set BalanceFee=BalanceFee-Size*(select fee from tariffs where id=users.TariffId) WHERE isMem=1;
+    update users set BalanceFee=BalanceFee-Size*(select fee from tariffs where id=users.TariffId); /* WHERE isMem=1; */
   ELSE
-    update users set BalanceFee=BalanceFee-Size*(select fee from tariffs where id=users.TariffId) WHERE isMem=1 AND IsActive=1;
+    update users set BalanceFee=BalanceFee-Size*(select fee from tariffs where id=users.TariffId) WHERE IsActive=1; /* AND isMem=1; */
   END IF;
 END$$
 
