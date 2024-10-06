@@ -149,7 +149,7 @@
                       $_SESSION['iType'] = 'check';
                       $_SESSION['imageOwner'] = -1;
 		                  $query = $userModel->call('vedomost', "$year, $week");
-		                  $sumEl=0; $sumWat=0; $sumFee=0; $sumInc=0; $sumOthers;
+		                  $sumEl=0; $sumWat=0; $sumFee=0; $sumInc=0; $sumOthers=0; $sumCach=0;
                       $cnt=1;
 		                  foreach ($query as $result) {
 		                ?>
@@ -176,7 +176,7 @@
                         ?></td>
                         <?php if($result['type']): ?>
                         <td style="text-align:right; background-color:powderblue;"><?php echo $result['sum']; ?></td>
-                        <?php else: ?>
+                        <?php else: $sumCach+=$result['sum']; ?>
                         <td style="text-align:right"><?php echo $result['sum']; ?></td>
                         <?php endif ?>
 			                  <td style="text-align:right"><?php echo $result['date']; ?></td>
@@ -187,13 +187,17 @@
 		  <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
 		    <tfoot>
 		      <tr>
-			      <td style="text-align:right"><b><?php echo "Итого:";?></b></td>
-            <td style="text-align:right"><b><?php echo "Електричество: " . number_format($sumEl, 2, '.', ' ');?></b></td>
-            <td style="text-align:right"><b><?php echo "Вода: " . number_format($sumWat, 2, '.', ' ');?></b></td>
-            <td style="text-align:right"><b><?php echo "Членские: " . number_format($sumFee, 2, '.', ' ');?></b></td>
-            <td style="text-align:right"><b><?php echo "Вступительный: " . number_format($sumInc, 2, '.', ' ');?></b></td>
-            <td style="text-align:right"><b><?php echo "Прочие: " . number_format($sumOthers, 2, '.', ' ');?></b></td>
-			      <td style="text-align:right"><b><?php echo "Сумма: " . number_format($sumEl+$sumWat+$sumFee+$sumInc+$sumOthers, 2, '.', ' ');?></b></td>
+			<td style="text-align:right"><b><?php echo "Итого:";?></b></td>
+            		<td style="text-align:right"><b><?php echo "Електричество: " . number_format($sumEl, 2, '.', ' ');?></b></td>
+            		<td style="text-align:right"><b><?php echo "Вода: " . number_format($sumWat, 2, '.', ' ');?></b></td>
+            		<td style="text-align:right"><b><?php echo "Членские: " . number_format($sumFee, 2, '.', ' ');?></b></td>
+            		<td style="text-align:right"><b><?php echo "Вступительный: " . number_format($sumInc, 2, '.', ' ');?></b></td>
+            		<td style="text-align:right"><b><?php echo "Прочие: " . number_format($sumOthers, 2, '.', ' ');?></b></td>
+			<td style="text-align:right">
+			  <b><?php echo "Сумма: " . number_format($sumEl+$sumWat+$sumFee+$sumInc+$sumOthers, 2, '.', ' ');?></b>
+			  <br>
+			  <b><?php echo "(Наличные: " . number_format($sumCach, 2, '.', ' ') . ")";?></b>  
+			</td>
 		      </tr>
                     </tfoot>
                   </table>
