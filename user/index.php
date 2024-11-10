@@ -173,7 +173,7 @@
                           <th colspan="3" style="text-align:center">День</th>
                           <th colspan="3" style="text-align:center">Ночь</th>
                           <th rowspan="2" style="text-align:center">К оплате</th>
-                          <th rowspan="2" style="text-align:center">Оплочено</th>
+                          <th rowspan="2" style="text-align:center">Оплачено</th>
                         </tr>
                         <tr>
                           <th style="text-align:center">Предыдущие</th>
@@ -188,31 +188,28 @@
                       <tbody>
 <?php
   $cnt=1;
-  $date_of_start = date('Y-m-d');
-  $date_of_end = date("Y-m-d", strtotime("-60 month", strtotime(date('Y-m-d'))));
- 
-  while (strtotime($date_of_start) >= strtotime($date_of_end)) {
-    $query = $userModel->call('el_history', $uid . ", " . $cid . ", " . "'$date_of_start'");
-    foreach  ($query as $countValues ) {
-      if ( ! is_null($countValues['dCur']) || ! is_null($countValues['nCur']) || ! is_null($countValues['paid']) ) {
+  $counts = $userModel->call('elCountHistory', $cid . ", NULL");
+  $payd = $userModel->call('paymentsHistory', $uid . ", NULL, 'el'");
+  $report = merge_array_common_key($counts, $payd, 'date');
+
+  foreach  ($report as $countValues ) {
+    if ( ! is_null($countValues['dCurrent']) || ! is_null($countValues['nCurrent']) || ! is_null($countValues['paydSum']) ) {
 ?>
                         <tr>
                           <td style="text-align:right"><?php echo $countValues['date'] ?></td>
-                          <td style="text-align:right"><?php echo $countValues['dPrev'] ?: '--';?></td>
-                          <td style="text-align:right"><?php echo $countValues['dCur'] ?: '--';?></td>
+                          <td style="text-align:right"><?php echo $countValues['dPrevius'] ?: '--';?></td>
+                          <td style="text-align:right"><?php echo $countValues['dCurrent'] ?: '--';?></td>
                           <td style="text-align:right"><?php echo $countValues['dDelta'] ?: '0.00';?></td>
-                          <td style="text-align:right"><?php echo $countValues['nPrev'] ?: '--';?></td>
-                          <td style="text-align:right"><?php echo $countValues['nCur'] ?: '--';?></td>
+                          <td style="text-align:right"><?php echo $countValues['nPrevius'] ?: '--';?></td>
+                          <td style="text-align:right"><?php echo $countValues['nCurrent'] ?: '--';?></td>
                           <td style="text-align:right"><?php echo $countValues['nDelta'] ?: '0.00';?></td>
                           <td style="text-align:right"><?php printf("%.2f", $countValues['toPay']) ?: '0.00';?></td>
-                          <td style="text-align:right"><?php echo $countValues['paid'];?></td>
+                          <td style="text-align:right"><?php printf("%.2f", $countValues['paydSum']) ?: '0.00';?></td>
                         </tr>
 <?php
-        }
-      }
       $cnt++;
-      $date_of_start = date ("Y-m-d", strtotime("-1 month", strtotime($date_of_start)));
     }
+  }
 ?>
                       </tbody>
                     </table>

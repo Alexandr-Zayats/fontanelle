@@ -175,8 +175,8 @@
                       <thead>
                         <tr>
                           <th style="text-align:center">Год</th>
-                          <th style="text-align:center">Начисленно</th>
-                          <th style="text-align:center">Оплоченно</th>
+                          <th style="text-align:center">Начислено</th>
+                          <th style="text-align:center">Оплачено</th>
                           <th style="text-align:center">Долг</th>
                         </tr>
                       </thead>
@@ -184,7 +184,7 @@
                       <tbody>
 <?php
   $cnt=1;
-  $sql = $userModel->call('fee_history', $uid);
+  $sql = $userModel->call('feeHistory', $uid);
   foreach ($sql as $fee) {
 ?>
 

@@ -34,14 +34,6 @@ STARTS '2024-07-01 02:00:00'
 DO
 BEGIN
   call rentMonthly();
-  /*
-  DECLARE date DATE DEFAULT DATE(NOW());
-  IF (MONTH(date) > 3 AND MONTH(date) < 11) THEN
-    update users set BalanceFee=BalanceFee-Size*(select fee from tariffs where id=users.TariffId) WHERE isMem=1;
-  ELSE
-    update users set BalanceFee=BalanceFee-Size*(select fee from tariffs where id=users.TariffId) WHERE isMem=1 AND IsActive=1;
-  END IF;
-  */
 END$$
 
 --
@@ -59,8 +51,8 @@ BEGIN
   END IF;
 END$$
 
-DROP PROCEDURE IF EXISTS fee_history;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `fee_history` (`uid` INT(5))
+DROP PROCEDURE IF EXISTS feeHistory;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `feeHistory` (`uid` INT(5))
 BEGIN
   SELECT
     DATE_FORMAT(p.dstDate, '%Y') as date,
@@ -69,79 +61,64 @@ BEGIN
     u.BalanceFee as balance 
   FROM payments p LEFT JOIN users u ON (u.id=p.userId)
   WHERE userId=uid AND dst='fee'
-  GROUP BY DATE_FORMAT(p.dstDate, '%Y')
+  GROUP BY DATE_FORMAT(p.dstDate, '%Y-%m-%d')
   ORDER BY dstDate DESC
   LIMIT 36;
 END$$
 
-DROP PROCEDURE IF EXISTS el_history;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `el_history` (`uid` INT(5), `cid` INT(5), `dNow` DATE)
+DROP PROCEDURE IF EXISTS paymentsHistory;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `paymentsHistory` (`uid` SMALLINT(5), `daysAgo` SMALLINT(4), `service` VARCHAR(10))
 BEGIN
+  SET daysAgo = IFNULL(daysAgo, 1000);
+  SET service = IFNULL(service, 'el');
   SELECT
-    payment.sum as paid,
-    SUM(c.dPrev) as dPrev,
-    c.dCur as dCur,
-    c.dDelta as dDelta,
-    c.nPrev as nPrev,
-    c.nCur as nCur,
-    c.nDelta as nDelta,
-    c.sum as toPay,
-    COALESCE(payment.date, c.date, DATE_FORMAT(dNow, '%Y-%m-%d')) as date
-  FROM
-    ( SELECT
-      min(v.dPrevius) as dPrev,
-      max(v.dCurrent) as dCur,
-      max(v.dCurrent)-min(v.dPrevius) as dDelta,
-      min(v.nPrevius) as nPrev,
-      max(v.nCurrent) as nCur,
-      max(v.nCurrent)-min(v.nPrevius) as nDelta,
-      DATE_FORMAT(v.date, '%Y-%m-%d') as date,
-      (max(v.dCurrent)-min(v.dPrevius))*t.day+(max(v.nCurrent)-min(v.nPrevius))*t.night as sum
-    FROM countValues v INNER JOIN tariffs t ON (v.tariffId=t.id)
-    WHERE v.cId=cid
-      AND ( v.dCurrent!=v.dPrevius OR v.nCurrent!=v.nPrevius )
-      AND  DATE_FORMAT(v.date, '%Y-%m')=DATE_FORMAT(dNow, '%Y-%m')
-    GROUP BY t.id ) as c,
-    ( SELECT
-      SUM(sum) as sum,
-      DATE_FORMAT(date, '%Y-%m-%d') as date
-    FROM payments
-    WHERE userId=uid
-      AND dst="el"
-      AND DATE_FORMAT(date, '%Y-%m')=DATE_FORMAT(dNow, '%Y-%m')
-    ) as payment;
+    DATE_FORMAT(date, '%Y-%m-%d') as date,
+    SUM(sum) as paydSum
+  FROM payments
+  WHERE userId=uid
+    AND dst=service
+    AND DATEDIFF(CURDATE(), date) < daysAgo
+  GROUP BY DATE_FORMAT(date, '%Y-%m-%d')
+  ORDER BY date DESC;
 END$$
 
-DROP PROCEDURE IF EXISTS wat_history;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `wat_history` (`uid` INT(5), `cid` INT(5), `dNow` DATE)
+DROP PROCEDURE IF EXISTS elCountHistory;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `elCountHistory` (`cid` SMALLINT(5), `daysAgo` SMALLINT(4))
 BEGIN
+  SET daysAgo = IFNULL(daysAgo, 1000);
   SELECT
-    payment.sum as paid,
-    SUM(c.dPrev) as dPrev,
-    SUM(c.dCur) as dCur,
-    SUM(c.dDelta) as dDelta,
-    SUM(c.sum) as toPay,
-    COALESCE(payment.date, c.date, DATE_FORMAT(dNow, '%Y-%m-%d')) as date
-  FROM
-    ( SELECT
-      min(v.dPrevius) as dPrev,
-      max(v.dCurrent) as dCur,
-      max(v.dCurrent)-min(v.dPrevius) as dDelta,
-      DATE_FORMAT(v.date, '%Y-%m-%d') as date,
-      (max(v.dCurrent)-min(v.dPrevius))*t.water as sum
-    FROM countValues v INNER JOIN tariffs t ON (v.tariffId=t.id)
-    WHERE v.cId=cid
-      AND v.dCurrent!=v.dPrevius
-      AND  DATE_FORMAT(v.date, '%Y-%m')=DATE_FORMAT(dNow, '%Y-%m')
-    GROUP BY t.id ) as c,
-    ( SELECT
-      SUM(sum) as sum,
-      DATE_FORMAT(date, '%Y-%m-%d') as date
-    FROM payments
-    WHERE userId=uid
-      AND dst="wat"
-      AND DATE_FORMAT(date, '%Y-%m')=DATE_FORMAT(dNow, '%Y-%m')
-    ) as payment;
+    DATE_FORMAT(v.date, '%Y-%m-%d') as date,
+    min(dPrevius) as dPrevius,
+    max(dCurrent) as dCurrent,
+    max(dCurrent)-min(dPrevius) as dDelta,
+    min(nPrevius) as nPrevius,
+    max(nCurrent) as nCurrent,
+    max(nCurrent)-min(nPrevius) as nDelta,
+    (max(dCurrent)-min(dPrevius))*t.day+(max(nCurrent)-min(nPrevius))*t.night as toPay
+  FROM countValues v INNER JOIN tariffs t ON (v.tariffId=t.id)
+  WHERE v.cId=cid
+    AND ( dCurrent!=dPrevius OR nCurrent!=nPrevius )
+    AND  DATEDIFF(CURDATE(), v.date) < daysAgo
+  GROUP BY DATE_FORMAT(date, '%Y-%m-%d')
+  ORDER BY date DESC;
+END$$
+
+DROP PROCEDURE IF EXISTS waterCountHistory;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `waterCountHistory` (`cid` SMALLINT(5), `daysAgo` SMALLINT(4))
+BEGIN
+  SET daysAgo = IFNULL(daysAgo, 1000);
+  SELECT
+    DATE_FORMAT(v.date, '%Y-%m-%d') as date,
+    min(dPrevius) as dPrevius,
+    max(dCurrent) as dCurrent,
+    max(dCurrent)-min(dPrevius) as dDelta,
+    (max(dCurrent)-min(dPrevius))*t.water as toPay
+  FROM countValues v INNER JOIN tariffs t ON (v.tariffId=t.id)
+  WHERE v.cId=cid
+    AND dCurrent!=dPrevius
+    AND  DATEDIFF(CURDATE(), v.date) < daysAgo
+  GROUP BY DATE_FORMAT(date, '%Y-%m-%d')
+  ORDER BY date DESC;
 END$$
 
 DROP PROCEDURE IF EXISTS counterInfo;

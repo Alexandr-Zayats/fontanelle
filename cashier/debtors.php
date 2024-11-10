@@ -94,17 +94,17 @@
   $query = $userModel->call('debtors', '');
   $cnt=1;
   foreach ( $query as $result) {
-    if( dateDiffInDays(date('Y-m-d'), $result['verWat']) > 180 || dateDiffInDays(date('Y-m-d'), $result['verEl']) > 180 || $result['fee'] < $result['Size'] * 100 * -2 ) {
+    // dateDiffInDays(date('Y-m-d'), $result['verWat']) > 180
+    //  $result['fee'] < $result['Size'] * 100 * -2
+    if( dateDiffInDays(date('Y-m-d'), $result['verEl']) > 180 ) {
+    	$phone="Номер телефона не указан";
+	    if (preg_match('/.*(\d{2})(\d{3})(\d{2})(\d{2})$/', $result['phone1'],  $matches )) {
+        $phone="+380 ($matches[1]) $matches[2]-$matches[3]-$matches[4]";
+      }
+      if (preg_match( '/.*(\d{2})(\d{3})(\d{2})(\d{2})$/', $result['phone2'],  $matches)) {
+        $phone=$phone."; "."+380 ($matches[1]) $matches[2]-$matches[3]-$matches[4]";
+      }
 ?>
-                                    <?php
-                                      $phone="Номер телефона не указан";
-                                      if (preg_match('/.*(\d{2})(\d{3})(\d{2})(\d{2})$/', $result['phone1'],  $matches )) {
-                                        $phone="+380 ($matches[1]) $matches[2]-$matches[3]-$matches[4]";
-                                      }
-                                      if (preg_match( '/.*(\d{2})(\d{3})(\d{2})(\d{2})$/', $result['phone2'],  $matches)) {
-                                        $phone=$phone."; "."+380 ($matches[1]) $matches[2]-$matches[3]-$matches[4]";
-                                      }
-                                    ?>
                                     <tr>
                                       <td style="text-align:right" class="user"><?php printf('%d', $cnt);?></td>
 

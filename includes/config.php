@@ -136,4 +136,28 @@
         </a>
       </form>";
   }
+
+  function merge_array_common_key($a1, $a2, $Ckey) {
+    $merge = array_merge($a1,$a2);
+    $keys = array();
+    foreach ($merge as $key => $value) {
+      if(isset($keys[$value[$Ckey]])) {
+        $merge[$keys[$value[$Ckey]]] += $value;
+        unset($merge[$key]);
+        continue;
+      }
+      $keys[$value[$Ckey]] = $key;
+    }
+
+    $dates = array();
+    foreach ($merge as $key => $row) {
+      $dates[$key] = strtotime($row['date']);
+    }
+
+    // Sort the multidimensional array based on the 'date' values 
+    // using array_multisort() with a callback
+    array_multisort($dates, SORT_DESC, $merge);
+
+    return $merge;
+  }
 ?>
